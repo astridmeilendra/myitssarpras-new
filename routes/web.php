@@ -11,13 +11,14 @@ Route::get('/test-db', function () {
     return DB::table('app_user')->get();
 });
 
-Route::get('/peminjaman', function () {
+//DB Connection
+Route::get('/cek-koneksi', function () {
     $peminjaman = DB::table('peminjaman')
         ->join('app_user', 'peminjaman.userid', '=', 'app_user.userid')
         ->select('peminjaman.peminjamanid', 'app_user.nama', 'peminjaman.keterangan', 'peminjaman.dokumen')
         ->get();
 
-    return view('peminjaman', ['peminjaman' => $peminjaman]);
+    return view('cek-koneksi', ['peminjaman' => $peminjaman]);
 });
 
 // Splashscreen
