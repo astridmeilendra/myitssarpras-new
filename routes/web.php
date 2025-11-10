@@ -41,3 +41,7 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('page/auth/regisster');
 });
+
+Route::get('/testing', function () {
+    return view('page/test');
+});
