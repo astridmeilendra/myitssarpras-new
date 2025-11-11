@@ -41,3 +41,15 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('page/auth/regisster');
 });
+
+Route::get('/alur-penjelasan', function () {
+    return view('alur-penjelasan', ['title' => 'Alur Penjelasan']);
+});
+
+Route::get('/faq', function () {
+    return view('faq', ['title' => 'FAQ']);
+});
+
+Route::get('/kirim-pertanyaan', function () {
+    return view('kirim-pertanyaan', ['title' => 'Kirim Pertanyaan']);
+});
