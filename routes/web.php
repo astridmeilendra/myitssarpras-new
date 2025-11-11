@@ -41,3 +41,16 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('page/auth/regisster');
 });
+
+// Cariruangan
+Route::get('/cariruangan', function () {
+    return view('page/cariruangan/cariruangan');
+});
+
+//Cariruangan parsial
+Route::get('/cariruanganparsial', function () {
+    return view('page/cariruangan/cariruanganparsial');
+});
+
+
+
