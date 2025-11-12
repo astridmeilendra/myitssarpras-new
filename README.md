@@ -1,9 +1,7 @@
-# MyITS SarPras  
-
----
+# 🏛️ MyITS SarPras  
 
 ## Overview  
-**MyITS SarPras** is a web-based platform developed as part of the *Perancangan dan Pengembangan Perangkat Lunak (PPPL)* course at **Institut Teknologi Sepuluh Nopember (ITS)**.  
+**MyITS SarPras** is a web-based platform developed as part of the *Perancangan dan Pengembangan Perangkat Lunak (PPPL)*.  
 This project aims to simplify and digitalize the facility borrowing process within the ITS campus environment. It enables students, lecturers, and staff to easily search for available rooms, submit booking requests, track approval status, and access relevant information — all in one integrated system.
 
 ---
@@ -19,12 +17,13 @@ This project aims to simplify and digitalize the facility borrowing process with
 
 | Feature | Description |
 |----------|-------------|
-|  **Search & Filter Rooms** | Users can search and filter rooms based on criteria such as date, time, capacity, and facilities. |
-|  **All-in-One Room Booking** | Provides a structured digital form to submit room borrowing requests efficiently and accurately. |
-|  **Track Borrowing Status** | Allows users to monitor the approval progress and status of their room bookings in real-time. |
-|  **Information Center & Custom Question Form** | Offers FAQs, document templates, and a form for submitting specific inquiries or assistance requests. |
+| **Search & Filter Rooms** | Users can search and filter rooms based on criteria such as date, time, capacity, and facilities. |
+| **All-in-One Room Booking** | Provides a structured digital form to submit room borrowing requests efficiently and accurately. |
+| **Track Borrowing Status** | Allows users to monitor the approval progress and status of their room bookings in real-time. |
+| **Information Center & Custom Question Form** | Offers FAQs, document templates, and a form for submitting specific inquiries or assistance requests. |
 
-## Group Members  
+
+## Group 6 - Members  
 
 | Name | NRP | GitHub Username |
 |------|-----|------------------|
