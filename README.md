@@ -1,4 +1,4 @@
-# 🏛️ MyITS SarPras  
+# MyITS SarPras  
 
 ## Overview  
 **MyITS SarPras** is a web-based platform developed as part of the *Perancangan dan Pengembangan Perangkat Lunak (PPPL)*.  
