@@ -50,7 +50,7 @@
 
 
     <!-- Filter Panel (Slide from Top) -->
-    <div id="filterPanel" class="absolute top-0 left-0 right-0 bg-white z-50 transform -translate-y-full transition-transform duration-300 ease-out overflow-hidden">
+    <div id="filterPanel" class="absolute top-0 left-0 right-0 bg-white shadow-lg z-50 transform -translate-y-full transition-transform duration-300 ease-out overflow-hidden">
         <div class="flex flex-col max-h-screen">
             <!-- Filter Header -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
@@ -91,8 +91,7 @@
                         </label>
                         <select
                             id="filterTime"
-                            class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
-                            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg width=%2712%27 height=%278%27 viewBox=%270 0 12 8%27 fill=%27none%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M1 1.5L6 6.5L11 1.5%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px 8px;"
+                            class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         >
                             <option value="">Pilih waktu</option>
                             <option value="07.00 - 10.00">Sesi 1 (07.00 - 10.00)</option>
@@ -141,7 +140,6 @@
                             <!-- icon -->
                             Fasilitas
                         </label>
-
                         <div class="space-y-2.5">
                             <!-- Baris 1 -->
                             <div class="grid grid-cols-3 gap-3">
@@ -256,7 +254,6 @@
                                     {{ $room['desc'] }}
                                 </p>
                             </div>
-
                             <!-- Facilities -->
                             <div class="flex flex-wrap gap-2 mt-3 text-xs text-gray-700">
                                 <div class="flex items-center gap-1">
@@ -312,7 +309,6 @@
 
     filterButton.addEventListener('click', openFilterPanel);
     closeFilter.addEventListener('click', closeFilterPanel);
-
     applyFilter.addEventListener('click', () => {
         const date = document.getElementById('filterDate').value;
         const time = document.getElementById('filterTime').value;
@@ -346,7 +342,6 @@
         facilities.forEach(f => addChip('Fasilitas', f.replace('-', ' ').toUpperCase()));
 
         console.log('Filter Applied:', { date, time, capacity, price, facilities });
-
         closeFilterPanel();
     });
 </script>

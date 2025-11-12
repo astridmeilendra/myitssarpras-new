@@ -68,3 +68,16 @@ Route::get('/ruangan', function () {
 Route::get('/success', function () {
     return view('page/peminjaman/success');
 });
+
+// Cariruangan
+Route::get('/cariruangan', function () {
+    return view('page/cariruangan/cariruangan');
+});
+
+//Cariruangan parsial
+Route::get('/cariruanganparsial', function () {
+    return view('page/cariruangan/cariruanganparsial');
+});
+
+
+
