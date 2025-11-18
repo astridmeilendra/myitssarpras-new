@@ -17,7 +17,7 @@ Route::get('/search', function () {
 })->name('search');
 
 Route::get('/info', function () {
-    return view('info');
+    return view('page/info/alur-penjelasan');
 })->name('info');
 
 Route::get('/profile', function () {
@@ -51,17 +51,17 @@ Route::get('/register', function () {
 
 
 Route::get('/alur-penjelasan', function () {
-    return view('alur-penjelasan', ['title' => 'Alur Penjelasan']);
+    return view('page/info/alur-penjelasan', ['title' => 'Alur Penjelasan']);
 });
 
 Route::get('/faq', function () {
-    return view('faq', ['title' => 'FAQ']);
+    return view('page/info/faq', ['title' => 'FAQ']);
 });
 
 Route::get('/kirim-pertanyaan', function () {
-    return view('kirim-pertanyaan', ['title' => 'Kirim Pertanyaan']);
+    return view('page/info/kirim-pertanyaan', ['title' => 'Kirim Pertanyaan']);
 });
-=======
+
 Route::get('/signup', function () {
     return view('page/signup/signup');
 });
@@ -102,8 +102,6 @@ Route::get('/cariruangan', function () {
 Route::get('/cariruanganparsial', function () {
     return view('page/cariruangan/cariruanganparsial');
 });
-
-
 
 
 // Cariruangan
