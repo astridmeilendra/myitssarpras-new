@@ -21,7 +21,7 @@ Route::get('/info', function () {
 })->name('info');
 
 Route::get('/profile', function () {
-    return view('profile');
+    return view('page/profile/profile');
 })->name('profile');
 
 //DB Connection
@@ -46,17 +46,11 @@ Route::get('/login', function () {
 
 // Register Page
 Route::get('/register', function () {
-    return view('page/auth/register');
+    return view('page/register/signin');
 });
-
-<<<<<<< HEAD
 
 Route::get('/signup', function () {
     return view('page/signup/signup');
-});
-
-Route::get('/profile', function () {
-    return view('page/profile/profile');
 });
 
 Route::get('/editprofile', function () {
@@ -66,7 +60,6 @@ Route::get('/editprofile', function () {
 Route::get('/signin', function () {
     return view('page/register/signin');
 });
-=======
 // Cariruangan
 Route::get('/seacrh', function () {
     return view('page/cariruangan/cariruangan');
@@ -99,4 +92,3 @@ Route::get('/cariruanganparsial', function () {
 
 
 
->>>>>>> 9c1ac338d75671b87334e22cf4ae229feba11952
