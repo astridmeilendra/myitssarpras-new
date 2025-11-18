@@ -3,13 +3,26 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Navbar
+Route::get('/home', function () {
+    return view('page/homepage');
+})->name('home');
 
-Route::get('/test-db', function () {
-    return DB::table('app_user')->get();
-});
+Route::get('/riwayat', function () {
+    return view('riwayat');
+})->name('riwayat');
+
+Route::get('/search', function () {
+    return view('page/cariruangan/cariruangan');
+})->name('search');
+
+Route::get('/info', function () {
+    return view('info');
+})->name('info');
+
+Route::get('/profile', function () {
+    return view('profile');
+})->name('profile');
 
 //DB Connection
 Route::get('/cek-koneksi', function () {
@@ -21,14 +34,8 @@ Route::get('/cek-koneksi', function () {
     return view('cek-koneksi', ['peminjaman' => $peminjaman]);
 });
 
-// Splashscreen
+// Auth
 Route::get('/', function () {
-    return view('page/auth/splashscreen');
-});
-
-
-// Auth Page
-Route::get('/myitssarpras', function () {
     return view('page/auth/auth');
 });
 
@@ -37,11 +44,12 @@ Route::get('/login', function () {
     return view('page/auth/login');
 });
 
-// Login Page
+// Register Page
 Route::get('/register', function () {
-    return view('page/auth/regisster');
+    return view('page/auth/register');
 });
 
+<<<<<<< HEAD
 
 Route::get('/signup', function () {
     return view('page/signup/signup');
@@ -58,3 +66,37 @@ Route::get('/editprofile', function () {
 Route::get('/signin', function () {
     return view('page/register/signin');
 });
+=======
+// Cariruangan
+Route::get('/seacrh', function () {
+    return view('page/cariruangan/cariruangan');
+});
+
+//Cariruangan parsial
+Route::get('/search-persial', function () {
+    return view('page/cariruangan/cariruanganparsial');
+});
+
+// Ruangan
+Route::get('/ruangan', function () {
+    return view('page/ruangan/detail-ruangan');
+});
+
+// Success
+Route::get('/success', function () {
+    return view('page/peminjaman/success');
+});
+
+// Cariruangan
+Route::get('/cariruangan', function () {
+    return view('page/cariruangan/cariruangan');
+});
+
+//Cariruangan parsial
+Route::get('/cariruanganparsial', function () {
+    return view('page/cariruangan/cariruanganparsial');
+});
+
+
+
+>>>>>>> 9c1ac338d75671b87334e22cf4ae229feba11952
