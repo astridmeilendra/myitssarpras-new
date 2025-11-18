@@ -50,7 +50,7 @@
 
 
     <!-- Filter Panel (Slide from Top) -->
-    <div id="filterPanel" class="absolute top-0 left-0 right-0 bg-white shadow-lg z-50 transform -translate-y-full transition-transform duration-300 ease-out overflow-hidden">
+    <div id="filterPanel" class="absolute top-0 left-0 right-0 bg-white z-50 transform -translate-y-full transition-transform duration-300 ease-out overflow-hidden">
         <div class="flex flex-col max-h-screen">
             <!-- Filter Header -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
