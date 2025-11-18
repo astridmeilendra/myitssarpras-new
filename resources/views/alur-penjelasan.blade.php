@@ -3,31 +3,6 @@
 @section('content')
 <div class="flex flex-col h-full bg-white">
 
-<div class="px-5">
-    <div class="w-full max-w-[340px] mx-auto grid grid-cols-3 relative">
-        <div class="absolute bottom-0 left-0 w-full h-[1.6px] bg-[#D1D5DB]"></div>
-
-        {{-- aktif --}}
-        <a href="{{ url('/alur-penjelasan') }}"
-           class="h-10 flex items-center justify-center text-[14px] font-bold text-[#013880] whitespace-nowrap">
-            Alur Penjelasan
-        </a>
-
-        <a href="{{ url('/faq') }}"
-           class="h-10 flex items-center justify-center text-[14px] font-medium text-[#3C3C3C] whitespace-nowrap">
-            FAQ
-        </a>
-
-        <a href="{{ url('/kirim-pertanyaan') }}"
-           class="h-10 flex items-center justify-center text-[14px] font-medium text-[#3C3C3C] whitespace-nowrap">
-            Kirim Pertanyaan
-        </a>
-
-        {{-- garis biru di kolom 1 --}}
-        <div class="absolute bottom-0 left-0 h-[3px] bg-[#013880] w-1/3 rounded-t-sm"></div>
-    </div>
-</div>
-
     {{-- HEADER --}}
     <div class="pt-6 pb-3 px-5">
         <h1 class="text-center text-[20px] font-bold text-[#013880] tracking-tight">Informasi</h1>
