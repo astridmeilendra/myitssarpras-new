@@ -49,7 +49,6 @@ Route::get('/register', function () {
     return view('page/auth/register');
 });
 
-<<<<<<< HEAD
 
 Route::get('/signup', function () {
     return view('page/signup/signup');
@@ -66,7 +65,7 @@ Route::get('/editprofile', function () {
 Route::get('/signin', function () {
     return view('page/register/signin');
 });
-=======
+
 // Cariruangan
 Route::get('/seacrh', function () {
     return view('page/cariruangan/cariruangan');
@@ -99,4 +98,3 @@ Route::get('/cariruanganparsial', function () {
 
 
 
->>>>>>> 9c1ac338d75671b87334e22cf4ae229feba11952

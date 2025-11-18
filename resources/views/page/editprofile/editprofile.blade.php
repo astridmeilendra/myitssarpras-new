@@ -1,4 +1,4 @@
-@extends('template')
+@extends('template-full')
 
 @section('content')
 <div class="h-full flex flex-col bg-white">
