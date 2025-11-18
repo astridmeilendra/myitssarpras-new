@@ -45,24 +45,20 @@ Route::get('/login', function () {
 });
 
 // Register Page
-Route::get('/register', function () {
-    return view('page/register/signin');
+Route::get('/loginpage', function () {
+    return view('page/loginpage/signin');
 });
-
-<<<<<<< HEAD
-
-=======
->>>>>>> c27cf9d3149f7323b61aa8698ce3e91b5c33de5e
+// Signup Page
 Route::get('/signup', function () {
     return view('page/signup/signup');
 });
 
-Route::get('/editprofile', function () {
-    return view('page/editprofile/editprofile');
+Route::get('/editakun', function () {
+    return view('page/editprofile/editakun');
 });
 
 Route::get('/signin', function () {
-    return view('page/register/signin');
+    return view('page/loginpage/signin');
 });
 // Cariruangan
 Route::get('/seacrh', function () {
@@ -93,6 +89,3 @@ Route::get('/cariruangan', function () {
 Route::get('/cariruanganparsial', function () {
     return view('page/cariruangan/cariruanganparsial');
 });
-
-
-
