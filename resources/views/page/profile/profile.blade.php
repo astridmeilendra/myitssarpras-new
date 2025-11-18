@@ -1,8 +1,40 @@
 @extends('template-full')
 
 @section('content')
-<div class="w-full h-full flex flex-col bg-white">
+@php
+    $statusbarTheme = 'light';
+@endphp
 
+<<<<<<< HEAD
+<div class="flex flex-col h-full bg-white">
+    {{-- AREA SCROLLABLE --}}
+    <div class="flex-1 overflow-y-auto">
+
+        {{-- AVATAR + NAME --}}
+        <div class="pt-8 pb-4 text-center">
+            {{-- Avatar gradient + icon orang --}}
+            <div
+                class="w-[82px] h-[82px] rounded-full bg-gradient-to-br from-[#2b78e4] via-[#5a6dfb] to-[#6f58ff]
+                       mx-auto flex items-center justify-center shadow-md">
+                <svg class="w-9 h-9" viewBox="0 0 24 24" fill="none">
+                    {{-- kepala --}}
+                    <circle cx="12" cy="8.5" r="3" fill="white"/>
+                    {{-- badan --}}
+                    <path d="M6.2 18.4C7.3 16.2 9.3 15 12 15s4.7 1.2 5.8 3.4"
+                          fill="white"/>
+                </svg>
+            </div>
+
+            {{-- Email + Nama --}}
+            <div class="text-[12px] text-[#9aa8b6] italic mt-2">
+                5026221191@student.its.ac.id
+            </div>
+            <div class="text-[18px] font-extrabold text-[#0b3a7e] mt-1">
+                Ezra Bimantara
+            </div>
+        </div>
+
+=======
     <div class="h-full flex flex-col">
         {{-- AVATAR + NAME --}}
         <div class="pt-8 pb-4 text-center">
@@ -28,6 +60,7 @@
             </div>
         </div>
 
+>>>>>>> c27cf9d3149f7323b61aa8698ce3e91b5c33de5e
         {{-- MENU LIST --}}
         <div class="px-4 space-y-1 mt-4">
 
@@ -97,9 +130,14 @@
 
         </div>
     </div>
+<<<<<<< HEAD
+=======
 
     <!-- Bottom Navigation -->
     <x-navbar active="profile" />
+>>>>>>> c27cf9d3149f7323b61aa8698ce3e91b5c33de5e
 
+    {{-- BOTTOM NAV DARI TEMPLATE --}}
+    <x-navbar active="profile" />
 </div>
 @endsection

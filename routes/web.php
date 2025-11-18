@@ -49,6 +49,10 @@ Route::get('/register', function () {
     return view('page/register/signin');
 });
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> c27cf9d3149f7323b61aa8698ce3e91b5c33de5e
 Route::get('/signup', function () {
     return view('page/signup/signup');
 });
