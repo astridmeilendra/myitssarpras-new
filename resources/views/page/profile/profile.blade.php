@@ -1,143 +1,92 @@
 @extends('template-full')
 
 @section('content')
-@php
-    $statusbarTheme = 'light';
-@endphp
-
-<<<<<<< HEAD
-<div class="flex flex-col h-full bg-white">
-    {{-- AREA SCROLLABLE --}}
-    <div class="flex-1 overflow-y-auto">
-
-        {{-- AVATAR + NAME --}}
-        <div class="pt-8 pb-4 text-center">
-            {{-- Avatar gradient + icon orang --}}
-            <div
-                class="w-[82px] h-[82px] rounded-full bg-gradient-to-br from-[#2b78e4] via-[#5a6dfb] to-[#6f58ff]
-                       mx-auto flex items-center justify-center shadow-md">
-                <svg class="w-9 h-9" viewBox="0 0 24 24" fill="none">
-                    {{-- kepala --}}
-                    <circle cx="12" cy="8.5" r="3" fill="white"/>
-                    {{-- badan --}}
-                    <path d="M6.2 18.4C7.3 16.2 9.3 15 12 15s4.7 1.2 5.8 3.4"
-                          fill="white"/>
-                </svg>
-            </div>
-
-            {{-- Email + Nama --}}
-            <div class="text-[12px] text-[#9aa8b6] italic mt-2">
-                5026221191@student.its.ac.id
-            </div>
-            <div class="text-[18px] font-extrabold text-[#0b3a7e] mt-1">
-                Ezra Bimantara
-            </div>
+<div class="flex flex-col h-full">
+    <!-- Profile Section -->
+    <div class="bg-white px-6 pt-16 pb-6 text-center">
+        <!-- Avatar -->
+        <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white">
+            <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+            </svg>
         </div>
 
-=======
-    <div class="h-full flex flex-col">
-        {{-- AVATAR + NAME --}}
-        <div class="pt-8 pb-4 text-center">
-            {{-- Avatar gradient + icon orang --}}
-            <div
-                class="w-[82px] h-[82px] rounded-full bg-gradient-to-br from-[#2b78e4] via-[#5a6dfb] to-[#6f58ff]
-                       mx-auto flex items-center justify-center shadow-md">
-                <svg class="w-9 h-9" viewBox="0 0 24 24" fill="none">
-                    {{-- kepala --}}
-                    <circle cx="12" cy="8.5" r="3" fill="white"/>
-                    {{-- badan --}}
-                    <path d="M6.2 18.4C7.3 16.2 9.3 15 12 15s4.7 1.2 5.8 3.4"
-                          fill="white"/>
-                </svg>
-            </div>
+        <!-- Email -->
+        <p class="text-xs text-gray-500 mb-1">5026221191@student.its.ac.id</p>
 
-            {{-- Email + Nama --}}
-            <div class="text-[12px] text-[#9aa8b6] italic mt-2">
-                5026221191@student.its.ac.id
-            </div>
-            <div class="text-[18px] font-extrabold text-[#0b3a7e] mt-1">
-                Ezra Bimantara
-            </div>
-        </div>
+        <!-- Name -->
+        <h1 class="text-xl font-bold" style="color: #013880;">Ezra Bimantara</h1>
+    </div>
 
->>>>>>> c27cf9d3149f7323b61aa8698ce3e91b5c33de5e
-        {{-- MENU LIST --}}
-        <div class="px-4 space-y-1 mt-4">
-
-            {{-- Akun --}}
-            <div class="flex items-center justify-between py-3 border-b border-[#eef2f6]">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-[#f7f9fc] flex items-center justify-center text-[#1b2a49]">
-                        {{-- icon orang outline --}}
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <circle cx="12" cy="8" r="3" stroke-width="1.7"/>
-                            <path d="M6 19c1.3-2.5 3.3-3.7 6-3.7s4.7 1.2 6 3.7"
-                                  stroke-width="1.7" stroke-linecap="round"/>
+    <!-- Menu Section -->
+    <div class="flex-1 bg-gray-50 px-4 py-4">
+        <div class="space-y-3">
+            <!-- Menu Item: Akun -->
+            <a href="#" class="bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center flex-1">
+                    <div class="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5" style="color: #013880;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                     </div>
-                    <div>
-                        <div class="text-[15px] font-semibold text-[#122b4a]">Akun</div>
-                        <div class="text-[12px] text-[#97a4b5]">Ganti Password, Edit Data Akun</div>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-bold text-gray-900">Akun</h3>
+                        <p class="text-xs text-gray-500">Ganti Password, Edit Data Akun</p>
                     </div>
                 </div>
-                <svg class="w-4 h-4 text-[#9aa8b6]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M9 6l6 6-6 6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-            </div>
+            </a>
 
-            {{-- Riwayat Peminjaman --}}
-            <div class="flex items-center justify-between py-3 border-b border-[#eef2f6]">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-[#f7f9fc] flex items-center justify-center text-[#1b2a49]">
-                        {{-- icon history --}}
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M5 11a7 7 0 1 1 2 5" stroke-width="1.7" stroke-linecap="round"/>
-                            <path d="M5 8v3h3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 9v3l2 2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Menu Item: Riwayat Peminjaman -->
+            <a href="{{ route('riwayat') }}" class="bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center flex-1">
+                    <div class="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5" style="color: #013880;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <div>
-                        <div class="text-[15px] font-semibold text-[#122b4a]">Riwayat Peminjaman</div>
-                        <div class="text-[12px] text-[#97a4b5]">Lihat peminjaman yang sudah selesai</div>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-bold text-gray-900">Riwayat Peminjaman</h3>
+                        <p class="text-xs text-gray-500">Lihat peminjaman yang sudah selesai</p>
                     </div>
                 </div>
-                <svg class="w-4 h-4 text-[#9aa8b6]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M9 6l6 6-6 6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-            </div>
+            </a>
 
-            {{-- Keluar --}}
-            <div class="flex items-center justify-between py-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-[#f7f9fc] flex items-center justify-center text-[#1b2a49]">
-                        {{-- icon logout --}}
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M10 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3"
-                                  stroke-width="1.7" stroke-linecap="round"/>
-                            <path d="M14 9l3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M17 12H10" stroke-width="1.7" stroke-linecap="round"/>
+            <!-- Menu Item: Keluar -->
+            <button onclick="confirmLogout()" class="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow text-left">
+                <div class="flex items-center flex-1">
+                    <div class="w-11 h-11 rounded-lg bg-red-50 flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
                     </div>
-                    <div>
-                        <div class="text-[15px] font-semibold text-[#122b4a]">Keluar</div>
-                        <div class="text-[12px] text-[#97a4b5]">Keluar dari akun</div>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-bold text-gray-900">Keluar</h3>
+                        <p class="text-xs text-gray-500">Keluar dari akun</p>
                     </div>
                 </div>
-                <svg class="w-4 h-4 text-[#9aa8b6]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M9 6l6 6-6 6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-            </div>
-
+            </button>
         </div>
     </div>
-<<<<<<< HEAD
-=======
 
     <!-- Bottom Navigation -->
     <x-navbar active="profile" />
->>>>>>> c27cf9d3149f7323b61aa8698ce3e91b5c33de5e
-
-    {{-- BOTTOM NAV DARI TEMPLATE --}}
-    <x-navbar active="profile" />
 </div>
+
+<script>
+    function confirmLogout() {
+        if (confirm('Apakah Anda yakin ingin keluar?')) {
+            // Untuk sementara redirect ke home
+            window.location.href = "{{ route('home') }}";
+        }
+    }
+</script>
 @endsection
