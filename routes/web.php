@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\SignUp\SignUpController;
+use App\Http\Controllers\Login\LoginController;
 
 // Navbar
 Route::get('/home', function () {
@@ -34,32 +36,25 @@ Route::get('/cek-koneksi', function () {
     return view('cek-koneksi', ['peminjaman' => $peminjaman]);
 });
 
-// Auth
+// Auth - arahkan root ke halaman login
 Route::get('/', function () {
-    return view('page/auth/auth');
+    return redirect()->route('login');
 });
 
-// Login Page
-Route::get('/login', function () {
-    return view('page/auth/login');
-});
+// LOGIN
+Route::get('/login', [LoginController::class, 'show'])
+    ->name('login');
 
-// Register Page
-Route::get('/loginpage', function () {
-    return view('page/loginpage/signin');
-});
-// Signup Page
-Route::get('/signup', function () {
-    return view('page/signup/signup');
-});
+Route::post('/login', [LoginController::class, 'login'])
+    ->name('login.process');
 
-Route::get('/editakun', function () {
-    return view('page/editprofile/editakun');
-});
+// SIGNUP
+Route::get('/signup', [SignUpController::class, 'create'])
+    ->name('signup');   // <-- ini yang dipakai di Blade: route('signup')
 
-Route::get('/signin', function () {
-    return view('page/loginpage/signin');
-});
+Route::post('/signup', [SignUpController::class, 'store'])
+    ->name('signup.store');
+
 // Cariruangan
 Route::get('/seacrh', function () {
     return view('page/cariruangan/cariruangan');
@@ -113,6 +108,10 @@ Route::get('/konfirmasi', function () {
 //Riwayat: Permintaan Gagal Dibatalkan
 Route::get('/fail', function () {
     return view('page/riwayat/fail');
+});
+
+Route::get('/editakun', function () {
+    return view('page/editprofile/editprofile');
 });
 
 
