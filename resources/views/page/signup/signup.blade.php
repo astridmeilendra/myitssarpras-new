@@ -79,6 +79,7 @@
         font-size: 1.75rem;
         font-weight: 700;
         color: #1e3a5f;
+        text-align: center;
     }
 
     .form-control {
@@ -89,11 +90,18 @@
         border-radius: 10px;
         font-size: 0.875rem;
         color: #334155;
+        transition: all 0.2s;
     }
 
-    .invalid-feedback {
-        font-size: 0.75rem;
-        color: #ef4444;
+    .form-control::placeholder {
+        color: #cbd5e1;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0052a8;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(0, 82, 168, 0.05);
     }
 
     .server-error {
@@ -110,8 +118,61 @@
         border-radius: 10px;
         font-weight: 700;
         margin-top: 1.5rem;
+        border: none;
     }
 
+    /* Bungkus input yang ada icon mata */
+    .input-wrapper {
+        position: relative;
+        margin-bottom: 0.75rem;
+    }
+
+    .input-wrapper .form-control {
+        padding-right: 3rem; /* ruang buat icon */
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+    }
+
+    .password-toggle:hover {
+        color: #64748b;
+    }
+
+    /* Link ke login */
+    .signup-link {
+        text-align: center;
+        font-size: 0.875rem;
+        color: #64748b;
+        margin-top: 1rem;
+    }
+
+    .signup-link a {
+        color: #0052a8;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* HAPUS icon mata default dari browser (Edge/Chrome) */
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear {
+        display: none;
+    }
 </style>
 
 <section class="hero">
@@ -128,7 +189,6 @@
             <h2 class="title">Sign Up</h2>
         </div>
 
-        {{-- ERROR DETAIL --}}
         @if ($errors->any())
             <div class="server-error mb-3">
                 <div>Terdapat kesalahan pada input:</div>
@@ -145,7 +205,10 @@
 
             {{-- Nama --}}
             <div class="mb-3">
-                <input type="text" class="form-control" name="name" placeholder="Nama"
+                <input type="text"
+                       class="form-control"
+                       name="name"
+                       placeholder="Nama"
                        value="{{ old('name') }}">
                 @error('name')
                     <div class="server-error">{{ $message }}</div>
@@ -154,30 +217,78 @@
 
             {{-- Email ITS --}}
             <div class="mb-3">
-                <input type="email" class="form-control" name="email" placeholder="Email ITS"
-                       value="{{ old('email') }}" required>
+                <input type="email"
+                       class="form-control"
+                       name="email"
+                       placeholder="Alamat Email"
+                       value="{{ old('email') }}"
+                       required>
                 @error('email')
                     <div class="server-error">{{ $message }}</div>
                 @enderror
             </div>
 
             {{-- Password --}}
-            <div class="mb-3">
-                <input type="password" class="form-control" name="password" placeholder="Password" required>
+            <div class="input-wrapper">
+                <input type="password"
+                       class="form-control"
+                       id="password"
+                       name="password"
+                       placeholder="Password"
+                       required>
+                <button type="button"
+                        class="password-toggle"
+                        data-toggle-pass="#password">
+                    {{-- mata silang (default, hidden text) --}}
+                    <svg class="eye-slash" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    {{-- mata biasa (muncul saat teks kelihatan) --}}
+                    <svg class="eye" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         style="display:none;">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
                 @error('password')
                     <div class="server-error">{{ $message }}</div>
                 @enderror
             </div>
 
-            {{-- Konfirmasi --}}
-            <div class="mb-3">
-                <input type="password" class="form-control" name="password_confirmation"
-                       placeholder="Ulangi Password" required>
+            {{-- Ulangi Password --}}
+            <div class="input-wrapper">
+                <input type="password"
+                       class="form-control"
+                       id="confirm"
+                       name="password_confirmation"
+                       placeholder="Ulangi Password"
+                       required>
+                <button type="button"
+                        class="password-toggle"
+                        data-toggle-pass="#confirm">
+                    <svg class="eye-slash" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    <svg class="eye" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         style="display:none;">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
             </div>
 
-            {{-- Telepon --}}
+            {{-- Nomor Telepon --}}
             <div class="mb-3">
-                <input type="text" class="form-control" name="phone" placeholder="Nomor Telepon"
+                <input type="text"
+                       class="form-control"
+                       name="phone"
+                       placeholder="Nomor Telepon"
                        value="{{ old('phone') }}">
                 @error('phone')
                     <div class="server-error">{{ $message }}</div>
@@ -186,13 +297,35 @@
 
             <button type="submit" class="btn-submit">Daftar</button>
 
-            <div class="text-center mt-3">
+            <div class="signup-link">
                 Sudah punya akun?
                 <a href="{{ route('login') }}">Login</a>
             </div>
-
         </form>
     </div>
 </div>
 
+<script>
+    // Toggle show/hide password + ubah icon mata
+    document.querySelectorAll('[data-toggle-pass]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const selector = btn.getAttribute('data-toggle-pass');
+            const input = document.querySelector(selector);
+            if (!input) return;
+
+            const eyeSlash = btn.querySelector('.eye-slash');
+            const eye      = btn.querySelector('.eye');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (eyeSlash) eyeSlash.style.display = 'none';
+                if (eye)      eye.style.display      = 'block';
+            } else {
+                input.type = 'password';
+                if (eyeSlash) eyeSlash.style.display = 'block';
+                if (eye)      eye.style.display      = 'none';
+            }
+        });
+    });
+</script>
 @endsection
