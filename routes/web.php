@@ -110,4 +110,8 @@ Route::get('/fail', function () {
     return view('page/riwayat/fail');
 });
 
+Route::get('/editakun', function () {
+    return view('page/editprofile/editprofile');
+});
+
 
