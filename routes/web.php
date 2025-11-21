@@ -8,7 +8,36 @@ use App\Http\Controllers\Peminjaman\PeminjamanController;
 
 // Navbar
 Route::get('/home', function () {
-    return view('page/homepage');
+    $riwayat = collect();
+
+    if (Auth::check()) {
+        $userId = Auth::id();
+
+        $riwayat = DB::table('peminjaman as p')
+            ->join('ruangan as r', 'p.ruanganid', '=', 'r.ruanganid')
+            ->join('riwayat_status as rs', function ($join) {
+                $join->on('p.peminjamanid', '=', 'rs.peminjamanid')
+                     ->whereRaw('rs.statusid = (
+                         SELECT MAX(statusid)
+                         FROM riwayat_status
+                         WHERE peminjamanid = p.peminjamanid
+                     )');
+            })
+            ->where('p.userid', $userId)
+            ->orderByDesc('p.tanggal')
+            ->limit(2)
+            ->get([
+                'p.peminjamanid',
+                'p.tanggal',
+                'p.nama_shift',
+                'p.keterangan',
+                'r.nama_ruangan',
+                'r.kapasitas',
+                'rs.nama_status',
+            ]);
+    }
+
+    return view('page/homepage', compact('riwayat'));
 })->name('home');
 
 Route::get('/riwayat', function () {
@@ -37,9 +66,9 @@ Route::get('/cek-koneksi', function () {
     return view('cek-koneksi', ['peminjaman' => $peminjaman]);
 });
 
-// Auth - arahkan root ke halaman login
+// Auth
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('page/auth/auth');
 });
 
 // LOGIN
@@ -80,26 +109,21 @@ Route::get('/ruangan/{id}', [PeminjamanController::class, 'show'])
 // ====== PEMINJAMAN ROUTES (Requires Auth) ======
 Route::middleware(['auth'])->group(function () {
 
-    // Submit Pengajuan Peminjaman
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])
         ->name('peminjaman.store');
 
-    // Check Ketersediaan Ruangan (Real-time via AJAX)
     Route::post('/peminjaman/check-availability', [PeminjamanController::class, 'checkAvailability'])
         ->name('peminjaman.check-availability');
 
-    // Halaman Success Peminjaman
     Route::get('/success', function () {
         return view('page/peminjaman/success');
     })->name('peminjaman.success');
 
+    Route::post('/peminjaman/slots', [PeminjamanController::class, 'getAvailableSlots'])
+    ->name('peminjaman.slots');
+
 });
 
-
-// // Ruangan
-// Route::get('/ruangan', function () {
-//     return view('page/ruangan/detail-ruangan');
-// });
 
 // Success
 Route::get('/success', function () {
@@ -144,5 +168,3 @@ Route::get('/fail', function () {
 Route::get('/editakun', function () {
     return view('page/editprofile/editprofile');
 });
-
-

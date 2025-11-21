@@ -21,7 +21,7 @@
                   <div class="flex flex-col items-center w-full h-full justify-center mb-8 gap-6">
                       <img src="{{ asset('img/myits-sarpras-white.png') }}" class="w-40 md:w-44 drop-shadow" alt="Logo">
                       <div class="flex flex-col w-full">
-                        <a href="/signin">
+                        <a href="/login">
                             <x-button variant="primary" size="md" :full="true" class="mt-3">Login</x-button>
                         </a>
                         <a href="/signup">

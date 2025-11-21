@@ -2,24 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class AppUser extends Model
+class AppUser extends Authenticatable
 {
-    // Nama tabel di database
+    use Notifiable;
+
     protected $table = 'app_user';
-
-    // Primary key
     protected $primaryKey = 'userid';
-
-    // Tabel app_user tidak punya created_at & updated_at
     public $timestamps = false;
 
-    // Kolom yang boleh diisi mass-assignment
     protected $fillable = [
         'nama',
         'email_its',
         'password_hash',
         'no_telepon',
     ];
+
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
 }
