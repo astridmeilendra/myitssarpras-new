@@ -45,20 +45,20 @@ Route::get('/login', function () {
 });
 
 // Register Page
-Route::get('/register', function () {
-    return view('page/register/signin');
+Route::get('/loginpage', function () {
+    return view('page/loginpage/signin');
 });
-
+// Signup Page
 Route::get('/signup', function () {
     return view('page/signup/signup');
 });
 
-Route::get('/editprofile', function () {
-    return view('page/editprofile/editprofile');
+Route::get('/editakun', function () {
+    return view('page/editprofile/editakun');
 });
 
 Route::get('/signin', function () {
-    return view('page/register/signin');
+    return view('page/loginpage/signin');
 });
 // Cariruangan
 Route::get('/seacrh', function () {
