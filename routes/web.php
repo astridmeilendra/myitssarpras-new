@@ -11,7 +11,7 @@ Route::get('/home', function () {
 })->name('home');
 
 Route::get('/riwayat', function () {
-    return view('riwayat');
+    return view('page/riwayat/riwayat');
 })->name('riwayat');
 
 Route::get('/search', function () {
@@ -84,3 +84,30 @@ Route::get('/cariruangan', function () {
 Route::get('/cariruanganparsial', function () {
     return view('page/cariruangan/cariruanganparsial');
 });
+
+//Riwayat: Peminjaman Dibatalkan
+Route::get('/batal', function () {
+    return view('page/riwayat/batal');
+});
+
+//Riwayat: Peminjaman Diselesaikan
+Route::get('/selesai', function () {
+    return view('page/riwayat/selesai');
+});
+
+//Riwayat: Dalam Peminjaman
+Route::get('/dalam', function () {
+    return view('page/riwayat/dalam');
+});
+
+//Riwayat: Konfirmasi Pembatalan
+Route::get('/konfirmasi', function () {
+    return view('page/riwayat/konfirmasi');
+});
+
+//Riwayat: Permintaan Gagal Dibatalkan
+Route::get('/fail', function () {
+    return view('page/riwayat/fail');
+});
+
+
