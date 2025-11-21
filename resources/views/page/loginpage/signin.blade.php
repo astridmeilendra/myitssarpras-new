@@ -7,14 +7,18 @@
         --brand-blue-dark: #002952;
     }
 
-    /* Hero Section dengan gambar background */
+    /* Hero Section dengan gambar background dari file lokal */
     .hero-section {
-        background: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop');
+        background: url('{{ asset('img/its-background.png') }}');
         background-size: cover;
         background-position: center;
-        padding: 2.5rem 1.5rem 3rem;
+        padding: 2rem 1.5rem 2.5rem;
         position: relative;
         overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 180px;
     }
 
     /* Overlay biru di atas gambar */
@@ -22,17 +26,6 @@
         position: absolute;
         inset: 0;
         background: linear-gradient(135deg, rgba(0, 61, 130, 0.85) 0%, rgba(0, 82, 168, 0.85) 100%);
-    }
-
-    /* Background Pattern */
-    .hero-pattern {
-        position: absolute;
-        right: -50px;
-        top: -50px;
-        width: 250px;
-        height: 250px;
-        opacity: 0.15;
-        z-index: 5;
     }
 
     .diagonal-lines {
@@ -60,45 +53,20 @@
         );
     }
 
-    /* Gedung pattern */
-    .building-pattern {
-        position: absolute;
-        bottom: -20px;
-        right: 20px;
-        opacity: 0.1;
-        font-size: 120px;
-        color: white;
-        line-height: 1;
-        z-index: 5;
-    }
-
     .hero-logo {
         position: relative;
         z-index: 10;
         color: white;
-        text-align: left;
-    }
-
-    .hero-logo h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
+        text-align: center;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 0.25rem;
     }
 
-    .hero-logo .lock-icon {
-        width: 28px;
-        height: 28px;
-        margin-left: 4px;
-    }
-
-    .hero-logo p {
-        font-size: 0.875rem;
-        font-weight: 500;
-        opacity: 0.95;
-        letter-spacing: 0.3px;
+    /* Logo myITS dari file */
+    .hero-logo img {
+        height: 55px;
+        display: block;
     }
 
     /* Login Card with curved top */
@@ -228,17 +196,10 @@
 <div class="hero-section">
     <div class="hero-overlay"></div>
     <div class="diagonal-lines"></div>
-    <div class="building-pattern">🏢</div>
 
     <div class="hero-logo">
-        <h1>
-            myITS
-            <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-        </h1>
-        <p>Sarana Pra-Sarana</p>
+        <!-- Logo myITS dari file (sudah include tulisan Sarana Pra-Sarana di dalam gambar) -->
+        <img src="{{ asset('img/myits-sarpras-white.png') }}" alt="myITS Sarana Pra-Sarana">
     </div>
 </div>
 
