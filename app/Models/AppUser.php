@@ -17,7 +17,7 @@ class AppUser extends Authenticatable
         'nama',
         'email_its',
         'password_hash',
-        'no_telepon',
+        'no_telepon',   // <- ini yang dipakai
     ];
 
     public function getAuthPassword()
