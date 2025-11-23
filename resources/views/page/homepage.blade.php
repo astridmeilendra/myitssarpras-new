@@ -17,8 +17,10 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Welcomespre,</p>
-                    <h1 class="text-lg font-bold text-gray-900">Ezra Bimantara</h1>
+                    <p class="text-sm text-gray-500">Selamat Datang,</p>
+                    <h1 class="text-lg font-bold text-gray-900">
+                        {{ Auth::user()->nama ?? 'Pengguna' }}
+                    </h1>
                 </div>
             </div>
 
@@ -49,49 +51,83 @@
                 <a href="{{ route('riwayat') }}" class="text-xs text-gray-400 hover:text-gray-600">Lihat Semua ›</a>
             </div>
 
-            <!-- Booking Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-                <div class="flex items-start justify-between mb-3">
-                    <div>
-                        <p class="text-xs text-gray-500 mb-1">Room</p>
-                        <h3 class="text-xl font-bold text-gray-900">Teater A</h3>
-                    </div>
-                    <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                        Dalam Peminjaman
-                    </span>
-                </div>
+            @if($riwayat->isEmpty())
+                <p class="text-xs text-gray-500">Belum ada riwayat peminjaman.</p>
+            @else
+                @foreach($riwayat as $item)
+                    @php
+                        // Mapping warna badge status
+                        $status = $item->nama_status;
+                        $badgeClass = 'bg-gray-100 text-gray-700';
+                        if ($status === 'Menunggu') {
+                            $badgeClass = 'bg-yellow-100 text-yellow-700';
+                        } elseif ($status === 'Disetujui') {
+                            $badgeClass = 'bg-green-100 text-green-700';
+                        } elseif ($status === 'Ditolak') {
+                            $badgeClass = 'bg-red-100 text-red-700';
+                        } elseif ($status === 'Selesai') {
+                            $badgeClass = 'bg-blue-100 text-blue-700';
+                        }
+                    @endphp
 
-                <div class="space-y-2 mb-4">
-                    <div class="flex items-center gap-2 text-xs text-gray-600">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>20/01/25 - 22/01/25</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-600">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>13.00 - 18.00 WIB</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-600">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        <span>150 Orang</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-600">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        <span class="font-semibold">Rp160.000</span>
-                    </div>
-                </div>
+                    <!-- Booking Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">Room</p>
+                                <h3 class="text-xl font-bold text-gray-900">
+                                    {{ $item->nama_ruangan }}
+                                </h3>
+                            </div>
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $badgeClass }}">
+                                {{ $status }}
+                            </span>
+                        </div>
 
-                <x-button variant="solid" size="sm" :full="true">
-                    Lihat Detail
-                </x-button>
-            </div>
+                        <div class="space-y-2 mb-4">
+                            {{-- Tanggal --}}
+                            <div class="flex items-center gap-2 text-xs text-gray-600">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>
+                                    {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+                                </span>
+                            </div>
+
+                            {{-- Waktu / Shift --}}
+                            <div class="flex items-center gap-2 text-xs text-gray-600">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>{{ $item->nama_shift }}</span>
+                            </div>
+
+                            {{-- Kapasitas --}}
+                            <div class="flex items-center gap-2 text-xs text-gray-600">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <span>{{ $item->kapasitas ?? '-' }} Orang</span>
+                            </div>
+
+                            {{-- Keterangan singkat (opsional) --}}
+                            @if($item->keterangan)
+                                <div class="flex items-start gap-2 text-xs text-gray-600">
+                                    <svg class="w-4 h-4 text-gray-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M5 6h14M5 6a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2M5 6l2-2h10l2 2"></path>
+                                    </svg>
+                                    <span class="line-clamp-2">{{ $item->keterangan }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <x-button variant="solid" size="sm" :full="true">
+                            Lihat Detail
+                        </x-button>
+                    </div>
+                @endforeach
+            @endif
         </div>
 
         <!-- Pencarian Cepat Section -->

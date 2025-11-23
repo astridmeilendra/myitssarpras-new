@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AppUser;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -16,7 +17,6 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // Validasi input
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
@@ -25,20 +25,20 @@ class LoginController extends Controller
         // Cari user berdasarkan email ITS
         $user = AppUser::where('email_its', $credentials['email'])->first();
 
-        // Cek user & password
+        // Cek apakah user ada dan password cocok
         if (!$user || !Hash::check($credentials['password'], $user->password_hash)) {
             return back()->withErrors([
                 'email' => 'Email atau password salah.',
-            ])->withInput();
+            ]);
         }
 
-        // SIMPAN USER KE SESSION
-        // sesuaikan kolom sesuai database kamu
         $request->session()->put('user_id', $user->userid);
         $request->session()->put('user_name', $user->nama);
         $request->session()->put('user_email', $user->email_its);
 
-        // Login berhasil → redirect ke homepage
-        return redirect('/home');
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('home');
     }
 }
