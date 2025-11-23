@@ -2,8 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use App\Http\Controllers\SignUp\SignUpController;
 use App\Http\Controllers\Login\LoginController;
+use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\EditakundanHapusakun\AkunController;
+
 
 // Navbar
 Route::get('/home', function () {
@@ -22,9 +26,7 @@ Route::get('/info', function () {
     return view('info');
 })->name('info');
 
-Route::get('/profile', function () {
-    return view('page/profile/profile');
-})->name('profile');
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
 //DB Connection
 Route::get('/cek-koneksi', function () {
@@ -42,18 +44,18 @@ Route::get('/', function () {
 });
 
 // LOGIN
-Route::get('/login', [LoginController::class, 'show'])
-    ->name('login');
+Route::get('/login', [LoginController::class, 'show'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 
-Route::post('/login', [LoginController::class, 'login'])
-    ->name('login.process');
+// LOGOUT (ini yang tadi bikin error karena belum ada)
+Route::post('/logout', function (Request $request) {
+    $request->session()->flush();      // hapus semua session user
+    return redirect()->route('login'); // balik ke halaman login
+})->name('logout');
 
 // SIGNUP
-Route::get('/signup', [SignUpController::class, 'create'])
-    ->name('signup');   // <-- ini yang dipakai di Blade: route('signup')
-
-Route::post('/signup', [SignUpController::class, 'store'])
-    ->name('signup.store');
+Route::get('/signup', [SignUpController::class, 'create'])->name('signup');
+Route::post('/signup', [SignUpController::class, 'store'])->name('signup.store');
 
 // Cariruangan
 Route::get('/seacrh', function () {
@@ -110,8 +112,15 @@ Route::get('/fail', function () {
     return view('page/riwayat/fail');
 });
 
-Route::get('/editakun', function () {
-    return view('page/editprofile/editprofile');
-});
+
+
+// Edit akun
+Route::get('/editakun', [AkunController::class, 'edit'])->name('account.edit');
+Route::post('/editakun', [AkunController::class, 'update'])->name('account.update');
+
+// Hapus akun
+Route::post('/hapus-akun', [AkunController::class, 'destroy'])->name('account.destroy');
+
+
 
 

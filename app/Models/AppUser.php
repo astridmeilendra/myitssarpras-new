@@ -20,6 +20,6 @@ class AppUser extends Model
         'nama',
         'email_its',
         'password_hash',
-        'no_telepon',
+        'no_telepon',   // <- ini yang dipakai
     ];
 }
