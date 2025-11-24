@@ -17,8 +17,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Welcomespre,</p>
-                    <h1 class="text-lg font-bold text-gray-900">Ezra Bimantara</h1>
+                    <p class="text-sm text-gray-500">Welcome</p>
+                    <h1 class="text-lg font-bold text-gray-900">{{ Auth::user()->name }}</h1>
                 </div>
             </div>
 

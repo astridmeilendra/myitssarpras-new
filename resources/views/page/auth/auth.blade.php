@@ -22,7 +22,8 @@
                       <img src="{{ asset('img/myits-sarpras-white.png') }}" class="w-40 md:w-44 drop-shadow" alt="Logo">
                       <div class="flex flex-col w-full">
                           <x-button variant="primary" size="md" :full="true" class="mt-3">Login</x-button>
-                          <x-button variant="outline" size="md" :full="true" class="mt-3">Sign Up</x-button>
+                          <x-button variant="outline" size="md" :full="true" class="mt-3" href="{{ route('signup') }}">Sign Up</x-button>
+
                       </div>
                   </div>
 

@@ -9,7 +9,7 @@ Route::get('/home', function () {
 })->name('home');
 
 Route::get('/riwayat', function () {
-    return view('riwayat');
+    return view('page/riwayat/riwayat');
 })->name('riwayat');
 
 Route::get('/search', function () {
@@ -21,7 +21,7 @@ Route::get('/info', function () {
 })->name('info');
 
 Route::get('/profile', function () {
-    return view('profile');
+    return view('page/profile/profile');
 })->name('profile');
 
 //DB Connection
@@ -49,10 +49,6 @@ Route::get('/register', function () {
     return view('page/auth/register');
 });
 
-// Cariruangan
-Route::get('/seacrh', function () {
-    return view('page/cariruangan/cariruangan');
-});
 
 //Cariruangan parsial
 Route::get('/search-persial', function () {
@@ -78,6 +74,30 @@ Route::get('/cariruangan', function () {
 Route::get('/cariruanganparsial', function () {
     return view('page/cariruangan/cariruanganparsial');
 });
+
+//Logout
+Route::get('/logout', function () {
+    return view('page/auth/logout');
+});
+
+//Profile
+Route::get('/profile', function () {
+    return view('page/profile/profile');
+});
+
+//Signup (named) kept below
+
+// Named signup route used by auth view
+Route::get('/signup', function () {
+    return view('page/signup/signup');
+})->name('signup');
+
+//Login
+Route::get('/login', function () {
+    return view('page/login/login');
+});
+
+
 
 
 
