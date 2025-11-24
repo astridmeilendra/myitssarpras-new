@@ -43,11 +43,16 @@
             font-family: 'Manrope', sans-serif;
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        html {
+            overflow: hidden;
         }
     </style>
 </head>
 
-<body class="bg-background flex items-center justify-center min-h-screen">
+<body class="bg-background flex items-center justify-center min-h-screen overflow-hidden">
 
     <div class="bg-card w-full max-w-[390px] h-[854px] rounded-xl shadow-mobile overflow-hidden">
         @yield('content')
@@ -75,7 +80,7 @@
                 if (e.ctrlKey || e.metaKey) {
                     return;
                 }
-                
+
                 e.preventDefault();
                 const href = link.href;
 

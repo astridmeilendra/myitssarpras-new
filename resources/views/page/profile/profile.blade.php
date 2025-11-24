@@ -95,7 +95,11 @@
     </div>
 
     <!-- Bottom Navigation -->
-    <x-navbar active="profile" />
+    @if(Auth::check() && Auth::user()->is_admin)
+        <x-navbar-admin active="profile" />
+    @else
+        <x-navbar active="profile" />
+    @endif
 </div>
 
 <script>
