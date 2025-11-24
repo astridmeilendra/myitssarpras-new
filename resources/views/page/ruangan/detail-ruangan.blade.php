@@ -138,64 +138,38 @@
         <div class="mb-6">
             <h2 class="text-base font-bold text-gray-800 mb-4">Ketersediaan Ruangan</h2>
 
-            <!-- Calendar Header -->
+            <!-- Calendar Header with Navigation -->
             <div class="flex justify-between items-center mb-4">
-                <button class="text-gray-400 hover:text-gray-600">
+                <button id="prevMonth" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
-                <span class="text-sm font-semibold text-gray-400">{{ now()->format('F Y') }}</span>
-                <button class="text-gray-400 hover:text-gray-600">
+                <span id="calendarMonth" class="text-sm font-semibold text-gray-800">{{ now()->format('F Y') }}</span>
+                <button id="nextMonth" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                 </button>
             </div>
 
-            <!-- Calendar Grid -->
-            <div class="grid grid-cols-7 gap-2 text-center">
-                <!-- Day Headers -->
-                <div class="text-xs font-semibold text-gray-500 pb-2">S</div>
-                <div class="text-xs font-semibold text-gray-500 pb-2">M</div>
-                <div class="text-xs font-semibold text-gray-500 pb-2">T</div>
-                <div class="text-xs font-semibold text-gray-500 pb-2">W</div>
-                <div class="text-xs font-semibold text-gray-500 pb-2">T</div>
-                <div class="text-xs font-semibold text-gray-500 pb-2">F</div>
-                <div class="text-xs font-semibold text-gray-500 pb-2">S</div>
+            <!-- Scrollable Calendar Container -->
+            <div id="calendarContainer" class="overflow-x-auto pb-2" style="scrollbar-width: thin;">
+                <div id="calendarGrid" class="inline-block min-w-full">
+                    <!-- Calendar will be rendered here by JavaScript -->
+                </div>
+            </div>
 
-                @php
-                    $today = now();
-                    $daysInMonth = $today->daysInMonth;
-                    $firstDayOfMonth = $today->copy()->startOfMonth()->dayOfWeek;
-
-                    // Render previous month's filler days
-                    for ($i = 0; $i < $firstDayOfMonth; $i++) {
-                        echo '<div class="text-xs text-gray-300 py-2">' . $today->copy()->subDays($firstDayOfMonth - $i)->day . '</div>';
-                    }
-
-                    // Render current month's days
-                    for ($day = 1; $day <= $daysInMonth; $day++) {
-                        $currentDate = $today->copy()->setDay($day);
-                        $isToday = $currentDate->isToday();
-                        $isPast = $currentDate->isPast() && !$isToday;
-                        $isBooked = $jadwalTerpakai->where('tanggal', $currentDate->format('Y-m-d'))->count() >= 4;
-
-                        $classes = 'text-xs py-2';
-                        if ($isToday) {
-                            $classes .= ' bg-gray-200 rounded-full w-7 h-7 flex items-center justify-center mx-auto';
-                        }
-                        if ($isBooked) {
-                            $classes .= ' text-red-500';
-                        } elseif ($isPast) {
-                            $classes .= ' text-gray-300';
-                        } else {
-                            $classes .= ' text-gray-800';
-                        }
-
-                        echo '<div class="' . trim($classes) . '">' . $day . '</div>';
-                    }
-                @endphp
+            <!-- Legend -->
+            <div class="flex justify-center gap-4 mt-4 text-xs text-gray-600">
+                <div class="flex items-center gap-1">
+                    <div class="w-3 h-3 rounded-full bg-gray-200"></div>
+                    <span>Hari ini</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <span>Penuh</span>
+                </div>
             </div>
         </div>
 
@@ -310,6 +284,73 @@
 </div>
 
 <script>
+    // Calendar Navigation & Rendering
+    let currentDate = new Date();
+    const bookedDates = @json($jadwalTerpakai);
+
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        const monthDisplay = new Date(year, month).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        document.getElementById('calendarMonth').textContent = monthDisplay;
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+
+        let html = '<div class="grid grid-cols-7 gap-2 text-center p-2">';
+
+        // Day headers
+        const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        dayHeaders.forEach(day => {
+            html += `<div class="text-xs font-semibold text-gray-500 pb-2">${day}</div>`;
+        });
+
+        // Empty cells for days before month starts
+        for (let i = 0; i < firstDay; i++) {
+            html += '<div class="text-xs text-gray-300 py-2"></div>';
+        }
+
+        // Days of month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const isToday = date.toDateString() === today.toDateString();
+            const isPast = date < today && !isToday;
+            const isBooked = bookedDates.includes(dateStr);
+
+            let classes = 'text-xs py-2 rounded-lg transition-colors';
+            let bgColor = 'bg-white text-gray-800';
+
+            if (isToday) {
+                bgColor = 'bg-gray-200 text-gray-800 font-semibold';
+            } else if (isBooked) {
+                bgColor = 'bg-red-100 text-red-600 font-semibold';
+            } else if (isPast) {
+                bgColor = 'text-gray-300';
+            }
+
+            html += `<div class="${classes} ${bgColor} w-8 h-8 flex items-center justify-center mx-auto">${day}</div>`;
+        }
+
+        html += '</div>';
+        document.getElementById('calendarGrid').innerHTML = html;
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    // Render initial calendar
+    renderCalendar();
+
     // Thumbnail → ganti gambar utama
     document.addEventListener('DOMContentLoaded', function () {
         const mainImage = document.getElementById('main-room-image');
@@ -405,9 +446,7 @@
             const result = await response.json();
 
             if (result.success) {
-                alert('Peminjaman berhasil diajukan!');
-                closeBookingModal();
-                window.location.reload();
+                window.location.href = '/success';
             } else {
                 if (result.errors) {
                     console.log('VALIDATION ERRORS:', result.errors);
