@@ -33,10 +33,12 @@ class PeminjamanController extends Controller
                     )');
             })
             ->where('p.ruanganid', $ruanganId)
-            ->where('rs.nama_status', '!=', 'Ditolak')
+            ->whereIn('rs.nama_status', ['Menunggu', 'Disetujui'])
             ->where('p.tanggal', '>=', now()->toDateString())
-            ->select('p.tanggal', 'p.nama_shift')
-            ->get();
+            ->groupBy('p.tanggal')
+            ->having(DB::raw('COUNT(DISTINCT p.nama_shift)'), '>=', 4)
+            ->pluck('p.tanggal')
+            ->all();
 
         return view('page.ruangan.detail-ruangan', compact('ruangan', 'jadwalTerpakai'));
     }
