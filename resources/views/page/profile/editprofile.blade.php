@@ -133,9 +133,13 @@
         {{-- Button Section - Always at bottom --}}
         <div class="px-6 py-4 bg-white space-y-3">
             {{-- Simpan Perubahan --}}
-            <button id="saveButton" type="submit" form="editAccountForm" class="hidden opacity-0 w-full py-3 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all duration-300 ease-in-out">
-                Simpan Perubahan
-            </button>
+            <div id="saveButtonWrapper" class="hidden opacity-0 transition-all duration-300 ease-in-out">
+                <button type="submit" form="editAccountForm" class="w-full">
+                    <x-button type="submit" size="md" full class="!bg-blue-600 !text-white hover:!bg-blue-700">
+                        Simpan Perubahan
+                    </x-button>
+                </button>
+            </div>
 
             {{-- Hapus Akun --}}
             <form action="{{ route('account.destroy') }}" method="POST"
@@ -152,7 +156,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // ===== Form Change Detection =====
     const editForm = document.getElementById('editAccountForm');
-    const saveButton = document.getElementById('saveButton');
+    const saveButtonWrapper = document.getElementById('saveButtonWrapper');
     const namaInput = editForm.querySelector('input[name="nama"]');
     const phoneInput = editForm.querySelector('input[name="phone"]');
     const photoInput = document.getElementById('photoInput');
@@ -169,16 +173,16 @@ document.addEventListener('DOMContentLoaded', function() {
             photoInput.files.length > 0;
 
         if (hasChanges) {
-            saveButton.classList.remove('hidden');
+            saveButtonWrapper.classList.remove('hidden');
             // Trigger reflow to ensure transition works
-            void saveButton.offsetWidth;
-            saveButton.classList.remove('opacity-0');
+            void saveButtonWrapper.offsetWidth;
+            saveButtonWrapper.classList.remove('opacity-0');
         } else {
-            saveButton.classList.add('opacity-0');
-            // Wait for transition to complete before hiding
+            saveButtonWrapper.classList.add('opacity-0');
+            // Wait for transition to complete before hiding (300ms)
             setTimeout(() => {
-                if (saveButton.classList.contains('opacity-0')) {
-                    saveButton.classList.add('hidden');
+                if (saveButtonWrapper.classList.contains('opacity-0')) {
+                    saveButtonWrapper.classList.add('hidden');
                 }
             }, 300);
         }
