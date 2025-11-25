@@ -5,10 +5,25 @@
     <!-- Profile Section -->
     <div class="bg-white px-6 pt-16 pb-6 text-center">
         <!-- Avatar -->
-        <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white">
-            <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-            </svg>
+        <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
+            @if($user->foto_profile)
+                @php
+                    // Handle both old path format and new full URL format
+                    if (str_starts_with($user->foto_profile, 'http')) {
+                        $photoUrl = $user->foto_profile;
+                    } else {
+                        // Old format: construct from Supabase base URL
+                        $supabaseUrl = rtrim(env('SUPABASE_URL'), '/');
+                        $encodedPath = str_replace(' ', '%20', $user->foto_profile);
+                        $photoUrl = "{$supabaseUrl}/storage/v1/object/public/{$encodedPath}";
+                    }
+                @endphp
+                <img src="{{ $photoUrl }}" class="w-full h-full object-cover">
+            @else
+                <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                </svg>
+            @endif
         </div>
 
         {{-- Email ITS --}}

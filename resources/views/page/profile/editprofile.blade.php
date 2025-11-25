@@ -17,20 +17,38 @@
     <div class="flex-1 px-6 pb-6">
         {{-- Avatar + Ganti Foto --}}
         <div class="flex flex-col items-center mt-2 mb-6">
-            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 flex items-center justify-center text-white shadow-md">
-                <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-                </svg>
+            <div id="avatarContainer" class="w-24 h-24 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
+                @if($user->foto_profile)
+                    @php
+                        // Handle both old path format and new full URL format
+                        if (str_starts_with($user->foto_profile, 'http')) {
+                            $photoUrl = $user->foto_profile;
+                        } else {
+                            // Old format: construct from Supabase base URL
+                            $supabaseUrl = rtrim(env('SUPABASE_URL'), '/');
+                            $encodedPath = str_replace(' ', '%20', $user->foto_profile);
+                            $photoUrl = "{$supabaseUrl}/storage/v1/object/public/{$encodedPath}";
+                        }
+                    @endphp
+                    <img id="avatarImg" src="{{ $photoUrl }}" class="w-full h-full object-cover">
+                @else
+                    <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                    </svg>
+                @endif
             </div>
-            <button type="button"
-                    class="mt-3 text-xs px-4 py-1 rounded-full border border-blue-400 text-blue-600 bg-white">
+            <button type="button" id="changePhotoBtn"
+                    class="mt-3 text-xs px-4 py-1 rounded-full border border-blue-400 text-blue-600 bg-white hover:bg-blue-50 transition">
                 Ganti Foto
             </button>
+            <span id="fileName" class="text-xs text-gray-400 mt-1"></span>
         </div>
 
         {{-- Form Edit Akun --}}
-        <form action="{{ route('account.update') }}" method="POST">
+        <form action="{{ route('account.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            {{-- File input HARUS DALAM FORM agar ter-submit --}}
+            <input type="file" id="photoInput" name="photo" accept="image/*" class="hidden">
 
             {{-- Nama Lengkap --}}
             <div class="mb-4">
@@ -133,4 +151,48 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const changePhotoBtn = document.getElementById('changePhotoBtn');
+    const photoInput = document.getElementById('photoInput');
+    const fileName = document.getElementById('fileName');
+    const avatarContainer = document.getElementById('avatarContainer');
+
+    // Trigger file input when button is clicked
+    changePhotoBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        photoInput.click();
+    });
+
+    // Handle file selection
+    photoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            fileName.textContent = file.name;
+
+            // Preview image
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                // Remove existing image or icon
+                const existingImg = avatarContainer.querySelector('img');
+                const existingSvg = avatarContainer.querySelector('svg');
+
+                if (existingImg) {
+                    existingImg.src = event.target.result;
+                } else {
+                    if (existingSvg) existingSvg.remove();
+                    const img = document.createElement('img');
+                    img.id = 'avatarImg';
+                    img.src = event.target.result;
+                    img.alt = 'Profile Photo';
+                    img.className = 'w-full h-full object-cover';
+                    avatarContainer.appendChild(img);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+});
+</script>
 @endsection
