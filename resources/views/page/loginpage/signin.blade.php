@@ -144,6 +144,10 @@
         font-weight: 600;
         text-decoration: none;
     }
+
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
 </style>
 
 <div class="hero-section">
@@ -212,7 +216,8 @@
         </button>
 
         <div class="signup-link">
-            Belum punya akun? <a href="{{ route('signup') }}">Daftar Sekarang</a>
+            Belum punya akun?
+            <a href="{{ route('signup') }}">Daftar Sekarang</a>
         </div>
     </form>
 </div>
