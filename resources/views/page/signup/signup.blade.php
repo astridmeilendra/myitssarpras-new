@@ -1,197 +1,331 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>myITS Sarpres — Sign Up (Prototype)</title>
+@extends('template-full')
 
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Font Manrope -->
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root { --brand-blue-600:#0b3a7e; --brand-blue-500:#1159c3; --brand-blue-400:#2b78e4; }
-
-    body{
-      background:#f1f5f9;
-      font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-      min-height:100vh; display:grid; place-items:center;
+@section('content')
+<style>
+    :root {
+        --brand-blue: #003d82;
+        --brand-blue-dark: #002952;
+        --brand-blue-600: #0b3a7e;
+        --brand-blue-500: #1159c3;
+        --brand-blue-400: #2b78e4;
     }
 
-    /* Frame HP */
-    .phone{
-      width:390px; max-width:854px;
-      background:#fff;
-      border-radius:10px;
-      box-shadow:0 10px 30px rgba(0,0,0,.08);
-      overflow:hidden;
-      border:1px solid #e9ecef;
+    .hero {
+        background: url('{{ asset('img/its-background.png') }}');
+        background-size: cover;
+        background-position: center;
+        height: 180px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    /* HERO — pakai <img> supaya full */
-    .hero{
-      height:180px;
-      position:relative;
-      overflow:hidden;
-    }
-    .hero img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .hero .myits-logo{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      color:#fff;
-      text-align:center;
-      line-height:1.05;
-      background:linear-gradient(180deg,rgba(11,58,126,.55),rgba(11,58,126,.55));
-    }
-    .myits-logo .brand{font-weight:800;font-size:32px;letter-spacing:.5px}
-    .myits-logo .sub{font-weight:600;font-size:12px;opacity:.95}
-
-    /* Card */
-    .sign-card{
-      margin-top:-18px;
-      border-top-left-radius:20px!important;
-      border-top-right-radius:20px!important;
-      border:none;
-      box-shadow:0 -6px 18px rgba(0,0,0,.06);
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0, 61, 130, 0.85) 0%, rgba(0, 82, 168, 0.85) 100%);
     }
 
-    /* Typography & elemen form */
-    .title{font-weight:800;color:#183153;letter-spacing:.2px}
-    .title-underline{width:44px;height:3px;background:var(--brand-blue-500);border-radius:99px;margin:.25rem auto 0}
+    .diagonal-lines {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 5;
+    }
 
-    .form-label{font-weight:600;color:#6c7a89}
-    .form-control{border-radius:12px;border-color:#e5e7eb;padding-top:.65rem;padding-bottom:.65rem}
-    .form-control::placeholder{color:#9aa6b2;opacity:1;font-weight:600}
-    .form-control:focus{border-color:var(--brand-blue-400);box-shadow:0 0 0 .2rem rgba(43,120,228,.15)}
+    .diagonal-lines::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 200%;
+        height: 200%;
+        background-image: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 255, 255, 0.03) 10px,
+            rgba(255, 255, 255, 0.03) 11px
+        );
+    }
 
-    .input-group .btn-eye{border-color:#e5e7eb;font-weight:600}
-    .input-group .btn-eye:hover{background:#f8fafc}
+    .myits-logo {
+        position: relative;
+        z-index: 10;
+        color: white;
+        text-align: center;
+    }
 
-    .btn-primary{background:var(--brand-blue-600);border-color:var(--brand-blue-600);border-radius:10px;font-weight:800}
-    .btn-primary:hover{filter:brightness(1.05)}
+    .myits-logo img {
+        height: 55px;
+    }
 
-    .muted-link{font-size:12px}
-    .app-version{color:#94a3b8;font-size:11px}
-  </style>
-</head>
-<body>
-  <main class="phone">
-    <!-- Hero banner full -->
-    <section class="hero">
-      <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop" alt="myITS banner">
-      <div class="myits-logo">
-        <div>
-          <div class="brand">myITS</div>
-          <div class="sub">Sarana Pra-Sarana</div>
-        </div>
-      </div>
-    </section>
+    .sign-card {
+        margin-top: -20px;
+        border-top-left-radius: 28px !important;
+        border-top-right-radius: 28px !important;
+        background: white;
+        min-height: calc(100vh - 180px);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+        position: relative;
+        z-index: 20;
+    }
 
-    <!-- Sign card -->
-    <div class="card sign-card">
-      <div class="card-body p-4">
-        <div class="text-center mb-3">
-          <h5 class="title mb-1">Sign Up</h5>
-          <div class="title-underline"></div>
-        </div>
+    .title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1e3a5f;
+        text-align: center;
+    }
 
-        <form class="needs-validation" novalidate>
-          <div class="mb-3">
-            <label class="form-label small" for="name">Nama</label>
-            <input type="text" class="form-control" id="name" placeholder="Nama" required>
-            <div class="invalid-feedback">Harap isi nama.</div>
-          </div>
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: #fafbfc;
+        border: 1px solid #e8ecf1;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        color: #334155;
+        transition: all 0.2s;
+    }
 
-          <div class="mb-3">
-            <label class="form-label small" for="email">Alamat Email</label>
-            <input type="email" class="form-control" id="email" placeholder="nama@its.ac.id" required>
-            <div class="invalid-feedback">Harap masukkan email yang valid.</div>
-          </div>
+    .form-control::placeholder {
+        color: #cbd5e1;
+    }
 
-          <div class="mb-3">
-            <label class="form-label small" for="password">Password</label>
-            <div class="input-group">
-              <input type="password" class="form-control" id="password" placeholder="Password" required>
-              <button class="btn btn-outline-secondary btn-eye" type="button" data-toggle-pass="#password" aria-label="Tampilkan/Sembunyikan password">
-                <i class="bi bi-eye-slash"></i>
-              </button>
-              <div class="invalid-feedback">Password wajib diisi.</div>
-            </div>
-          </div>
+    .form-control:focus {
+        outline: none;
+        border-color: #0052a8;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(0, 82, 168, 0.05);
+    }
 
-          <div class="mb-3">
-            <label class="form-label small" for="confirm">Ulangi Password</label>
-            <div class="input-group">
-              <input type="password" class="form-control" id="confirm" placeholder="Ulangi Password" required>
-              <button class="btn btn-outline-secondary btn-eye" type="button" data-toggle-pass="#confirm" aria-label="Tampilkan/Sembunyikan password">
-                <i class="bi bi-eye-slash"></i>
-              </button>
-              <div class="invalid-feedback">Harap ulangi password.</div>
-            </div>
-          </div>
+    .server-error {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
 
-          <div class="mb-4">
-            <label class="form-label small" for="phone">Nomor Telepon</label>
-            <input type="tel" class="form-control" id="phone" placeholder="08xxxxxxxxxx" pattern="[0-9]{9,16}" required>
-            <div class="form-text">Gunakan angka saja, 9–16 digit.</div>
-            <div class="invalid-feedback">Masukkan nomor telepon yang valid.</div>
-          </div>
+    .btn-submit {
+        width: 100%;
+        padding: 0.875rem;
+        background: #003d82;
+        color: white;
+        border-radius: 10px;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        border: none;
+    }
 
-          <div class="d-grid gap-2 mb-2">
-            <button type="submit" class="btn btn-primary py-2">Masuk</button>
-          </div>
+    /* Bungkus input yang ada icon mata */
+    .input-wrapper {
+        position: relative;
+        margin-bottom: 0.75rem;
+    }
 
-          <p class="text-center mt-2 muted-link">Sudah punya akun? <a href="#">Login</a></p>
-        </form>
-      </div>
+    .input-wrapper .form-control {
+        padding-right: 3rem; /* ruang buat icon */
+    }
 
-      <div class="text-center py-3">
-        <div class="app-version">myITS Sarpres Versi 1.0.0</div>
-      </div>
+    .password-toggle {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+    }
+
+    .password-toggle:hover {
+        color: #64748b;
+    }
+
+    /* Link ke login */
+    .signup-link {
+        text-align: center;
+        font-size: 0.875rem;
+        color: #64748b;
+        margin-top: 1rem;
+    }
+
+    .signup-link a {
+        color: #0052a8;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* HAPUS icon mata default dari browser (Edge/Chrome) */
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear {
+        display: none;
+    }
+</style>
+
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="diagonal-lines"></div>
+    <div class="myits-logo">
+        <img src="{{ asset('img/myits-sarpras-white.png') }}" alt="myITS Sarpras">
     </div>
-  </main>
+</section>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Bootstrap validation
-    (function () {
-      const forms = document.querySelectorAll('.needs-validation');
-      Array.from(forms).forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
-      });
-    })();
+<div class="sign-card">
+    <div class="p-4" style="padding-top: 2.5rem;">
+        <div class="text-center mb-4">
+            <h2 class="title">Sign Up</h2>
+        </div>
 
-    // Toggle password visibility
+        @if ($errors->any())
+            <div class="server-error mb-3">
+                <div>Terdapat kesalahan pada input:</div>
+                <ul style="margin-top: 4px; padding-left: 18px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ url('/signup') }}">
+            @csrf
+
+            {{-- Nama --}}
+            <div class="mb-3">
+                <input type="text"
+                       class="form-control"
+                       name="name"
+                       placeholder="Nama"
+                       value="{{ old('name') }}">
+                @error('name')
+                    <div class="server-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Email ITS --}}
+            <div class="mb-3">
+                <input type="email"
+                       class="form-control"
+                       name="email"
+                       placeholder="Alamat Email"
+                       value="{{ old('email') }}"
+                       required>
+                @error('email')
+                    <div class="server-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Password --}}
+            <div class="input-wrapper">
+                <input type="password"
+                       class="form-control"
+                       id="password"
+                       name="password"
+                       placeholder="Password"
+                       required>
+                <button type="button"
+                        class="password-toggle"
+                        data-toggle-pass="#password">
+                    {{-- mata silang (default, hidden text) --}}
+                    <svg class="eye-slash" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    {{-- mata biasa (muncul saat teks kelihatan) --}}
+                    <svg class="eye" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         style="display:none;">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+                @error('password')
+                    <div class="server-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Ulangi Password --}}
+            <div class="input-wrapper">
+                <input type="password"
+                       class="form-control"
+                       id="confirm"
+                       name="password_confirmation"
+                       placeholder="Ulangi Password"
+                       required>
+                <button type="button"
+                        class="password-toggle"
+                        data-toggle-pass="#confirm">
+                    <svg class="eye-slash" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    <svg class="eye" width="20" height="20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         style="display:none;">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Nomor Telepon --}}
+            <div class="mb-3">
+                <input type="text"
+                       class="form-control"
+                       name="phone"
+                       placeholder="Nomor Telepon"
+                       value="{{ old('phone') }}">
+                @error('phone')
+                    <div class="server-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <button type="submit" class="btn-submit">Daftar</button>
+
+            <div class="signup-link">
+                Sudah punya akun?
+                <a href="{{ route('login') }}">Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Toggle show/hide password + ubah icon mata
     document.querySelectorAll('[data-toggle-pass]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const input = document.querySelector(btn.getAttribute('data-toggle-pass'));
-        const icon = btn.querySelector('i');
-        if (!input) return;
-        if (input.type === 'password') {
-          input.type = 'text';
-          icon.classList.replace('bi-eye-slash','bi-eye');
-        } else {
-          input.type = 'password';
-          icon.classList.replace('bi-eye','bi-eye-slash');
-        }
-      });
+        btn.addEventListener('click', () => {
+            const selector = btn.getAttribute('data-toggle-pass');
+            const input = document.querySelector(selector);
+            if (!input) return;
+
+            const eyeSlash = btn.querySelector('.eye-slash');
+            const eye      = btn.querySelector('.eye');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (eyeSlash) eyeSlash.style.display = 'none';
+                if (eye)      eye.style.display      = 'block';
+            } else {
+                input.type = 'password';
+                if (eyeSlash) eyeSlash.style.display = 'block';
+                if (eye)      eye.style.display      = 'none';
+            }
+        });
     });
-  </script>
-</body>
-</html>
+</script>
+@endsection

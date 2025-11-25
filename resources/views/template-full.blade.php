@@ -8,6 +8,9 @@
 
     {{-- Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
     {{-- Tailwind via CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -38,6 +41,8 @@
     <style>
         body {
             font-family: 'Manrope', sans-serif;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
         }
     </style>
 </head>
@@ -48,6 +53,40 @@
         @yield('content')
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.opacity = 1;
+        });
+
+        document.querySelectorAll('a[href]').forEach(link => {
+            // Filter out external links, mailto, tel, and anchors
+            if (link.hostname !== window.location.hostname ||
+                link.protocol !== window.location.protocol ||
+                link.href.startsWith('mailto:') ||
+                link.href.startsWith('tel:') ||
+                link.getAttribute('href').startsWith('#') ||
+                link.getAttribute('target') === '_blank'
+            ) {
+                return;
+            }
+
+            link.addEventListener('click', e => {
+                // Ignore clicks with modifier keys (e.g., Ctrl+Click, Cmd+Click)
+                if (e.ctrlKey || e.metaKey) {
+                    return;
+                }
+                
+                e.preventDefault();
+                const href = link.href;
+
+                document.body.style.opacity = 0;
+
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 300);
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,130 @@
+@extends('template-full')
+
+@section('content')
+<div class="flex flex-col h-full bg-gray-50">
+
+    <!-- Header -->
+    <div class="px-6 pt-4 pb-3 bg-white border-b border-gray-100 relative">
+        <button onclick="window.history.back()" class="flex items-center text-xs text-gray-400 gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Kembali</span>
+        </button>
+
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <h1 class="text-lg font-extrabold text-center leading-tight text-[#013880]">
+                <span class="block">Detail</span>
+                <span class="block">Peminjaman</span>
+            </h1>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto px-6 py-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+
+            <!-- Info Room -->
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <span class="block text-xs font-medium text-gray-500 mb-0.5">Room</span>
+                    <h2 class="text-xl font-bold text-gray-900 leading-tight">Tower 1</h2>
+
+                    <div class="mt-3 space-y-1.5 text-xs text-gray-600">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>20/01/2025</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>15.00 - 17.00 WIB</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <span>150 Orang</span>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold h-fit">
+                    Dibatalkan
+                </span>
+            </div>
+
+            <!-- Timeline -->
+            <div class="mt-4 pt-3 border-t border-gray-100">
+
+                <div class="relative pl-12">
+
+                    <!-- VERTICAL LINE (FULL) -->
+                    <div class="absolute left-6 top-0 bottom-0 w-[2px] bg-gray-300"></div>
+
+
+                    <div class="space-y-8">
+
+                        <!-- STEP TEMPLATE -->
+                        @php
+                            $steps = [
+                                ['color' => 'bg-blue-600', 'title' => 'Permintaan Dikirim', 'date' => '02-08-2025 / 15.20',
+                                 'desc' => 'Formulir peminjaman telah dikirim oleh pengguna.'],
+
+                                ['color' => 'bg-blue-600', 'title' => 'Diterima oleh Admin Sarpras', 'date' => '03-08-2025 / 09.50',
+                                 'desc' => 'Permintaan berhasil masuk dan dicatat oleh admin sarpras.'],
+
+                                ['color' => 'bg-yellow-400', 'title' => 'Revisi', 'date' => '03-08-2025 / 13.30',
+                                 'desc' => 'Reviewer: bentuk format tanggal & sesi peminjaman ke bentuk tabel.'],
+
+                                ['color' => 'bg-blue-600', 'title' => 'Permintaan Disetujui', 'date' => '03-08-2025 / 15.30',
+                                 'desc' => 'Admin menyetujui permintaan berdasarkan dokumen & ruang.'],
+
+                                ['color' => 'bg-red-600', 'title' => 'Peminjaman Dibatalkan', 'date' => '04-08-2025 / 10.15',
+                                 'desc' => 'AC sedang tidak tersedia, sehingga permintaan dibatalkan.'],
+                            ];
+                        @endphp
+
+                        @foreach ($steps as $step)
+                        <div class="relative">
+
+                            <!-- DOT (LEFT-4) OVERLAPS LINE (LEFT-6) -->
+                            <div class="absolute left-4 top-1 w-4 h-4 rounded-full {{ $step['color'] }} z-20"></div>
+
+                            <div class="flex justify-between items-start gap-3">
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-800">{{ $step['title'] }}</p>
+                                    <p class="text-[11px] text-gray-600">{{ $step['desc'] }}</p>
+                                </div>
+                                <p class="text-[10px] text-gray-400 whitespace-nowrap">
+                                    {{ $step['date'] }}
+                                </p>
+                            </div>
+                        </div>
+                        @endforeach
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <x-navbar active="riwayat" />
+
+</div>
+@endsection

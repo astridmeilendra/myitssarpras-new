@@ -2,27 +2,60 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Http\Controllers\SignUp\SignUpController;
+use App\Http\Controllers\Login\LoginController;
+use App\Http\Controllers\Peminjaman\PeminjamanController;
+use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\EditakundanHapusakun\AkunController;
+use App\Http\Controllers\CariRuangan\CariRuanganController;
+
 
 // Navbar
 Route::get('/home', function () {
-    return view('page/homepage');
+    $riwayat = collect();
+
+    if (Auth::check()) {
+        $userId = Auth::id();
+
+        $riwayat = DB::table('peminjaman as p')
+            ->join('ruangan as r', 'p.ruanganid', '=', 'r.ruanganid')
+            ->join('riwayat_status as rs', function ($join) {
+                $join->on('p.peminjamanid', '=', 'rs.peminjamanid')
+                     ->whereRaw('rs.statusid = (
+                         SELECT MAX(statusid)
+                         FROM riwayat_status
+                         WHERE peminjamanid = p.peminjamanid
+                     )');
+            })
+            ->where('p.userid', $userId)
+            ->orderByDesc('p.tanggal')
+            ->limit(2)
+            ->get([
+                'p.peminjamanid',
+                'p.tanggal',
+                'p.nama_shift',
+                'p.keterangan',
+                'r.nama_ruangan',
+                'r.kapasitas',
+                'rs.nama_status',
+            ]);
+    }
+
+    return view('page/homepage', compact('riwayat'));
 })->name('home');
 
 Route::get('/riwayat', function () {
     return view('page/riwayat/riwayat');
 })->name('riwayat');
 
-Route::get('/search', function () {
-    return view('page/cariruangan/cariruangan');
-})->name('search');
+Route::get('/search', [App\Http\Controllers\CariRuanganController::class, 'index'])->name('search');
 
 Route::get('/info', function () {
     return view('info');
 })->name('info');
 
-Route::get('/profile', function () {
-    return view('page/profile/profile');
-})->name('profile');
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
 //DB Connection
 Route::get('/cek-koneksi', function () {
@@ -39,26 +72,59 @@ Route::get('/', function () {
     return view('page/auth/auth');
 });
 
-// Login Page
-Route::get('/login', function () {
-    return view('page/auth/login');
-});
+// LOGIN
+Route::get('/login', [LoginController::class, 'show'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 
-// Register Page
-Route::get('/register', function () {
-    return view('page/auth/register');
-});
+// LOGOUT (ini yang tadi bikin error karena belum ada)
+Route::post('/logout', function (Request $request) {
+    $request->session()->flush();      // hapus semua session user
+    return redirect()->route('login'); // balik ke halaman login
+})->name('logout');
 
+// SIGNUP
+Route::get('/signup', [SignUpController::class, 'create'])->name('signup');
+Route::post('/signup', [SignUpController::class, 'store'])->name('signup.store');
+
+// Cariruangan
+Route::get('/seacrh', function () {
+    return view('page/cariruangan/cariruangan');
+});
 
 //Cariruangan parsial
 Route::get('/search-persial', function () {
     return view('page/cariruangan/cariruanganparsial');
 });
 
-// Ruangan
+// ====== RUANGAN & PEMINJAMAN ROUTES ======
+
+// Detail Ruangan (Static - route lama)
 Route::get('/ruangan', function () {
     return view('page/ruangan/detail-ruangan');
+})->name('ruangan.static');
+
+// Detail Ruangan (Dynamic - route baru dengan ID)
+Route::get('/ruangan/{id}', [PeminjamanController::class, 'show'])
+    ->name('ruangan.detail');
+
+// ====== PEMINJAMAN ROUTES (Requires Auth) ======
+Route::middleware(['auth'])->group(function () {
+
+    Route::post('/peminjaman', [PeminjamanController::class, 'store'])
+        ->name('peminjaman.store');
+
+    Route::post('/peminjaman/check-availability', [PeminjamanController::class, 'checkAvailability'])
+        ->name('peminjaman.check-availability');
+
+    Route::get('/success', function () {
+        return view('page/peminjaman/success');
+    })->name('peminjaman.success');
+
+    Route::post('/peminjaman/slots', [PeminjamanController::class, 'getAvailableSlots'])
+    ->name('peminjaman.slots');
+
 });
+
 
 // Success
 Route::get('/success', function () {
@@ -66,9 +132,9 @@ Route::get('/success', function () {
 });
 
 // Cariruangan
-Route::get('/cariruangan', function () {
-    return view('page/cariruangan/cariruangan');
-});
+Route::get('/cariruangan', [App\Http\Controllers\CariRuanganController::class, 'index'])->name('cari-ruangan.index');
+// AJAX search endpoint used by the Cari Ruangan page (filters + realtime search)
+Route::post('/cari-ruangan/search', [App\Http\Controllers\CariRuanganController::class, 'search'])->name('cari-ruangan.search');
 
 //Cariruangan parsial
 Route::get('/cariruanganparsial', function () {
@@ -80,24 +146,59 @@ Route::get('/logout', function () {
     return view('page/auth/logout');
 });
 
-//Profile
-Route::get('/profile', function () {
-    return view('page/profile/profile');
+// Signup/login/profile are handled by controllers above (keep routes centralized)
+
+//Riwayat: Peminjaman Dibatalkan
+Route::get('/batal', function () {
+    return view('page/riwayat/batal');
 });
 
-//Signup (named) kept below
+//Riwayat: Peminjaman Diselesaikan
+Route::get('/selesai', function () {
+    return view('page/riwayat/selesai');
+});
 
-// Named signup route used by auth view
-Route::get('/signup', function () {
-    return view('page/signup/signup');
-})->name('signup');
+//Riwayat: Dalam Peminjaman
+Route::get('/dalam', function () {
+    return view('page/riwayat/dalam');
+});
 
-//Login
-Route::get('/login', function () {
-    return view('page/login/login');
+//Riwayat: Konfirmasi Pembatalan
+Route::get('/konfirmasi', function () {
+    return view('page/riwayat/konfirmasi');
+});
+
+//Riwayat: Permintaan Gagal Dibatalkan
+Route::get('/fail', function () {
+    return view('page/riwayat/fail');
 });
 
 
 
+// Edit akun
+Route::get('/editakun', [AkunController::class, 'edit'])->name('account.edit');
+Route::post('/editakun', [AkunController::class, 'update'])->name('account.update');
 
+// Hapus akun
+Route::post('/hapus-akun', [AkunController::class, 'destroy'])->name('account.destroy');
 
+//Cari Ruangan AJAX search endpoint
+Route::get('/search', [CariRuanganController::class, 'search']);
+
+// Route untuk halaman pencarian ruangan
+Route::get('/search', [CariRuanganController::class, 'index'])->name('search.index');
+
+// Route untuk AJAX search dengan filter
+Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
+
+// Route untuk mendapatkan detail ruangan
+Route::get('/search/room/{id}', [CariRuanganController::class, 'show'])->name('search.show');
+
+// Route untuk mendapatkan semua fasilitas
+Route::get('/search/facilities', [CariRuanganController::class, 'getFacilities'])->name('search.facilities');
+
+// Route untuk cek ketersediaan ruangan
+Route::post('/search/check-availability', [CariRuanganController::class, 'checkAvailability'])->name('search.check-availability');
+// Route untuk booking ruangan
+Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name('search.booking');
+Route::get('/search', [App\Http\Controllers\CariRuangan\CariRuanganController::class, 'index'])->name('search');
