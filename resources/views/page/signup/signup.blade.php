@@ -71,6 +71,7 @@
         background: white;
         min-height: calc(100vh - 180px);
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2.5rem 1.75rem 2rem;
         position: relative;
         z-index: 20;
     }
@@ -124,7 +125,7 @@
     /* Bungkus input yang ada icon mata */
     .input-wrapper {
         position: relative;
-        margin-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
     }
 
     .input-wrapper .form-control {
@@ -184,7 +185,7 @@
 </section>
 
 <div class="sign-card">
-    <div class="p-4" style="padding-top: 2.5rem;">
+    <div style="padding-top: 0;">
         <div class="text-center mb-4">
             <h2 class="title">Sign Up</h2>
         </div>
@@ -204,19 +205,19 @@
             @csrf
 
             {{-- Nama --}}
-            <div class="mb-3">
+            <div class="mb-5">
                 <input type="text"
                        class="form-control"
                        name="name"
                        placeholder="Nama"
                        value="{{ old('name') }}">
                 @error('name')
-                    <div class="server-error">{{ $message }}</div>
+                    <div class="server-error"></div>
                 @enderror
             </div>
 
             {{-- Email ITS --}}
-            <div class="mb-3">
+            <div class="mb-5">
                 <input type="email"
                        class="form-control"
                        name="email"
@@ -224,7 +225,7 @@
                        value="{{ old('email') }}"
                        required>
                 @error('email')
-                    <div class="server-error">{{ $message }}</div>
+                    <div class="server-error"></div>
                 @enderror
             </div>
 
@@ -284,14 +285,14 @@
             </div>
 
             {{-- Nomor Telepon --}}
-            <div class="mb-3">
+            <div class="mb-5">
                 <input type="text"
                        class="form-control"
                        name="phone"
                        placeholder="Nomor Telepon"
                        value="{{ old('phone') }}">
                 @error('phone')
-                    <div class="server-error">{{ $message }}</div>
+                    <div class="server-error"></div>
                 @enderror
             </div>
 
