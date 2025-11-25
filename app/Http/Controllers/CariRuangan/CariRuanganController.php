@@ -33,13 +33,22 @@ class CariRuanganController extends Controller
             ->get();
 
         $formattedRooms = $rooms->map(function ($room) {
-            $foto = $room->foto;
-            if ($foto && (str_starts_with($foto, 'http://') || str_starts_with($foto, 'https://'))) {
-                $imageUrl = $foto;
-            } elseif ($foto) {
-                $imageUrl = asset('storage/' . ltrim($foto, '/'));
+            // Ambil foto dari database (string dipisah koma)
+            $images = [];
+            if ($room->foto) {
+                $images = array_filter(array_map('trim', explode(',', $room->foto)));
+            }
+
+            // Ambil foto pertama jika ada, atau gunakan default
+            $mainImage = !empty($images) ? $images[0] : null;
+
+            // Format imageUrl dengan deteksi URL dan fallback
+            if ($mainImage && (str_starts_with($mainImage, 'http://') || str_starts_with($mainImage, 'https://'))) {
+                $imageUrl = $mainImage;
+            } elseif ($mainImage) {
+                $imageUrl = asset('storage/' . ltrim($mainImage, '/'));
             } else {
-                $imageUrl = asset('img/default-room.png');
+                $imageUrl = asset('img/room/tw-01.png');
             }
 
             return [
@@ -134,13 +143,22 @@ class CariRuanganController extends Controller
         $rooms = $query->get();
 
         $formattedRooms = $rooms->map(function ($room) {
-            $foto = $room->foto;
-            if ($foto && (str_starts_with($foto, 'http://') || str_starts_with($foto, 'https://'))) {
-                $imageUrl = $foto;
-            } elseif ($foto) {
-                $imageUrl = asset('storage/' . ltrim($foto, '/'));
+            // Ambil foto dari database (string dipisah koma)
+            $images = [];
+            if ($room->foto) {
+                $images = array_filter(array_map('trim', explode(',', $room->foto)));
+            }
+
+            // Ambil foto pertama jika ada, atau gunakan default
+            $mainImage = !empty($images) ? $images[0] : null;
+
+            // Format imageUrl dengan deteksi URL dan fallback
+            if ($mainImage && (str_starts_with($mainImage, 'http://') || str_starts_with($mainImage, 'https://'))) {
+                $imageUrl = $mainImage;
+            } elseif ($mainImage) {
+                $imageUrl = asset('storage/' . ltrim($mainImage, '/'));
             } else {
-                $imageUrl = asset('img/default-room.png');
+                $imageUrl = asset('img/room/tw-01.png');
             }
 
             return [
