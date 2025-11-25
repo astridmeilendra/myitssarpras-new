@@ -10,6 +10,7 @@ use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\EditakundanHapusakun\AkunController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RuanganController;
+use App\Http\Controllers\Pertanyaan\PertanyaanController;
 
 
 // Navbar
@@ -54,9 +55,34 @@ Route::get('/search', function () {
     return view('page/cariruangan/cariruangan');
 })->name('search');
 
+// Auth
+// Auth
+Route::get('/', function () {
+    return view('page/info/alur-penjelasan');
+});
+
+Route::get('/alur-penjelasan', function () {
+    return view('page/info/alur-penjelasan');
+})->name('alur-penjelasan');
+
+// ✅ TAMBAHAN MINIMAL AGAR navbar route('info') TIDAK ERROR
 Route::get('/info', function () {
     return view('page/info/alur-penjelasan');
 })->name('info');
+
+// INFO - FAQ
+Route::get('/faq', function () {
+    return view('page/info/faq');
+})->name('faq');
+
+// INFO - KIRIM PERTANYAAN
+Route::get('/kirim-pertanyaan', [PertanyaanController::class, 'index'])
+    ->middleware('auth')
+    ->name('kirim-pertanyaan');
+
+Route::post('/pertanyaan', [PertanyaanController::class, 'store'])
+    ->middleware('auth')
+    ->name('pertanyaan.store');
 
 Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
@@ -71,7 +97,7 @@ Route::get('/cek-koneksi', function () {
 });
 
 // Auth
-Route::get('/', function () {
+Route::get('/auth', function () {
     return view('page/auth/auth');
 });
 
