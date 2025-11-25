@@ -86,7 +86,7 @@
                     @endphp
 
                     <!-- Booking Card -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+                    <a href="{{ route('peminjaman.detail', $item->peminjamanid) }}" class="block bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4 hover:shadow-md transition-shadow">
                         <div class="flex items-start justify-between mb-3">
                             <div>
                                 <p class="text-xs text-gray-500 mb-1">Room</p>
@@ -137,10 +137,10 @@
                             @endif
                         </div>
 
-                        <x-button variant="solid" size="sm" :full="true">
+                        <div class="inline-block w-full px-4 py-2 bg-[#013880] text-white text-sm font-semibold rounded-lg hover:bg-blue-900 transition-colors text-center">
                             Lihat Detail
-                        </x-button>
-                    </div>
+                        </div>
+                    </a>
                 @endforeach
             @endif
         </div>
@@ -154,20 +154,23 @@
                 <h2 class="text-base font-bold text-gray-900">Pencarian Cepat</h2>
             </div>
 
-            <!-- Search Input -->
-            <div class="relative mb-4">
-                <input
-                    type="text"
-                    placeholder="Masukkan nama ruangan..."
-                    class="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent transition-all"
-                >
-            </div>
+            <!-- Search Form -->
+            <form id="searchForm" method="GET" action="{{ route('search') }}" class="space-y-4">
+                <!-- Search Input -->
+                <div class="relative">
+                    <input
+                        type="text"
+                        name="search"
+                        id="searchInput"
+                        placeholder="Masukkan nama ruangan..."
+                        class="w-full pl-4 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent transition-all"
+                    >
+                </div>
 
-            <a href="{{ route('search') }}">
-                <x-button variant="solid" size="md" :full="true">
+                <button type="submit" class="w-full px-4 py-3 bg-[#013880] text-white text-sm font-semibold rounded-lg hover:bg-blue-900 transition-colors">
                     Cari Ruangan
-                </x-button>
-            </a>
+                </button>
+            </form>
         </div>
 
         <!-- Informasi Lainnya Section -->

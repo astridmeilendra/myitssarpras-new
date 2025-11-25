@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\SignUp\SignUpController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Peminjaman\PeminjamanController;
+use App\Http\Controllers\Peminjaman\PeminjamanDetailController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\EditakundanHapusakun\AkunController;
 use App\Http\Controllers\CariRuangan\CariRuanganController;
@@ -50,6 +51,15 @@ Route::get('/home', function () {
 Route::get('/riwayat', function () {
     return view('page/riwayat/riwayat');
 })->name('riwayat');
+
+// Detail Peminjaman
+Route::get('/peminjaman/{peminjamanid}', [PeminjamanDetailController::class, 'show'])
+    ->name('peminjaman.detail')
+    ->middleware('auth');
+
+Route::get('/peminjaman/{peminjamanid}/download-dokumen', [PeminjamanDetailController::class, 'downloadDokumen'])
+    ->name('peminjaman.download-dokumen')
+    ->middleware('auth');
 
 Route::get('/search', [CariRuanganController::class, 'index'])->name('search');
 Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
