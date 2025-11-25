@@ -7,7 +7,7 @@
 
 <div class="flex flex-col h-full">
     <!-- Header Section -->
-    <div class="bg-white px-6 pt-5 pb-6">
+    <div class="bg-white px-6 pt-3 pb-2">
         <!-- User Greeting -->
         <div class="flex items-center justify-between mt-4 mb-2">
             <div class="flex items-center gap-3">
@@ -56,7 +56,7 @@
     <div class="flex-1 overflow-y-auto px-6 pb-4 scrollbar-hide" style="scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Riwayat Peminjaman Section -->
         <div class="mb-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4 mt-5">
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#013880]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
