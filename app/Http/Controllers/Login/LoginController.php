@@ -35,9 +35,15 @@ class LoginController extends Controller
         $request->session()->put('user_id', $user->userid);
         $request->session()->put('user_name', $user->nama);
         $request->session()->put('user_email', $user->email_its);
+        $request->session()->put('is_admin', $user->is_admin);
 
         Auth::login($user);
         $request->session()->regenerate();
+
+        // Jika user adalah admin, arahkan ke dashboard, jika tidak arahkan ke home
+        if ($user->is_admin) {
+            return redirect()->route('admin.dashboard');
+        }
 
         return redirect()->route('home');
     }

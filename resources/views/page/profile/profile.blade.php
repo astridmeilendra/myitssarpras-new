@@ -42,7 +42,7 @@
         <div class="space-y-3">
             <!-- Menu Item: Akun -->
             <a href="{{ route('account.edit') }}"
-               class="bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+               class="bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow ring-1 ring-gray-200">
                 <div class="flex items-center flex-1">
                     <div class="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center mr-3">
                         <svg class="w-5 h-5" style="color: #013880;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,7 +63,7 @@
 
             <!-- Menu Item: Riwayat Peminjaman -->
             <a href="{{ route('riwayat') }}"
-               class="bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+               class="bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow ring-1 ring-gray-200">
                 <div class="flex items-center flex-1">
                     <div class="w-11 h-11 rounded-lg bg-gray-100 flex items-center justify-center mr-3">
                         <svg class="w-5 h-5" style="color: #013880;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@
                 @csrf
                 <button type="button"
                         onclick="confirmLogout()"
-                        class="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow text-left">
+                        class="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow text-left ring-1 ring-gray-200">
                     <div class="flex items-center flex-1">
                         <div class="w-11 h-11 rounded-lg bg-red-50 flex items-center justify-center mr-3">
                             <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
