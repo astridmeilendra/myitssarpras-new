@@ -12,9 +12,11 @@ class PertanyaanController extends Controller
 {
     public function index()
     {
-        // user yang sedang login
+        // user yang sedang loginn
+        // test
         $userId = Auth::id();
 
+        // ambil pertanyaan user + jawabannya (kalau sudah ada)
         // ambil pertanyaan user + jawabannya (kalau sudah ada)
         $histories = DB::table('pertanyaan as p')
             ->leftJoin('jawaban as j', 'p.pertanyaanid', '=', 'j.pertanyaanid')
