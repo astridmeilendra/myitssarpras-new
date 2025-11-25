@@ -17,7 +17,8 @@ class AppUser extends Authenticatable
         'nama',
         'email_its',
         'password_hash',
-        'no_telepon',   // <- ini yang dipakai
+        'no_telepon',
+        'foto_profile',
         'is_admin',
     ];
 

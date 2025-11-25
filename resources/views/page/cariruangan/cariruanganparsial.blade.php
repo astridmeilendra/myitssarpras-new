@@ -13,9 +13,11 @@
         <h2 class="text-sm font-semibold text-gray-500 mb-4">Pencarian Cepat</h2>
 
         <div class="space-y-4" id="roomList">
-            @foreach ($rooms as $room)
+            @forelse(($rooms ?? []) as $room)
                 @include('page.cariruangan.parsial.listruangan', ['room' => $room])
-            @endforeach
+            @empty
+                <p class="text-center text-sm text-gray-500 py-6">Belum ada ruangan.</p>
+            @endforelse
         </div>
     </div>
 

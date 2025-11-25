@@ -8,6 +8,7 @@ use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Peminjaman\PeminjamanController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\EditakundanHapusakun\AkunController;
+use App\Http\Controllers\CariRuangan\CariRuanganController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RuanganController;
 use App\Http\Controllers\Pertanyaan\PertanyaanController;
@@ -51,9 +52,8 @@ Route::get('/riwayat', function () {
     return view('page/riwayat/riwayat');
 })->name('riwayat');
 
-Route::get('/search', function () {
-    return view('page/cariruangan/cariruangan');
-})->name('search');
+Route::get('/search', [CariRuanganController::class, 'index'])->name('search');
+Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
 
 // Auth
 // Auth
@@ -161,14 +161,21 @@ Route::get('/success', function () {
 });
 
 // Cariruangan
-Route::get('/cariruangan', function () {
-    return view('page/cariruangan/cariruangan');
-});
+Route::get('/cariruangan', [CariRuanganController::class, 'index'])->name('cari-ruangan.index');
+// AJAX search endpoint used by the Cari Ruangan page (filters + realtime search)
+Route::post('/cari-ruangan/search', [CariRuanganController::class, 'search'])->name('cari-ruangan.search');
 
 //Cariruangan parsial
 Route::get('/cariruanganparsial', function () {
     return view('page/cariruangan/cariruanganparsial');
 });
+
+//Logout
+Route::get('/logout', function () {
+    return view('page/auth/logout');
+});
+
+// Signup/login/profile are handled by controllers above (keep routes centralized)
 
 //Riwayat: Peminjaman Dibatalkan
 Route::get('/batal', function () {
@@ -210,8 +217,6 @@ Route::post('/editakun', [AkunController::class, 'update'])->name('account.updat
 
 // Hapus akun
 Route::post('/hapus-akun', [AkunController::class, 'destroy'])->name('account.destroy');
-
-
 // ====== ADMIN ROUTES ======
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -224,4 +229,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('admin.ruangan.edit');
     Route::post('/ruangan/{id}', [RuanganController::class, 'update'])->name('admin.ruangan.update');
     Route::post('/ruangan/{id}/delete', [RuanganController::class, 'destroy'])->name('admin.ruangan.destroy');
-});
+});// Route untuk mendapatkan detail ruangan
+Route::get('/search/room/{id}', [CariRuanganController::class, 'show'])->name('search.show');
+
+// Route untuk mendapatkan semua fasilitas
+Route::get('/search/facilities', [CariRuanganController::class, 'getFacilities'])->name('search.facilities');
+
+// Route untuk cek ketersediaan ruangan
+Route::post('/search/check-availability', [CariRuanganController::class, 'checkAvailability'])->name('search.check-availability');
+// Route untuk booking ruangan
+Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name('search.booking');
