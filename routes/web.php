@@ -9,6 +9,8 @@ use App\Http\Controllers\Peminjaman\PeminjamanController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\EditakundanHapusakun\AkunController;
 use App\Http\Controllers\CariRuangan\CariRuanganController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\RuanganController;
 
 
 // Navbar
@@ -190,8 +192,19 @@ Route::get('/search', [CariRuanganController::class, 'index'])->name('search.ind
 
 // Route untuk AJAX search dengan filter
 Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
+// ====== ADMIN ROUTES ======
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/peminjaman/{peminjamanId}/status', [AdminController::class, 'updateStatus'])->name('admin.peminjaman.updateStatus');
 
-// Route untuk mendapatkan detail ruangan
+    // Ruangan Routes
+    Route::get('/ruangan', [RuanganController::class, 'index'])->name('admin.ruangan.index');
+    Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('admin.ruangan.create');
+    Route::post('/ruangan', [RuanganController::class, 'store'])->name('admin.ruangan.store');
+    Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('admin.ruangan.edit');
+    Route::post('/ruangan/{id}', [RuanganController::class, 'update'])->name('admin.ruangan.update');
+    Route::post('/ruangan/{id}/delete', [RuanganController::class, 'destroy'])->name('admin.ruangan.destroy');
+});// Route untuk mendapatkan detail ruangan
 Route::get('/search/room/{id}', [CariRuanganController::class, 'show'])->name('search.show');
 
 // Route untuk mendapatkan semua fasilitas
