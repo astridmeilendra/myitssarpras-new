@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Profile;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AppUser;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
