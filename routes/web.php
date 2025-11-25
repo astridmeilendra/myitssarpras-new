@@ -51,7 +51,8 @@ Route::get('/riwayat', function () {
     return view('page/riwayat/riwayat');
 })->name('riwayat');
 
-Route::get('/search', [App\Http\Controllers\CariRuanganController::class, 'index'])->name('search');
+Route::get('/search', [CariRuanganController::class, 'index'])->name('search');
+Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
 
 Route::get('/info', function () {
     return view('info');
@@ -134,9 +135,9 @@ Route::get('/success', function () {
 });
 
 // Cariruangan
-Route::get('/cariruangan', [App\Http\Controllers\CariRuanganController::class, 'index'])->name('cari-ruangan.index');
+Route::get('/cariruangan', [CariRuanganController::class, 'index'])->name('cari-ruangan.index');
 // AJAX search endpoint used by the Cari Ruangan page (filters + realtime search)
-Route::post('/cari-ruangan/search', [App\Http\Controllers\CariRuanganController::class, 'search'])->name('cari-ruangan.search');
+Route::post('/cari-ruangan/search', [CariRuanganController::class, 'search'])->name('cari-ruangan.search');
 
 //Cariruangan parsial
 Route::get('/cariruanganparsial', function () {
@@ -183,15 +184,6 @@ Route::post('/editakun', [AkunController::class, 'update'])->name('account.updat
 
 // Hapus akun
 Route::post('/hapus-akun', [AkunController::class, 'destroy'])->name('account.destroy');
-
-//Cari Ruangan AJAX search endpoint
-Route::get('/search', [CariRuanganController::class, 'search']);
-
-// Route untuk halaman pencarian ruangan
-Route::get('/search', [CariRuanganController::class, 'index'])->name('search.index');
-
-// Route untuk AJAX search dengan filter
-Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
 // ====== ADMIN ROUTES ======
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -214,4 +206,3 @@ Route::get('/search/facilities', [CariRuanganController::class, 'getFacilities']
 Route::post('/search/check-availability', [CariRuanganController::class, 'checkAvailability'])->name('search.check-availability');
 // Route untuk booking ruangan
 Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name('search.booking');
-Route::get('/search', [App\Http\Controllers\CariRuangan\CariRuanganController::class, 'index'])->name('search');

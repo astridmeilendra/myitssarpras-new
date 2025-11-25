@@ -46,12 +46,13 @@ class CariRuanganController extends Controller
                 'id' => $room->ruanganid,
                 'name' => $room->nama_ruangan,
                 'type' => 'Room',
+                'location' => $room->lokasi_ruangan ?? '-',
                 'desc' => $room->deskripsi ?? 'Tidak ada deskripsi',
                 'facilities' => $room->fasilitas ?? 'Tidak ada fasilitas',
-                'capacity' => $room->kapasitas ? $room->kapasitas . ' Orang' : 'N/A',
+                'capacity' => $room->kapasitas ?? 0,
+                'capacityLabel' => $room->kapasitas ? $room->kapasitas . ' Orang' : 'N/A',
                 'price' => null,
                 'image' => $imageUrl,
-                'location' => $room->lokasi_ruangan,
             ];
         });
 
@@ -83,6 +84,7 @@ class CariRuanganController extends Controller
                 'ruangan.fasilitas'
             );
 
+        // Filter pencarian nama ruangan, lokasi, atau deskripsi
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama_ruangan', 'like', '%' . $search . '%')
@@ -91,17 +93,34 @@ class CariRuanganController extends Controller
             });
         }
 
+        // Filter kapasitas (minimal kapasitas yang dicari)
         if (!empty($filterCapacity)) {
             $capacityNumber = (int) filter_var($filterCapacity, FILTER_SANITIZE_NUMBER_INT);
-            $query->where('kapasitas', '>=', $capacityNumber);
-        }
-
-        if (!empty($filterFacilities) && is_array($filterFacilities)) {
-            foreach ($filterFacilities as $facility) {
-                $query->where('fasilitas', 'like', '%' . $facility . '%');
+            if ($capacityNumber > 0) {
+                $query->where('kapasitas', '>=', $capacityNumber);
             }
         }
 
+        // Filter fasilitas - cari ruangan yang memiliki SEMUA fasilitas yang dipilih
+        if (!empty($filterFacilities) && is_array($filterFacilities)) {
+            foreach ($filterFacilities as $facility) {
+                // Mapping nama fasilitas dari checkbox ke database
+                $facilityMap = [
+                    'ac' => 'AC',
+                    'speaker' => 'Sound System',
+                    'layar' => 'Proyektor',
+                    'mic' => 'Mic',
+                    'smart-tv' => 'TV',
+                    'wifi' => 'WiFi',
+                    'whiteboard' => 'Whiteboard',
+                ];
+
+                $dbFacilityName = $facilityMap[$facility] ?? $facility;
+                $query->where('fasilitas', 'like', '%' . $dbFacilityName . '%');
+            }
+        }
+
+        // Filter berdasarkan ketersediaan tanggal dan waktu
         if (!empty($filterDate) && !empty($filterTime)) {
             $query->whereNotExists(function ($subQuery) use ($filterDate, $filterTime) {
                 $subQuery->select(DB::raw(1))
@@ -128,12 +147,13 @@ class CariRuanganController extends Controller
                 'id' => $room->ruanganid,
                 'name' => $room->nama_ruangan,
                 'type' => 'Room',
+                'location' => $room->lokasi_ruangan ?? '-',
                 'desc' => $room->deskripsi ?? 'Tidak ada deskripsi',
                 'facilities' => $room->fasilitas ?? 'Tidak ada fasilitas',
-                'capacity' => $room->kapasitas ? $room->kapasitas . ' Orang' : 'N/A',
+                'capacity' => $room->kapasitas ?? 0,
+                'capacityLabel' => $room->kapasitas ? $room->kapasitas . ' Orang' : 'N/A',
                 'price' => null,
                 'image' => $imageUrl,
-                'location' => $room->lokasi_ruangan,
             ];
         });
 
@@ -171,6 +191,15 @@ class CariRuanganController extends Controller
             ->orderBy('peminjaman.tanggal', 'asc')
             ->get();
 
+        $foto = $room->foto;
+        if ($foto && (str_starts_with($foto, 'http://') || str_starts_with($foto, 'https://'))) {
+            $imageUrl = $foto;
+        } elseif ($foto) {
+            $imageUrl = asset('storage/' . ltrim($foto, '/'));
+        } else {
+            $imageUrl = asset('img/default-room.png');
+        }
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -181,7 +210,7 @@ class CariRuanganController extends Controller
                     'description' => $room->deskripsi,
                     'capacity' => $room->kapasitas,
                     'facilities' => $room->fasilitas,
-                    'photo' => ($room->foto && (str_starts_with($room->foto, 'http://') || str_starts_with($room->foto, 'https://'))) ? $room->foto : ($room->foto ? asset('storage/' . ltrim($room->foto, '/')) : asset('img/default-room.png')),
+                    'photo' => $imageUrl,
                 ],
                 'bookings' => $bookings
             ]
