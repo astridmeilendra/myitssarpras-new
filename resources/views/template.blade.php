@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'My App' }}</title>
+    <title>{{ $title ?? 'MyITS Sarpras' }}</title>
 
     {{-- Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
@@ -76,7 +76,7 @@
                 if (e.ctrlKey || e.metaKey) {
                     return;
                 }
-                
+
                 e.preventDefault();
                 const href = link.href;
 
