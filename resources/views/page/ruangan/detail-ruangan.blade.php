@@ -1,4 +1,4 @@
-@extends('template')
+@extends('template-full')
 
 @section('content')
 <div class="relative h-full">
@@ -35,8 +35,8 @@
 
     <!-- Main Scrollable Content -->
     <div class="flex flex-col h-full overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
-        <!-- Header with Back Button -->
-        <div class="flex items-center mb-6">
+        <!-- Header with Back Button - Sticky -->
+        <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center mb-6 px-6 pt-6 pb-4">
             <a href="{{ route('home') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -49,136 +49,139 @@
             <div class="w-6 h-6"></div>
         </div>
 
-        <!-- Image Gallery -->
-        <div class="mb-6">
-            @php
-                // Ambil foto dari database (string dipisah koma)
-                $images = [];
+        <div class="flex flex-col px-6 py-1">
+            <!-- Image Gallery -->
+            <div class="mb-6">
+                @php
+                    // Ambil foto dari database (string dipisah koma)
+                    $images = [];
 
-                if ($ruangan->foto) {
-                    $images = array_filter(array_map('trim', explode(',', $ruangan->foto)));
-                }
+                    if ($ruangan->foto) {
+                        $images = array_filter(array_map('trim', explode(',', $ruangan->foto)));
+                    }
 
-                // Default fallback jika tidak ada data
-                if (empty($images)) {
-                    $images = [asset('img/room/tw-01.png')];
-                }
+                    // Default fallback jika tidak ada data
+                    if (empty($images)) {
+                        $images = [asset('img/room/tw-01.png')];
+                    }
 
-                // Batasi max 4 gambar
-                $images = array_slice($images, 0, 4);
+                    // Batasi max 4 gambar
+                    $images = array_slice($images, 0, 4);
 
-                // Gambar besar awal
-                $mainImage = $images[0];
-            @endphp
+                    // Gambar besar awal
+                    $mainImage = $images[0];
+                @endphp
 
-            {{-- MAIN IMAGE --}}
-            <div class="relative rounded-2xl overflow-hidden mb-3">
-                <img id="main-room-image"
-                    src="{{ $mainImage }}"
-                    alt="{{ $ruangan->nama_ruangan }}"
-                    class="w-full h-48 object-cover">
+                {{-- MAIN IMAGE --}}
+                <div class="relative rounded-2xl overflow-hidden mb-3">
+                    <img id="main-room-image"
+                        src="{{ $mainImage }}"
+                        alt="{{ $ruangan->nama_ruangan }}"
+                        class="w-full h-48 object-cover">
+                </div>
+
+                {{-- THUMBNAILS --}}
+                <div class="flex gap-2 w-full">
+                    @foreach($images as $index => $img)
+                        <button
+                            type="button"
+                            class="thumbnail-item w-full h-16 rounded-lg overflow-hidden border
+                                {{ $index === 0 ? 'border-2 border-[#003D82]' : 'border-gray-200' }}"
+                            data-large-src="{{ $img }}">
+
+                            <img src="{{ $img }}"
+                                alt="Thumbnail {{ $index + 1 }}"
+                                class="w-full h-full object-cover">
+                        </button>
+                    @endforeach
+                </div>
             </div>
 
-            {{-- THUMBNAILS --}}
-            <div class="flex gap-2 w-full">
-                @foreach($images as $index => $img)
-                    <button
-                        type="button"
-                        class="thumbnail-item w-full h-16 rounded-lg overflow-hidden border
-                            {{ $index === 0 ? 'border-2 border-[#003D82]' : 'border-gray-200' }}"
-                        data-large-src="{{ $img }}">
+            <!-- Description -->
+            <div class="mb-6">
+                <h2 class="text-base font-bold text-gray-800 mb-2">Deskripsi</h2>
+                <p class="text-xs text-gray-600 leading-relaxed text-justify">
+                    {{ $ruangan->deskripsi ?? 'Tower 1 ITS, atau MIPA Tower, menyediakan berbagai ruang kelas dengan kapasitas bervariasi yang dapat dipinjam untuk kegiatan perkuliahan, seminar, atau acara akademik lainnya.' }}
+                </p>
+            </div>
 
-                        <img src="{{ $img }}"
-                            alt="Thumbnail {{ $index + 1 }}"
-                            class="w-full h-full object-cover">
+            <!-- Location -->
+            <div class="mb-6">
+                <h2 class="text-base font-bold text-gray-800 mb-2">Lokasi</h2>
+                <p class="text-xs text-gray-600 leading-relaxed">
+                    {{ $ruangan->lokasi_ruangan ?? 'Jl. Teknik Mesin, Keputih, Kec. Sukolilo, Surabaya, Jawa Timur 60117' }}
+                </p>
+            </div>
+
+            <!-- Capacity -->
+            <div class="flex flex-col items-left mb-6">
+                <span class="font-bold text-gray-800 mb-2">Kapasitas</span>
+                <span class="text-gray-600 text-xs">{{ $ruangan->kapasitas ?? 150 }} Orang</span>
+            </div>
+
+            <!-- Facilities -->
+            <div class="mb-6">
+                <div class="flex items-center mb-3">
+                    <span class="font-bold text-gray-800">Fasilitas</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach($ruangan->fasilitas ? explode(',', $ruangan->fasilitas) : ['AC', 'Speaker', 'Layar', 'Mic'] as $item)
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                            <span class="text-xs text-gray-600">{{ trim($item) }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Room Availability Calendar -->
+            <div class="mb-6">
+                <h2 class="text-base font-bold text-gray-800 mb-4">Ketersediaan Ruangan</h2>
+
+                <!-- Calendar Header with Navigation -->
+                <div class="flex justify-between items-center mb-4">
+                    <button id="prevMonth" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
                     </button>
-                @endforeach
-            </div>
-        </div>
+                    <span id="calendarMonth" class="text-sm font-semibold text-gray-800">{{ now()->format('F Y') }}</span>
+                    <button id="nextMonth" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
 
-        <!-- Description -->
-        <div class="mb-6">
-            <h2 class="text-base font-bold text-gray-800 mb-2">Deskripsi</h2>
-            <p class="text-xs text-gray-600 leading-relaxed text-justify">
-                {{ $ruangan->deskripsi ?? 'Tower 1 ITS, atau MIPA Tower, menyediakan berbagai ruang kelas dengan kapasitas bervariasi yang dapat dipinjam untuk kegiatan perkuliahan, seminar, atau acara akademik lainnya.' }}
-            </p>
-        </div>
-
-        <!-- Location -->
-        <div class="mb-6">
-            <h2 class="text-base font-bold text-gray-800 mb-2">Lokasi</h2>
-            <p class="text-xs text-gray-600 leading-relaxed">
-                {{ $ruangan->lokasi_ruangan ?? 'Jl. Teknik Mesin, Keputih, Kec. Sukolilo, Surabaya, Jawa Timur 60117' }}
-            </p>
-        </div>
-
-        <!-- Capacity -->
-        <div class="flex flex-col items-left mb-6">
-            <span class="font-bold text-gray-800 mb-2">Kapasitas</span>
-            <span class="text-gray-600 text-xs">{{ $ruangan->kapasitas ?? 150 }} Orang</span>
-        </div>
-
-        <!-- Facilities -->
-        <div class="mb-6">
-            <div class="flex items-center mb-3">
-                <span class="font-bold text-gray-800">Fasilitas</span>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                @foreach($ruangan->fasilitas ? explode(',', $ruangan->fasilitas) : ['AC', 'Speaker', 'Layar', 'Mic'] as $item)
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                        <span class="text-xs text-gray-600">{{ trim($item) }}</span>
+                <!-- Scrollable Calendar Container -->
+                <div id="calendarContainer" class="overflow-x-auto pb-2" style="scrollbar-width: thin;">
+                    <div id="calendarGrid" class="inline-block min-w-full">
+                        <!-- Calendar will be rendered here by JavaScript -->
                     </div>
-                @endforeach
-            </div>
-        </div>
+                </div>
 
-        <!-- Room Availability Calendar -->
-        <div class="mb-6">
-            <h2 class="text-base font-bold text-gray-800 mb-4">Ketersediaan Ruangan</h2>
-
-            <!-- Calendar Header with Navigation -->
-            <div class="flex justify-between items-center mb-4">
-                <button id="prevMonth" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </button>
-                <span id="calendarMonth" class="text-sm font-semibold text-gray-800">{{ now()->format('F Y') }}</span>
-                <button id="nextMonth" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Scrollable Calendar Container -->
-            <div id="calendarContainer" class="overflow-x-auto pb-2" style="scrollbar-width: thin;">
-                <div id="calendarGrid" class="inline-block min-w-full">
-                    <!-- Calendar will be rendered here by JavaScript -->
+                <!-- Legend -->
+                <div class="flex justify-center gap-4 mt-4 text-xs text-gray-600">
+                    <div class="flex items-center gap-1">
+                        <div class="w-3 h-3 rounded-full bg-gray-200"></div>
+                        <span>Hari ini</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span>Penuh</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Legend -->
-            <div class="flex justify-center gap-4 mt-4 text-xs text-gray-600">
-                <div class="flex items-center gap-1">
-                    <div class="w-3 h-3 rounded-full bg-gray-200"></div>
-                    <span>Hari ini</span>
-                </div>
-                <div class="flex items-center gap-1">
-                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                    <span>Penuh</span>
-                </div>
+            <!-- Booking Button -->
+            <div class="flex flex-col w-full pb-4">
+                <x-button variant="solid" size="md" :full="true" class="mt-3" onclick="openBookingModal()">
+                    Ajukan Peminjaman
+                </x-button>
             </div>
         </div>
 
-        <!-- Booking Button -->
-        <div class="flex flex-col w-full pb-4">
-            <x-button variant="solid" size="md" :full="true" class="mt-3" onclick="openBookingModal()">
-                Ajukan Peminjaman
-            </x-button>
-        </div>
     </div>
 
     <!-- Booking Modal (Fixed Position Inside Frame) -->
