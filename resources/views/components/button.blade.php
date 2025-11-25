@@ -26,6 +26,7 @@
         'solid'   => 'bg-[#013880] text-white hover:bg-[#013880]/90 active:bg-[#013880]/80 focus:ring-[#013880]',
         'outline' => 'border border-white text-white hover:text-[#013880] hover:bg-white focus:ring-white',
         'ghost'   => 'text-blue-700 hover:bg-blue-50 focus:ring-blue-300',
+        'danger'  => 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus:ring-red-300',
     ];
 
     $cls = trim($base.' '.($sizes[$size] ?? $sizes['md']).' '.($variants[$variant] ?? $variants['primary']).' '.($full ? 'w-full' : ''));
