@@ -11,10 +11,25 @@
         <!-- User Greeting -->
         <div class="flex items-center justify-between mt-4 mb-2">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                    </svg>
+                <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
+                    @if(Auth::user()->foto_profile)
+                        @php
+                            // Handle both old path format and new full URL format
+                            if (str_starts_with(Auth::user()->foto_profile, 'http')) {
+                                $photoUrl = Auth::user()->foto_profile;
+                            } else {
+                                // Old format: construct from Supabase base URL
+                                $supabaseUrl = rtrim(env('SUPABASE_URL'), '/');
+                                $encodedPath = str_replace(' ', '%20', Auth::user()->foto_profile);
+                                $photoUrl = "{$supabaseUrl}/storage/v1/object/public/{$encodedPath}";
+                            }
+                        @endphp
+                        <img src="{{ $photoUrl }}" class="w-full h-full object-cover">
+                    @else
+                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                        </svg>
+                    @endif
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Selamat Datang,</p>
