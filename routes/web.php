@@ -2,10 +2,48 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Http\Controllers\SignUp\SignUpController;
+use App\Http\Controllers\Login\LoginController;
+use App\Http\Controllers\Peminjaman\PeminjamanController;
+use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\EditakundanHapusakun\AkunController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\RuanganController;
+
 
 // Navbar
 Route::get('/home', function () {
-    return view('page/homepage');
+    $riwayat = collect();
+
+    if (Auth::check()) {
+        $userId = Auth::id();
+
+        $riwayat = DB::table('peminjaman as p')
+            ->join('ruangan as r', 'p.ruanganid', '=', 'r.ruanganid')
+            ->join('riwayat_status as rs', function ($join) {
+                $join->on('p.peminjamanid', '=', 'rs.peminjamanid')
+                     ->whereRaw('rs.statusid = (
+                         SELECT MAX(statusid)
+                         FROM riwayat_status
+                         WHERE peminjamanid = p.peminjamanid
+                     )');
+            })
+            ->where('p.userid', $userId)
+            ->orderByDesc('p.tanggal')
+            ->limit(2)
+            ->get([
+                'p.peminjamanid',
+                'p.tanggal',
+                'p.nama_shift',
+                'p.keterangan',
+                'r.nama_ruangan',
+                'r.kapasitas',
+                'rs.nama_status',
+            ]);
+    }
+
+    return view('page/homepage', compact('riwayat'));
 })->name('home');
 
 Route::get('/riwayat', function () {
@@ -20,9 +58,7 @@ Route::get('/info', function () {
     return view('page/info/alur-penjelasan');
 })->name('info');
 
-Route::get('/profile', function () {
-    return view('page/profile/profile');
-})->name('profile');
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
 //DB Connection
 Route::get('/cek-koneksi', function () {
@@ -39,40 +75,20 @@ Route::get('/', function () {
     return view('page/auth/auth');
 });
 
-// Login Page
-Route::get('/login', function () {
-    return view('page/auth/login');
-});
+// LOGIN
+Route::get('/login', [LoginController::class, 'show'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 
-// Register Page
-Route::get('/loginpage', function () {
-    return view('page/loginpage/signin');
-});
+// LOGOUT (ini yang tadi bikin error karena belum ada)
+Route::post('/logout', function (Request $request) {
+    $request->session()->flush();      // hapus semua session user
+    return redirect()->route('login'); // balik ke halaman login
+})->name('logout');
 
+// SIGNUP
+Route::get('/signup', [SignUpController::class, 'create'])->name('signup');
+Route::post('/signup', [SignUpController::class, 'store'])->name('signup.store');
 
-Route::get('/alur-penjelasan', function () {
-    return view('page/info/alur-penjelasan', ['title' => 'Alur Penjelasan']);
-});
-
-Route::get('/faq', function () {
-    return view('page/info/faq', ['title' => 'FAQ']);
-});
-
-Route::get('/kirim-pertanyaan', function () {
-    return view('page/info/kirim-pertanyaan', ['title' => 'Kirim Pertanyaan']);
-});
-
-Route::get('/signup', function () {
-    return view('page/signup/signup');
-});
-
-Route::get('/editakun', function () {
-    return view('page/editprofile/editakun');
-});
-
-Route::get('/signin', function () {
-    return view('page/loginpage/signin');
-});
 // Cariruangan
 Route::get('/seacrh', function () {
     return view('page/cariruangan/cariruangan');
@@ -83,10 +99,35 @@ Route::get('/search-persial', function () {
     return view('page/cariruangan/cariruanganparsial');
 });
 
-// Ruangan
+// ====== RUANGAN & PEMINJAMAN ROUTES ======
+
+// Detail Ruangan (Static - route lama)
 Route::get('/ruangan', function () {
     return view('page/ruangan/detail-ruangan');
+})->name('ruangan.static');
+
+// Detail Ruangan (Dynamic - route baru dengan ID)
+Route::get('/ruangan/{id}', [PeminjamanController::class, 'show'])
+    ->name('ruangan.detail');
+
+// ====== PEMINJAMAN ROUTES (Requires Auth) ======
+Route::middleware(['auth'])->group(function () {
+
+    Route::post('/peminjaman', [PeminjamanController::class, 'store'])
+        ->name('peminjaman.store');
+
+    Route::post('/peminjaman/check-availability', [PeminjamanController::class, 'checkAvailability'])
+        ->name('peminjaman.check-availability');
+
+    Route::get('/success', function () {
+        return view('page/peminjaman/success');
+    })->name('peminjaman.success');
+
+    Route::post('/peminjaman/slots', [PeminjamanController::class, 'getAvailableSlots'])
+    ->name('peminjaman.slots');
+
 });
+
 
 // Success
 Route::get('/success', function () {
@@ -136,4 +177,25 @@ Route::get('/cariruangan', function () {
 //Cariruangan parsial
 Route::get('/cariruanganparsial', function () {
     return view('page/cariruangan/cariruanganparsial');
+});
+// Edit akun
+Route::get('/editakun', [AkunController::class, 'edit'])->name('account.edit');
+Route::post('/editakun', [AkunController::class, 'update'])->name('account.update');
+
+// Hapus akun
+Route::post('/hapus-akun', [AkunController::class, 'destroy'])->name('account.destroy');
+
+
+// ====== ADMIN ROUTES ======
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/peminjaman/{peminjamanId}/status', [AdminController::class, 'updateStatus'])->name('admin.peminjaman.updateStatus');
+
+    // Ruangan Routes
+    Route::get('/ruangan', [RuanganController::class, 'index'])->name('admin.ruangan.index');
+    Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('admin.ruangan.create');
+    Route::post('/ruangan', [RuanganController::class, 'store'])->name('admin.ruangan.store');
+    Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('admin.ruangan.edit');
+    Route::post('/ruangan/{id}', [RuanganController::class, 'update'])->name('admin.ruangan.update');
+    Route::post('/ruangan/{id}/delete', [RuanganController::class, 'destroy'])->name('admin.ruangan.destroy');
 });

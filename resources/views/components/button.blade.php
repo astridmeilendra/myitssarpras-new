@@ -14,6 +14,7 @@
              transition disabled:opacity-50 disabled:pointer-events-none';
 
     $sizes = [
+        'xs' => 'h-7 px-3 text-xs', // New extra small size
         'sm' => 'h-9 px-4 text-sm',
         'md' => 'h-11 px-5 text-base',
         'lg' => 'h-12 px-6 text-lg',
