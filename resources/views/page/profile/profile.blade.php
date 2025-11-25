@@ -38,7 +38,7 @@
     </div>
 
     <!-- Menu Section -->
-    <div class="flex-1 bg-gray-50 px-4 py-4">
+    <div class="flex-1 bg-white px-4 py-4">
         <div class="space-y-3">
             <!-- Menu Item: Akun -->
             <a href="{{ route('account.edit') }}"

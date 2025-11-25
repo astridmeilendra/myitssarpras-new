@@ -81,6 +81,14 @@
         font-size: 0.875rem;
         color: #334155;
         padding-right: 3rem;
+        transition: all 0.2s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #0052a8;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(0, 82, 168, 0.05);
     }
 
     .input-wrapper {
