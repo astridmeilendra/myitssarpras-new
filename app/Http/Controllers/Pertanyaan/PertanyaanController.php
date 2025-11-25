@@ -4,60 +4,74 @@ namespace App\Http\Controllers\Pertanyaan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pertanyaan;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PertanyaanController extends Controller
 {
+    /**
+     * Tampilkan halaman "Kirim Pertanyaan"
+     * beserta daftar pertanyaan milik user yang sedang login.
+     */
     public function index()
     {
-        // user yang sedang loginn
-        // test
+        // Pastikan user sudah login (harusnya sudah lewat middleware auth)
         $userId = Auth::id();
 
-        // ambil pertanyaan user + jawabannya (kalau sudah ada)
-        // ambil pertanyaan user + jawabannya (kalau sudah ada)
-        $histories = DB::table('pertanyaan as p')
-            ->leftJoin('jawaban as j', 'p.pertanyaanid', '=', 'j.pertanyaanid')
-            ->where('p.userid', $userId)
-            ->orderBy('p.pertanyaanid', 'desc')
-            ->get([
-                'p.pertanyaanid',
-                'p.isi_pertanyaan',
-                'p.lampiran',
-                'p.sifat',
-                'j.isi_jawaban'
-            ]);
+        // Ambil semua pertanyaan milik user + relasi jawaban (jika ada)
+        $histories = Pertanyaan::with('jawaban')
+            ->where('userid', $userId)
+            ->orderByDesc('pertanyaanid')
+            ->get();
 
         return view('page.info.kirim-pertanyaan', compact('histories'));
     }
 
+    /**
+     * Simpan pertanyaan baru dari user.
+     */
     public function store(Request $request)
     {
-        // validasi input
+        // Validasi input
         $validated = $request->validate([
-            'isi_pertanyaan' => 'required|string|max:500',
-            'lampiran' => 'nullable|file|max:10240', // max 10MB
-            'sifat' => 'required|in:rendah,sedang,menengah'
+            'isi_pertanyaan' => ['required', 'string', 'max:500'],
+            'lampiran'       => ['nullable', 'file', 'max:10240'], // max 10 MB
+            'sifat'          => ['required', 'in:rendah,sedang,menengah'],
         ]);
 
         $userId = Auth::id();
 
-        // handle file upload
+        // Default: tidak ada file
         $filePath = null;
+
+        // Kalau ada lampiran, upload ke Supabase Storage (disk: supabase)
         if ($request->hasFile('lampiran')) {
-            $filePath = $request->file('lampiran')->store('pertanyaan', 'public');
+            $file = $request->file('lampiran');
+
+            // Nama file unik biar tidak tabrakan
+            $fileName = time() . '_' . $file->getClientOriginalName();
+
+            // Folder di dalam bucket (misal: dokumen-pertanyaan/lampiran/xxx.pdf)
+            $filePath = 'lampiran/' . $fileName;
+
+            // Simpan ke disk 'supabase' (sudah di-setup di config/filesystems.php)
+            Storage::disk('supabase')->put(
+                $filePath,
+                file_get_contents($file->getRealPath())
+            );
         }
 
-        // create pertanyaan
+        // Simpan ke tabel pertanyaan
         Pertanyaan::create([
-            'userid' => $userId,
+            'userid'         => $userId,
             'isi_pertanyaan' => $validated['isi_pertanyaan'],
-            'lampiran' => $filePath,
-            'sifat' => $validated['sifat']
+            'lampiran'       => $filePath, // path di Supabase
+            'sifat'          => $validated['sifat'],
         ]);
 
-        return redirect()->route('kirim-pertanyaan')->with('success', 'Pertanyaan berhasil dikirim!');
+        return redirect()
+            ->route('kirim-pertanyaan')
+            ->with('success', 'Pertanyaan berhasil dikirim!');
     }
 }
