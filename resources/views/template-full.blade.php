@@ -55,7 +55,7 @@
 
 <body class="bg-background flex items-center justify-center min-h-screen overflow-hidden">
 
-    <div class="bg-card w-full max-w-[390px] md:max-h-[854px] h-screen rounded-xl shadow-mobile overflow-hidden">
+    <div class="bg-card w-full max-w-[390px] md:max-h-[854px] h-screen max-h-[854px] rounded-xl shadow-mobile overflow-hidden">
         @yield('content')
     </div>
 

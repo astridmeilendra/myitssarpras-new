@@ -5,20 +5,32 @@
 
 @section('content')
 <div class="flex flex-col h-full relative">
-    <!-- Header -->
-    <div class="bg-white px-6 pt-5 pb-2">
-        <!-- Judul -->
-        <h1 class="text-xl font-extrabold text-[#013880] mb-4 text-center tracking-wide">
-            Cari Ruangan
-        </h1>
+    <!-- Header with Back Button - Sticky -->
+        <div class="sticky top-0 z-10 bg-white flex items-center px-6 pt-6 pb-4">
+        <div class="flex flex-col justify-center text-center m-auto">
+            <h1 class="text-md font-bold text-[#003D82]">Cari Ruangan</h1>
+        </div>
+    </div>
 
-        <!-- Search Bar -->
+    <!-- Search Bar -->
+    <div class="px-6 bg-white py-1 shadow-sm">
+        <style>
+            .search-input {
+                transition: all 0.2s;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #003D82 !important;
+                box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.05) !important;
+            }
+        </style>
         <div class="relative flex items-center w-full">
             <!-- Input -->
             <input
                 type="text"
                 placeholder="Masukkan nama ruangan..."
-                class="w-full pl-4 pr-24 py-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent transition-all"
+                class="search-input w-full pl-4 pr-24 py-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent transition-all"
                 id="searchInput"
                 value="{{ $search ?? '' }}"
             >
@@ -42,8 +54,8 @@
             </button>
         </div>
 
-        <!-- Active Filters (Chip Container) - Sticky -->
-        <div class="bg-white pt-3 pb-3 -mx-6 px-6">
+        <!-- Active Filters (Chip Container) -->
+        <div class="pt-2 pb-2">
             <div id="activeFilters"
                 class="flex flex-wrap gap-2 w-full">
                 <!-- Chip akan muncul di sini via JS -->
@@ -182,9 +194,9 @@
     </div>
 
     <!-- Content -->
-    <div class="flex flex-col px-6 overflow-y-auto scrollbar-hide h-full mb-4" style="scrollbar-width: none; -ms-overflow-style: none;">
+    <div class="flex flex-col px-6 overflow-y-auto scrollbar-hide h-full pt-2 mb-4" style="scrollbar-width: none; -ms-overflow-style: none;">
         <h2 class="text-sm font-semibold text-gray-500 mb-4 mt-1">Pencarian Cepat</h2>
-        
+
         <!-- Loading State -->
         <div id="loadingState" class="hidden text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#013880]"></div>
@@ -203,7 +215,7 @@
         <!-- Room Cards -->
         <div class="space-y-4" id="roomList">
             @forelse ($rooms as $room)
-            <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer" 
+            <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                  data-room-name="{{ strtolower($room['name']) }}"
                  data-room-desc="{{ strtolower($room['desc']) }}"
                  data-room-location="{{ strtolower($room['location'] ?? '') }}"
@@ -270,7 +282,7 @@
 
     filterButton.addEventListener('click', openFilterPanel);
     closeFilter.addEventListener('click', closeFilterPanel);
-    
+
     // Apply Filter dengan AJAX
     applyFilter.addEventListener('click', () => {
         const date = document.getElementById('filterDate').value;
@@ -308,7 +320,7 @@
 
             if (data.success) {
                 updateRoomList(data.data);
-                
+
                 // Update chips
                 activeFilters.innerHTML = '';
                 const addChip = (label, value) => {
@@ -343,9 +355,9 @@
 
     searchInput.addEventListener('input', function() {
         const searchQuery = this.value.toLowerCase().trim();
-        
+
         clearTimeout(searchTimeout);
-        
+
         searchTimeout = setTimeout(() => {
             let visibleCount = 0;
 
@@ -353,7 +365,7 @@
                 const roomName = card.getAttribute('data-room-name');
                 const roomDesc = card.getAttribute('data-room-desc');
                 const roomLocation = card.getAttribute('data-room-location');
-                
+
                 if (roomName.includes(searchQuery) || roomDesc.includes(searchQuery) || roomLocation.includes(searchQuery)) {
                     card.style.display = 'block';
                     visibleCount++;
@@ -389,7 +401,7 @@
 
         rooms.forEach(room => {
             const roomCard = `
-                <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer" 
+                <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                      data-room-name="${room.name.toLowerCase()}"
                      data-room-desc="${room.desc.toLowerCase()}"
                      data-room-location="${(room.location || '').toLowerCase()}"
@@ -397,15 +409,15 @@
                      onclick="window.location.href='/ruangan/${room.id}'">
                     <!-- Image -->
                     <div class="w-full h-[180px] overflow-hidden">
-                        <img 
-                            src="${room.image}" 
-                            alt="${room.name}" 
-                            class="w-full h-full object-cover" 
+                        <img
+                            src="${room.image}"
+                            alt="${room.name}"
+                            class="w-full h-full object-cover"
                             onerror="console.error('Image failed to load:', this.src); this.src='{{ asset('img/default-room.png') }}'"
                             onload="console.log('Image loaded:', this.src)"
                         >
                     </div>
-                    
+
                     <!-- Info -->
                     <div class="p-4">
                         <p class="text-xs font-medium text-gray-500 mb-1">${room.type}</p>
