@@ -17,7 +17,7 @@
     <div class="flex flex-col h-full overflow-y-auto scrollbar-hide">
         <!-- Header with Back Button - Sticky -->
         <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center mb-6 px-6 pt-6 pb-4">
-            <a href="{{ route('home') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <a href="{{ route('seacrh') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -101,9 +101,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
-                        <div>
+                        <div class="space-y-1">
                             <p class="text-xs text-gray-500">Tanggal Peminjaman</p>
-                            <p class="text-base font-semibold text-gray-900">{{ \Carbon\Carbon::parse($peminjaman->tanggal)->translatedFormat('d F Y') }}</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ \Carbon\Carbon::parse($peminjaman->tanggal)->translatedFormat('d F Y') }}</p>
                         </div>
                     </div>
 
@@ -114,9 +114,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <div>
+                        <div class="space-y-1">
                             <p class="text-xs text-gray-500">Shift</p>
-                            <p class="text-base font-semibold text-gray-900">{{ $peminjaman->nama_shift ?? '-' }}</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ $peminjaman->nama_shift ?? '-' }}</p>
                         </div>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                     <div class="mb-3">
                         <h4 class="text-xs font-semibold text-gray-600 mb-4">Riwayat Status</h4>
 
-                        <div class="space-y-0">
+                        <div class="space-y-4">
                             @forelse($riwayatStatus as $status)
                                 <div class="flex gap-4">
                                     {{-- Timeline Dot --}}

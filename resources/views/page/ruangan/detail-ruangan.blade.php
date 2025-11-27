@@ -37,7 +37,7 @@
     <div class="flex flex-col h-full overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Header with Back Button - Sticky -->
         <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center mb-6 px-6 pt-6 pb-4">
-            <a href="{{ route('home') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <a href="{{ route('search') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
