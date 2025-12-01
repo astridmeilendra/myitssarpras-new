@@ -116,7 +116,21 @@ Route::get('/ruangan', function () {
     return view('page/ruangan/detail-ruangan');
 })->name('ruangan.static');
 
-// Detail Ruangan (Dynamic - route baru dengan ID)
+// ====== ADMIN ROUTES (Harus sebelum dynamic routes) ======
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/peminjaman/{peminjamanId}/status', [AdminController::class, 'updateStatus'])->name('admin.peminjaman.updateStatus');
+
+    // Ruangan Routes - HARUS SEBELUM /ruangan/{id}
+    Route::get('/ruangan/index', [RuanganController::class, 'index'])->name('admin.ruangan.index');
+    Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('admin.ruangan.create');
+    Route::post('/ruangan', [RuanganController::class, 'store'])->name('admin.ruangan.store');
+    Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('admin.ruangan.edit');
+    Route::post('/ruangan/{id}', [RuanganController::class, 'update'])->name('admin.ruangan.update');
+    Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])->name('admin.ruangan.destroy');
+});
+
+// Detail Ruangan (Dynamic - route baru dengan ID) - SETELAH admin routes
 Route::get('/ruangan/{id}', [PeminjamanController::class, 'show'])
     ->name('ruangan.detail');
 
@@ -194,19 +208,8 @@ Route::post('/editakun', [AkunController::class, 'update'])->name('account.updat
 
 // Hapus akun
 Route::post('/hapus-akun', [AkunController::class, 'destroy'])->name('account.destroy');
-// ====== ADMIN ROUTES ======
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::post('/peminjaman/{peminjamanId}/status', [AdminController::class, 'updateStatus'])->name('admin.peminjaman.updateStatus');
 
-    // Ruangan Routes
-    Route::get('/ruangan', [RuanganController::class, 'index'])->name('admin.ruangan.index');
-    Route::get('/ruangan/create', [RuanganController::class, 'create'])->name('admin.ruangan.create');
-    Route::post('/ruangan', [RuanganController::class, 'store'])->name('admin.ruangan.store');
-    Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('admin.ruangan.edit');
-    Route::post('/ruangan/{id}', [RuanganController::class, 'update'])->name('admin.ruangan.update');
-    Route::post('/ruangan/{id}/delete', [RuanganController::class, 'destroy'])->name('admin.ruangan.destroy');
-});// Route untuk mendapatkan detail ruangan
+// Route untuk mendapatkan detail ruangan
 Route::get('/search/room/{id}', [CariRuanganController::class, 'show'])->name('search.show');
 
 // Route untuk mendapatkan semua fasilitas
