@@ -18,31 +18,29 @@
         <div class="flex-1 px-6 pb-6 overflow-y-auto">
         {{-- Avatar + Ganti Foto --}}
         <div class="flex flex-col items-center mt-2 mb-6">
-            <div id="avatarContainer" class="w-24 h-24 rounded-full bg-blue-500 flex items-center justify-center overflow-hidden">
+            <div id="avatarContainer" class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center overflow-hidden shadow-md">
                 @if($user->foto_profile)
                     @php
-                        // Handle both old path format and new full URL format
-                        if (str_starts_with($user->foto_profile, 'http')) {
-                            $photoUrl = $user->foto_profile;
-                        } else {
-                            // Old format: construct from Supabase base URL
+                        $photoUrl = $user->foto_profile;
+                        // Jika belum format URL lengkap, construct dari env
+                        if (!str_starts_with($photoUrl, 'http')) {
                             $supabaseUrl = rtrim(env('SUPABASE_URL'), '/');
-                            $encodedPath = str_replace(' ', '%20', $user->foto_profile);
+                            $encodedPath = str_replace(' ', '%20', $photoUrl);
                             $photoUrl = "{$supabaseUrl}/storage/v1/object/public/{$encodedPath}";
                         }
                     @endphp
-                    <img id="avatarImg" src="{{ $photoUrl }}" class="w-full h-full object-cover">
+                    <img id="avatarImg" src="{{ $photoUrl }}" alt="Profile Photo" class="w-full h-full object-cover" onerror="this.style.display='none';">
                 @else
-                    <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <svg id="avatarPlaceholder" class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
                     </svg>
                 @endif
             </div>
             <button type="button" id="changePhotoBtn"
-                    class="mt-3 text-xs px-4 py-1 rounded-full border border-blue-400 text-blue-600 bg-white hover:bg-blue-50 transition">
+                    class="mt-4 px-8 py-2 text-sm rounded-lg border-2 border-blue-600 text-blue-600 bg-white hover:bg-blue-50 font-medium transition duration-200">
                 Ganti Foto
             </button>
-            <span id="fileName" class="text-xs text-gray-400 mt-1"></span>
+            <span id="fileName" class="text-xs text-gray-400 mt-2"></span>
         </div>
 
         {{-- Form Edit Akun --}}
@@ -134,10 +132,8 @@
         <div class="px-6 py-4 bg-white space-y-3">
             {{-- Simpan Perubahan --}}
             <div id="saveButtonWrapper" class="hidden opacity-0 transition-all duration-300 ease-in-out">
-                <button type="submit" form="editAccountForm" class="w-full">
-                    <x-button type="submit" size="md" full class="!bg-blue-600 !text-white hover:!bg-blue-700">
-                        Simpan Perubahan
-                    </x-button>
+                <button type="submit" form="editAccountForm" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition duration-200">
+                    Simpan Perubahan
                 </button>
             </div>
 
@@ -145,9 +141,9 @@
             <form action="{{ route('account.destroy') }}" method="POST"
                   onsubmit="return confirm('Yakin ingin menghapus akun? Tindakan ini tidak dapat dibatalkan.')">
                 @csrf
-                <x-button type="submit" size="md" full class="!bg-gray-300 !text-gray-700 hover:!bg-red-600 hover:!text-white">
+                <button type="submit" class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-red-600 hover:text-white font-medium transition duration-200">
                     Hapus Akun
-                </x-button>
+                </button>
             </form>
         </div>
 </div>
@@ -226,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (existingImg) {
                     existingImg.src = event.target.result;
+                    existingImg.style.display = 'block';
                 } else {
                     if (existingSvg) existingSvg.remove();
                     const img = document.createElement('img');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\SupabaseHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,16 +27,37 @@ class RuanganController extends Controller
             'lokasi_ruangan' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'kapasitas' => 'required|integer|min:1',
-            'foto' => 'nullable|string',
+            'foto_1' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'foto_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'foto_3' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'fasilitas' => 'nullable|string',
         ]);
+
+        // Upload foto ke Supabase
+        $fotoUrls = [];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $fieldName = 'foto_' . $i;
+            if ($request->hasFile($fieldName) && $request->file($fieldName)->isValid()) {
+                $url = SupabaseHelper::uploadFile(
+                    $request->file($fieldName),
+                    'ruangan',
+                    date('Y/m/d')
+                );
+                if ($url) {
+                    $fotoUrls[] = $url;
+                }
+            }
+        }
+
+        $fotoString = !empty($fotoUrls) ? implode(',', $fotoUrls) : null;
 
         DB::table('ruangan')->insert([
             'nama_ruangan' => $request->nama_ruangan,
             'lokasi_ruangan' => $request->lokasi_ruangan,
             'deskripsi' => $request->deskripsi,
             'kapasitas' => $request->kapasitas,
-            'foto' => $request->foto,
+            'foto' => $fotoString,
             'fasilitas' => $request->fasilitas,
         ]);
 
@@ -60,16 +82,54 @@ class RuanganController extends Controller
             'lokasi_ruangan' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'kapasitas' => 'required|integer|min:1',
-            'foto' => 'nullable|string',
+            'foto_1' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'foto_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'foto_3' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'fasilitas' => 'nullable|string',
         ]);
+
+        $ruangan = DB::table('ruangan')->where('ruanganid', $id)->first();
+
+        if (!$ruangan) {
+            return redirect()->route('admin.ruangan.index')->with('error', 'Ruangan tidak ditemukan.');
+        }
+
+        // Parse existing photos
+        $existingPhotos = SupabaseHelper::parseFotoUrls($ruangan->foto);
+
+        // Handle foto replacement - jika user upload foto baru, replace photo di index tersebut
+        for ($i = 0; $i < 3; $i++) {
+            $fieldName = 'foto_' . ($i + 1);
+            if ($request->hasFile($fieldName) && $request->file($fieldName)->isValid()) {
+                // Delete old photo jika ada
+                if (isset($existingPhotos[$i]) && $existingPhotos[$i]) {
+                    SupabaseHelper::deleteFile($existingPhotos[$i], 'ruangan');
+                }
+
+                // Upload foto baru
+                $url = SupabaseHelper::uploadFile(
+                    $request->file($fieldName),
+                    'ruangan',
+                    date('Y/m/d')
+                );
+
+                if ($url) {
+                    $existingPhotos[$i] = $url;
+                }
+            }
+        }
+
+        // Re-index array dan buat string foto
+        $existingPhotos = array_filter($existingPhotos); // Remove empty values
+        $existingPhotos = array_values($existingPhotos); // Re-index
+        $fotoString = !empty($existingPhotos) ? implode(',', $existingPhotos) : null;
 
         DB::table('ruangan')->where('ruanganid', $id)->update([
             'nama_ruangan' => $request->nama_ruangan,
             'lokasi_ruangan' => $request->lokasi_ruangan,
             'deskripsi' => $request->deskripsi,
             'kapasitas' => $request->kapasitas,
-            'foto' => $request->foto,
+            'foto' => $fotoString,
             'fasilitas' => $request->fasilitas,
         ]);
 
