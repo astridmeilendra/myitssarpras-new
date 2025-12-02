@@ -1,5 +1,4 @@
-#![Cozy Mario Gaming Room Pixel Art _ Nostalgic Lofi   8-Bit Vibes](https://github.com/user-attachments/assets/299505bb-2803-44ab-bc9b-5076ce01cda3)
- MyITS SarPras  
+#MyITS SarPras  
 
 ## Overview  
 **MyITS SarPras** is a web-based platform developed as part of the *Perancangan dan Pengembangan Perangkat Lunak (PPPL)*.  
