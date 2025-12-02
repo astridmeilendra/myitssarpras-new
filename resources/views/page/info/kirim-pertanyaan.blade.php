@@ -165,12 +165,17 @@
             </div>
         </div>
 
-        <hr class="border-[#E5E7EB]">
+        {{-- DIVIDER --}}
+        <div class="flex items-center gap-3 my-6">
+            <div class="flex-1 h-px bg-[#E5E7EB]"></div>
+            <span class="text-[12px] text-[#9CA3AF] font-medium">Buat Pertanyaan Baru</span>
+            <div class="flex-1 h-px bg-[#E5E7EB]"></div>
+        </div>
 
-        {{-- FORM --}}
-        <div class="bg-white rounded-[18px] shadow-sm px-4 py-4">
+        {{-- FORM CARD --}}
+        <div class="bg-gradient-to-br from-blue-50 to-white border border-[#DBEAFE] rounded-[16px] shadow-sm px-5 py-5">
 
-            <p class="text-center text-[14px] font-bold text-[#013880] mb-4">
+            <p class="text-center text-[14px] font-bold text-[#013880] mb-5">
                 Buat Pertanyaan
             </p>
 
@@ -180,7 +185,7 @@
                 @csrf
 
                 {{-- TEXTAREA --}}
-                <label class="block text-[13px] text-[#111827] mb-1">
+                <label class="block text-[13px] text-[#111827] mb-2 font-medium">
                     Pertanyaan (max. 500 kata)
                 </label>
                 <textarea
@@ -188,18 +193,18 @@
                     required
                     maxlength="500"
                     class="w-full h-28 rounded-[10px] border border-[#E5E7EB]
-                           focus:outline-none focus:ring-1 focus:ring-[#013880]
-                           px-3 py-2 text-[13px] mb-3"
+                           focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent
+                           px-3 py-2 text-[13px] mb-4 bg-white"
                     placeholder="Tulis pertanyaan kamu di sini..."></textarea>
 
                 {{-- FILE --}}
-                <label class="block text-[13px] text-[#111827] mb-1">
+                <label class="block text-[13px] text-[#111827] mb-2 font-medium">
                     Dokumen (Opsional)
                 </label>
 
                 <label class="w-full flex items-center gap-2 border border-[#E5E7EB]
                                rounded-[10px] px-3 py-2 text-[13px] text-[#6B7280]
-                               mb-3 cursor-pointer bg-white">
+                               mb-4 cursor-pointer bg-white hover:bg-blue-50 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="w-4 h-4 text-[#013880]" fill="none"
                          viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor">
@@ -211,27 +216,27 @@
                 </label>
 
                 {{-- SIFAT --}}
-                <p class="text-[13px] text-[#111827] mb-2">Sifat Pertanyaan</p>
+                <p class="text-[13px] text-[#111827] mb-3 font-medium">Sifat Pertanyaan</p>
 
-                <div class="flex items-center gap-4 mb-4">
-                    <label class="flex items-center gap-1 text-[13px]">
+                <div class="flex items-center gap-4 mb-5">
+                    <label class="flex items-center gap-2 text-[13px] cursor-pointer">
                         <input type="radio" name="sifat" value="rendah" checked class="accent-[#16A34A]">
-                        <span class="text-[#16A34A]">Rendah</span>
+                        <span class="text-[#16A34A] font-medium">Rendah</span>
                     </label>
-                    <label class="flex items-center gap-1 text-[13px]">
+                    <label class="flex items-center gap-2 text-[13px] cursor-pointer">
                         <input type="radio" name="sifat" value="sedang" class="accent-[#F97316]">
-                        <span class="text-[#F97316]">Sedang</span>
+                        <span class="text-[#F97316] font-medium">Sedang</span>
                     </label>
-                    <label class="flex items-center gap-1 text-[13px]">
+                    <label class="flex items-center gap-2 text-[13px] cursor-pointer">
                         <input type="radio" name="sifat" value="menengah" class="accent-[#DC2626]">
-                        <span class="text-[#DC2626]">Menengah</span>
+                        <span class="text-[#DC2626] font-medium">Menengah</span>
                     </label>
                 </div>
 
                 {{-- SUBMIT --}}
                 <button type="submit"
-                        class="w-full bg-[#003B84] text-white rounded-[14px] h-10 text-[14px] font-semibold">
-                    Kirim
+                        class="w-full bg-[#013880] hover:bg-[#002659] text-white rounded-[12px] h-10 text-[14px] font-semibold transition-colors">
+                    Kirim Pertanyaan
                 </button>
             </form>
 
