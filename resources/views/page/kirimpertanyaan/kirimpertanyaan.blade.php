@@ -126,35 +126,35 @@
         <h2 class="text-center text-[#003d82] text-xl font-bold mb-6">Informasi</h2>
 
         <!-- Tabs Navigation -->
-            <div class="bg-white -mx-5 px-5 mb-5">
-                <div class="grid grid-cols-3 relative">
-                    <!-- Garis bawah abu-abu untuk semua tab -->
-                    <div class="absolute bottom-0 left-0 w-full h-[2px] bg-[#E5E7EB]"></div>
+        <div class="bg-white -mx-5 px-5 mb-5">
+            <div class="grid grid-cols-3 relative">
+                <!-- Garis bawah abu-abu untuk semua tab -->
+                <div class="absolute bottom-0 left-0 w-full h-[2px] bg-[#E5E7EB]"></div>
 
-                    <!-- Tab Alur Penjelasan -->
-                    <a href="{{ url('/alur-penjelasan') }}"
-                    class="flex items-center justify-center text-[13px] font-normal text-[#6B7280] py-3 relative whitespace-nowrap">
-                        Alur Penjelasan
-                    </a>
+                <!-- Tab Alur Penjelasan -->
+                <a href="{{ url('/alur-penjelasan') }}"
+                class="flex items-center justify-center text-[13px] font-normal text-[#6B7280] py-3 relative whitespace-nowrap">
+                    Alur Penjelasan
+                </a>
 
-                    <!-- Tab FAQ -->
-                    <a href="{{ url('faq') }}"
-                    class="flex items-center justify-center text-[13px] font-normal text-[#6B7280] py-3 relative whitespace-nowrap">
-                        FAQ
-                    </a>
+                <!-- Tab FAQ -->
+                <a href="{{ url('/faq') }}"
+                class="flex items-center justify-center text-[13px] font-normal text-[#6B7280] py-3 relative whitespace-nowrap">
+                    FAQ
+                </a>
 
-                    <!-- Tab Kirim Pertanyaan (Active) -->
-                    <div class="flex items-center justify-center text-[13px] font-semibold text-[#003d82] py-3 relative whitespace-nowrap">
-                        Kirim Pertanyaan
-                        <!-- Garis bawah biru untuk tab aktif -->
-                        <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[#003d82]"></div>
-                    </div>
+                <!-- Tab Kirim Pertanyaan (Active) -->
+                <div class="flex items-center justify-center text-[13px] font-semibold text-[#003d82] py-3 relative whitespace-nowrap">
+                    Kirim Pertanyaan
+                    <!-- Garis bawah biru untuk tab aktif -->
+                    <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[#003d82]"></div>
                 </div>
             </div>
+        </div>
 
         <!-- Success Message -->
         @if(session('success'))
-        <div class="bg-green-50 border-2 border-green-500 text-green-800 rounded-lg px-4 py-3 mb-5 mt-5 text-sm font-semibold flex items-center gap-2">
+        <div class="bg-green-50 border-2 border-green-500 text-green-800 rounded-lg px-4 py-3 mb-5 text-sm font-semibold flex items-center gap-2">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
@@ -164,7 +164,7 @@
 
         <!-- Error Messages -->
         @if($errors->any())
-        <div class="bg-red-50 border-2 border-red-500 text-red-800 rounded-lg px-4 py-3 mb-5 mt-5 text-sm">
+        <div class="bg-red-50 border-2 border-red-500 text-red-800 rounded-lg px-4 py-3 mb-5 text-sm">
             <div class="font-semibold mb-2 flex items-center gap-2">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -181,7 +181,7 @@
 
         <!-- Error from Session -->
         @if(session('error'))
-        <div class="bg-red-50 border-2 border-red-500 text-red-800 rounded-lg px-4 py-3 mb-5 mt-5 text-sm font-semibold flex items-center gap-2">
+        <div class="bg-red-50 border-2 border-red-500 text-red-800 rounded-lg px-4 py-3 mb-5 text-sm font-semibold flex items-center gap-2">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
             </svg>
@@ -189,20 +189,73 @@
         </div>
         @endif
 
-        <!-- Pertanyaan Saya Section -->
-        <div class="mb-6 mt-6">
+        <!-- Pertanyaan Saya Section - Update bagian ini saja -->
+        <div class="mb-6">
             <h3 class="text-[#003d82] text-base font-semibold mb-4">Pertanyaan Saya</h3>
             
-            <div class="space-y-2.5">
-                <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3.5 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition">
-                    <span class="text-sm text-gray-800">Bagaimana cara menyelesaikan...</span>
-                    <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+            @if($pertanyaan->count() > 0)
+                <div class="space-y-2.5">
+                    @foreach($pertanyaan as $p)
+                    <a href="{{ route('kirimpertanyaan.show', $p->pertanyaanid) }}" 
+                    class="block bg-gray-50 border border-gray-200 rounded-lg px-4 py-3.5 cursor-pointer hover:bg-gray-100 transition">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-800 mb-2 line-clamp-2">{{ $p->isi_pertanyaan }}</p>
+                                
+                                <!-- Badge Sifat -->
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    @php
+                                        $badgeColors = [
+                                            'rendah' => 'bg-green-100 text-green-700 border-green-300',
+                                            'sedang' => 'bg-yellow-100 text-yellow-700 border-yellow-300',
+                                            'tinggi' => 'bg-red-100 text-red-700 border-red-300',
+                                        ];
+                                        $badgeClass = $badgeColors[$p->sifat] ?? 'bg-gray-100 text-gray-700 border-gray-300';
+                                    @endphp
+                                    
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border {{ $badgeClass }}">
+                                        {{ ucfirst($p->sifat) }}
+                                    </span>
+                                    
+                                    <!-- Status Jawaban -->
+                                    @if($p->jawaban)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-700 border border-blue-300">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Terjawab
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-orange-100 text-orange-700 border border-orange-300">
+                                            Menunggu Jawaban
+                                        </span>
+                                    @endif
+                                    
+                                    <!-- Badge Lampiran -->
+                                    @if($p->lampiran)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-700 border border-purple-300">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Ada Lampiran
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <i class="fas fa-chevron-right text-gray-400 text-xs mt-1"></i>
+                        </div>
+                    </a>
+                    @endforeach
                 </div>
-                <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3.5 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition">
-                    <span class="text-sm text-gray-800">Apakah bisa extend jam peminjaman?</span>
-                    <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+            @else
+                <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-8 text-center">
+                    <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm text-gray-500 italic">Belum ada pertanyaan yang Anda ajukan</p>
                 </div>
-            </div>
+            @endif
         </div>
 
         <!-- Form Section -->
@@ -286,13 +339,13 @@
                         <div class="flex items-center gap-2">
                             <input 
                                 type="radio" 
-                                id="menengah" 
+                                id="tinggi" 
                                 name="sifat" 
-                                value="menengah"
+                                value="tinggi"
                                 class="radio-red"
-                                {{ old('sifat') == 'menengah' ? 'checked' : '' }}
+                                {{ old('sifat') == 'tinggi' ? 'checked' : '' }}
                             >
-                            <label for="menengah" class="text-sm text-gray-800 cursor-pointer">Tinggi</label>
+                            <label for="tinggi" class="text-sm text-gray-800 cursor-pointer">Tinggi</label>
                         </div>
                     </div>
                 </div>
