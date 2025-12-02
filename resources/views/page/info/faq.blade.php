@@ -41,7 +41,7 @@
                 FAQ
             </button>
 
-            <a href="{{ url('/kirim-pertanyaan') }}"
+            <a href="{{ url('/kirimpertanyaan') }}"
                class="h-10 flex items-center justify-center text-[14px] font-medium text-[#3C3C3C]">
                 Kirim Pertanyaan
             </a>

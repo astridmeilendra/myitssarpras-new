@@ -126,17 +126,31 @@
         <h2 class="text-center text-[#003d82] text-xl font-bold mb-6">Informasi</h2>
 
         <!-- Tabs Navigation -->
-        <div class="flex border-b border-gray-200 bg-white -mx-5 px-5">
-            <a href="#" class="flex-1 text-center py-4 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-800 transition">
-                Alur Penjelasan
-            </a>
-            <a href="#" class="flex-1 text-center py-4 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-800 transition">
-                FAQ
-            </a>
-            <a href="#" class="flex-1 text-center py-4 text-sm font-medium text-[#003d82] border-b-2 border-[#003d82]">
-                Kirim Pertanyaan
-            </a>
-        </div>
+            <div class="bg-white -mx-5 px-5 mb-5">
+                <div class="grid grid-cols-3 relative">
+                    <!-- Garis bawah abu-abu untuk semua tab -->
+                    <div class="absolute bottom-0 left-0 w-full h-[2px] bg-[#E5E7EB]"></div>
+
+                    <!-- Tab Alur Penjelasan -->
+                    <a href="{{ url('/alur-penjelasan') }}"
+                    class="flex items-center justify-center text-[13px] font-normal text-[#6B7280] py-3 relative whitespace-nowrap">
+                        Alur Penjelasan
+                    </a>
+
+                    <!-- Tab FAQ -->
+                    <a href="{{ url('faq') }}"
+                    class="flex items-center justify-center text-[13px] font-normal text-[#6B7280] py-3 relative whitespace-nowrap">
+                        FAQ
+                    </a>
+
+                    <!-- Tab Kirim Pertanyaan (Active) -->
+                    <div class="flex items-center justify-center text-[13px] font-semibold text-[#003d82] py-3 relative whitespace-nowrap">
+                        Kirim Pertanyaan
+                        <!-- Garis bawah biru untuk tab aktif -->
+                        <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[#003d82]"></div>
+                    </div>
+                </div>
+            </div>
 
         <!-- Success Message -->
         @if(session('success'))
