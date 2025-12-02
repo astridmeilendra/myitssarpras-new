@@ -16,7 +16,7 @@
 
 <div class="flex flex-col h-full">
     <!-- Header with Back Button - Sticky -->
-    <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center mb-6 px-6 pt-6 pb-4">
+    <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center px-6 pt-6 pb-4">
         <a href="{{ route('kirimpertanyaan.create') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -172,8 +172,5 @@
         </div>
         @endif
     </div>
-
-    <!-- Bottom Navigation -->
-    <x-navbar active="info" />
 </div>
 @endsection

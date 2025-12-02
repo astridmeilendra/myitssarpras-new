@@ -13,7 +13,8 @@ use App\Http\Controllers\CariRuangan\CariRuanganController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RuanganController;
 use App\Http\Controllers\Riwayat\RiwayatController;
-use App\Http\Controllers\KirimPertanyaan\KirimPertanyaanController;
+use App\Http\Controllers\Admin\AdminPertanyaanController;
+use App\Http\Controllers\KirimPertanyaanController;
 
 // Navbar
 Route::get('/home', function () {
@@ -121,6 +122,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('admin.ruangan.edit');
     Route::post('/ruangan/{id}', [RuanganController::class, 'update'])->name('admin.ruangan.update');
     Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])->name('admin.ruangan.destroy');
+
+    // Pertanyaan Routes
+    Route::get('/pertanyaan', [AdminPertanyaanController::class, 'index'])->name('admin.pertanyaan.index');
+    Route::get('/pertanyaan/{id}', [AdminPertanyaanController::class, 'show'])->name('admin.pertanyaan.show');
+    Route::post('/pertanyaan/{id}/jawab', [AdminPertanyaanController::class, 'store'])->name('admin.pertanyaan.store');
+    Route::put('/pertanyaan/{id}/jawab', [AdminPertanyaanController::class, 'update'])->name('admin.pertanyaan.update');
+    Route::delete('/pertanyaan/{id}/jawab', [AdminPertanyaanController::class, 'destroy'])->name('admin.pertanyaan.destroy');
 });
 
 // Detail Ruangan (Dynamic - route baru dengan ID) - SETELAH admin routes
@@ -216,16 +224,9 @@ Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name(
 // Route untuk konfirmasi booking
 Route::post('/search/confirm-booking', [CariRuanganController::class, 'confirmBooking'])->name('search.confirm-booking');
 
-Route::get('/kirimpertanyaan', function () {
-    return view('page/kirimpertanyaan/kirimpertanyaan');
-});
-// Routes untuk Kirim Pertanyaan dengan URL yang lebih sederhana
-Route::get('/kirimpertanyaan', [KirimPertanyaanController::class, 'create'])->name('kirimpertanyaan.create');
-Route::post('/kirimpertanyaan', [KirimPertanyaanController::class, 'store'])->name('kirimpertanyaan.store');
-
-// Optional: Routes tambahan jika diperlukan
-Route::get('/kirimpertanyaan/list', [KirimPertanyaanController::class, 'index'])->name('kirimpertanyaan.index');
-Route::get('/kirimpertanyaan/{id}', [KirimPertanyaanController::class, 'show'])->name('kirimpertanyaan.show');
+Route::get('/kirimpertanyaan', [KirimPertanyaanController::class, 'create'])->name('kirimpertanyaan.create')->middleware('auth');
+Route::post('/kirimpertanyaan', [KirimPertanyaanController::class, 'store'])->name('kirimpertanyaan.store')->middleware('auth');
+Route::get('/kirimpertanyaan/{id}', [KirimPertanyaanController::class, 'show'])->name('kirimpertanyaan.show')->middleware('auth');
 
 // faq
 Route::get('/faq', function () {
