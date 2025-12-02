@@ -1,6 +1,6 @@
 ![This pin is all about coding](https://github.com/user-attachments/assets/3b6b0673-1212-47af-ad5f-afcb4c822e08)
 
-##MyITS Sarpras
+## MyITS Sarpras
 
 ## Overview  
 **MyITS SarPras** is a web-based platform developed as part of the *Perancangan dan Pengembangan Perangkat Lunak (PPPL)*.  
