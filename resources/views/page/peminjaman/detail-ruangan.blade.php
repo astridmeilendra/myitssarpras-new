@@ -1,4 +1,4 @@
-﻿@extends('template-full')
+@extends('template-full')
 
 @section('content')
 <div class="relative h-full">
@@ -354,7 +354,7 @@
     // Render initial calendar
     renderCalendar();
 
-    // Thumbnail â†’ ganti gambar utama
+    // Thumbnail → ganti gambar utama
     document.addEventListener('DOMContentLoaded', function () {
         const mainImage = document.getElementById('main-room-image');
         const thumbnails = document.querySelectorAll('.thumbnail-item');
@@ -469,7 +469,7 @@
         }
     });
 
-    // Check availability on date change â†’ disable option penuh
+    // Check availability on date change → disable option penuh
     let checkTimeout;
     document.getElementById('tanggal').addEventListener('change', function () {
         clearTimeout(checkTimeout);
