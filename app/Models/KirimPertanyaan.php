@@ -59,4 +59,12 @@ class KirimPertanyaan extends Model
     {
         return $this->belongsTo(User::class, 'userid', 'userid');
     }
+
+    /**
+     * Get the jawaban for the pertanyaan.
+     */
+    public function jawaban()
+    {
+        return $this->hasOne(Jawaban::class, 'pertanyaanid', 'pertanyaanid');
+    }
 }

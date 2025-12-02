@@ -11,27 +11,21 @@ use Illuminate\Support\Facades\Storage;
 class KirimPertanyaanController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        // Jika menggunakan authentication
-        // $pertanyaan = KirimPertanyaan::where('userid', Auth::id())
-        //     ->orderBy('pertanyaanid', 'desc')
-        //     ->get();
-        
-        // Untuk testing tanpa auth
-        $pertanyaan = KirimPertanyaan::orderBy('pertanyaanid', 'desc')->get();
-        
-        return view('pertanyaan.index', compact('pertanyaan'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource and display user's questions.
      */
     public function create()
     {
-        return view('page.kirimpertanyaan.kirimpertanyaan');
+        // Ambil pertanyaan milik user yang sedang login
+        $pertanyaan = collect(); // Default empty collection
+        
+        if (Auth::check()) {
+            $pertanyaan = KirimPertanyaan::where('userid', Auth::id())
+                ->with('jawaban') // Eager load jawaban
+                ->orderBy('pertanyaanid', 'desc')
+                ->get();
+        }
+        
+        return view('page.kirimpertanyaan.kirimpertanyaan', compact('pertanyaan'));
     }
 
     /**
@@ -39,14 +33,11 @@ class KirimPertanyaanController extends Controller
      */
     public function store(Request $request)
     {
-        // Debug: Log semua input yang diterima
-        \Log::info('Request Data:', $request->all());
-
         // Validasi input
         $validated = $request->validate([
             'isi_pertanyaan' => 'required|string|max:500',
             'lampiran' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // max 5MB
-            'sifat' => 'required|in:rendah,sedang,menengah'
+            'sifat' => 'required|in:rendah,sedang,tinggi'
         ], [
             'isi_pertanyaan.required' => 'Pertanyaan wajib diisi',
             'isi_pertanyaan.max' => 'Pertanyaan maksimal 500 karakter',
@@ -55,9 +46,6 @@ class KirimPertanyaanController extends Controller
             'sifat.required' => 'Sifat pertanyaan wajib dipilih',
         ]);
 
-        // Debug: Log validated data
-        \Log::info('Validated Data:', $validated);
-
         // Prepare data
         $data = [
             'isi_pertanyaan' => $validated['isi_pertanyaan'],
@@ -65,13 +53,14 @@ class KirimPertanyaanController extends Controller
             'lampiran' => null
         ];
 
-        // Jika menggunakan Auth
-        if (Auth::check()) {
-            $data['userid'] = Auth::id();
-        } else {
-            // Untuk testing tanpa auth - GANTI dengan user ID yang ADA di database Anda
-            $data['userid'] = 16; // Sesuaikan dengan userid yang ada (lihat di tabel app_user)
+        // Cek apakah user sudah login
+        if (!Auth::check()) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Anda harus login terlebih dahulu untuk mengirim pertanyaan.');
         }
+
+        $data['userid'] = Auth::id();
 
         // Handle file upload
         if ($request->hasFile('lampiran')) {
@@ -88,9 +77,6 @@ class KirimPertanyaanController extends Controller
                 \Log::error('File upload error:', ['message' => $e->getMessage()]);
             }
         }
-
-        // Debug: Log final data before insert
-        \Log::info('Data to insert:', $data);
 
         // Simpan ke database
         try {
@@ -118,7 +104,13 @@ class KirimPertanyaanController extends Controller
      */
     public function show($id)
     {
-        $pertanyaan = KirimPertanyaan::findOrFail($id);
-        return view('pertanyaan.show', compact('pertanyaan'));
+        $pertanyaan = KirimPertanyaan::with('jawaban')->findOrFail($id);
+        
+        // Pastikan user hanya bisa melihat pertanyaannya sendiri
+        if (Auth::check() && $pertanyaan->userid !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        return view('page.kirimpertanyaan.detailpertanyaan', compact('pertanyaan'));
     }
 }
