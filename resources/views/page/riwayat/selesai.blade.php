@@ -58,47 +58,52 @@
                     </div>
                 </div>
 
-                <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold h-fit">
-                    Selesai
+                <span class="px-3 py-1 rounded-full text-xs font-semibold h-fit
+                    @if($statusTerakhir === 'Selesai')
+                        bg-gray-100 text-gray-700
+                    @elseif($statusTerakhir === 'Disetujui')
+                        bg-green-100 text-green-700
+                    @else
+                        bg-gray-100 text-gray-700
+                    @endif
+                ">
+                    {{ $statusTerakhir ?? 'Selesai' }}
                 </span>
             </div>
 
             <!-- Timeline -->
             <div class="mt-4 pt-3 border-t border-gray-100">
-                <div class="relative pl-10">
-                    <!-- vertical line -->
-                    <div class="absolute left-4 top-0 bottom-0 w-[2px] bg-gray-200"></div>
-
-                    <div class="space-y-6">
-                        @forelse($riwayatStatus as $status)
-                            @php
-                                $dotColor = 'bg-blue-700';
-                                if ($status->nama_status === 'Ditolak') {
-                                    $dotColor = 'bg-red-600';
-                                } elseif ($status->nama_status === 'Disetujui') {
-                                    $dotColor = 'bg-blue-700';
-                                } elseif ($status->nama_status === 'Selesai') {
-                                    $dotColor = 'bg-green-600';
-                                }
-                            @endphp
-                            <div class="relative">
-                                <div class="absolute left-[0.625rem] top-1 w-3 h-3 rounded-full {{ $dotColor }}"></div>
-                                <div class="flex justify-between items-start gap-3">
-                                    <div>
-                                        <p class="text-xs font-semibold text-gray-900">{{ $status->nama_status }}</p>
-                                        <p class="text-[11px] text-gray-600">
-                                            {{ $status->keterangan ?? '-' }}
-                                        </p>
-                                    </div>
-                                    <p class="text-[10px] text-gray-400 whitespace-nowrap">
-                                        {{ \Carbon\Carbon::parse($status->waktu_update)->format('d-m-Y / H:i') }}
-                                    </p>
-                                </div>
+                <div class="space-y-6">
+                    @forelse($riwayatStatus as $status)
+                        @php
+                            $dotColor = 'bg-blue-600';
+                            if ($status->nama_status === 'Ditolak') {
+                                $dotColor = 'bg-red-600';
+                            } elseif ($status->nama_status === 'Dibatalkan') {
+                                $dotColor = 'bg-red-600';
+                            } elseif ($status->nama_status === 'Menunggu') {
+                                $dotColor = 'bg-yellow-400';
+                            } elseif ($status->nama_status === 'Disetujui') {
+                                $dotColor = 'bg-green-600';
+                            } elseif ($status->nama_status === 'Selesai') {
+                                $dotColor = 'bg-gray-600';
+                            }
+                        @endphp
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 pt-1">
+                                <div class="w-3 h-3 rounded-full {{ $dotColor }}"></div>
                             </div>
-                        @empty
-                            <p class="text-xs text-gray-500 text-center py-4">Belum ada riwayat status</p>
-                        @endforelse
-                    </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-semibold text-gray-800">{{ $status->nama_status }}</p>
+                                <p class="text-[11px] text-gray-600 mt-0.5">{{ $status->keterangan ?? 'Pengajuan peminjaman ruangan baru' }}</p>
+                                <p class="text-[10px] text-gray-400 mt-1">
+                                    {{ \Carbon\Carbon::parse($status->waktu_update)->format('d-m-Y / H:i') }}
+                                </p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-xs text-gray-500 text-center py-4">Belum ada riwayat status</p>
+                    @endforelse
                 </div>
             </div>
 

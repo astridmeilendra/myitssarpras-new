@@ -4,12 +4,14 @@
 <div class="flex flex-col h-full bg-white">
 
     {{-- HEADER --}}
-    <div class="pt-6 pb-3 px-5">
-        <h1 class="text-center text-[20px] font-bold text-[#013880] tracking-tight">Informasi</h1>
+    <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center mb-6 px-6 pt-6 pb-4">
+        <div class="flex flex-col justify-center text-center m-auto">
+            <h1 class="text-md font-bold text-[#003D82]">Informasi</h1>
+        </div>
     </div>
 
     {{-- TAB 3 KOLOM --}}
-    <div class="px-5">
+    <div class="px-6">
         <div class="w-full max-w-[360px] mx-auto grid grid-cols-3 relative">
             {{-- TAB ACTIVE INDICATOR (GARIS ABU) --}}
             <div class="absolute bottom-0 left-0 w-full h-[1.6px] bg-[#D1D5DB]"></div>
@@ -37,7 +39,7 @@
     </div>
 
     {{-- CONTENT --}}
-    <div class="flex-1 overflow-y-auto px-5 pt-5 pb-28">
+    <div class="flex-1 overflow-y-auto px-6 py-6 pb-28">
         {{-- Title Section --}}
         <p class="text-[14px] font-bold text-[#013880] mb-3">Alur Peminjaman</p>
 

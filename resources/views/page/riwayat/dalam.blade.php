@@ -32,8 +32,15 @@
                     </p>
                 </div>
                 <span class="px-3 py-1 rounded-full text-[11px] font-semibold
-                             bg-[#013880]/10 text-[#013880]">
-                    {{ $peminjaman->status_terkini ?? 'Dalam Proses' }}
+                    @if($statusTerakhir === 'Disetujui')
+                        bg-green-100 text-green-700
+                    @elseif($statusTerakhir === 'Menunggu')
+                        bg-yellow-100 text-yellow-700
+                    @else
+                        bg-blue-100 text-blue-700
+                    @endif
+                ">
+                    {{ $statusTerakhir ?? 'Dalam Proses' }}
                 </span>
             </div>
 
@@ -85,43 +92,32 @@
                 <div class="space-y-6">
                     @forelse($riwayatStatus as $status)
                         @php
-                            $dotColor = 'bg-[#013880]'; // Default brand color
+                            $dotColor = 'bg-blue-600';
 
                             if ($status->nama_status === 'Ditolak' || $status->nama_status === 'Dibatalkan') {
                                 $dotColor = 'bg-red-600';
-                            } elseif ($status->nama_status === 'Revisi') {
+                            } elseif ($status->nama_status === 'Menunggu') {
                                 $dotColor = 'bg-yellow-400';
                             } elseif ($status->nama_status === 'Disetujui') {
                                 $dotColor = 'bg-green-600';
                             }
                         @endphp
 
-                        <div class="flex items-start gap-3">
-
-                            {{-- BULLET TANPA GARIS --}}
-                            <div class="flex-shrink-0 mt-[2px]">
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 pt-1">
                                 <div class="w-3 h-3 rounded-full {{ $dotColor }}"></div>
                             </div>
-
-                            {{-- TEKS STATUS --}}
-                            <div class="flex justify-between items-start gap-3 w-full">
-                                <div>
-                                    <p class="text-xs font-semibold text-gray-800">
-                                        {{ $status->nama_status }}
-                                    </p>
-                                    <p class="text-[11px] text-gray-600">
-                                        {{ $status->keterangan ?? '-' }}
-                                    </p>
-                                </div>
-
-                                <p class="text-[10px] text-gray-400 whitespace-nowrap">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-semibold text-gray-800">{{ $status->nama_status }}</p>
+                                <p class="text-[11px] text-gray-600 mt-0.5">{{ $status->keterangan ?? 'Pengajuan peminjaman ruangan baru' }}</p>
+                                <p class="text-[10px] text-gray-400 mt-1">
                                     {{ \Carbon\Carbon::parse($status->waktu_update)->format('d-m-Y / H:i') }}
                                 </p>
                             </div>
                         </div>
 
                     @empty
-                        <p class="text-xs text-gray-500 text-center">
+                        <p class="text-xs text-gray-500 text-center py-4">
                             Belum ada riwayat status
                         </p>
                     @endforelse

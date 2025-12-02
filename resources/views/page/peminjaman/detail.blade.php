@@ -185,10 +185,10 @@
     </div>
 
     <!-- Booking Modal (Fixed Position Inside Frame) -->
-    <div id="bookingModal" class="modal-overlay hidden bg-black bg-opacity-50 z-50 flex items-end -m-6">
+    <div id="bookingModal" class="modal-overlay hidden bg-black bg-opacity-50 z-50 flex items-end w-full">
         <div class="modal-content bg-white w-full shadow-2xl overflow-hidden rounded-t-3xl flex flex-col" style="max-height: 85%;">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between px-6 py-6 border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
                 <button onclick="closeBookingModal()" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -199,7 +199,7 @@
             </div>
 
             <!-- Modal Content -->
-            <form id="bookingForm" class="flex-1 px-6 pt-8 pb-10 flex flex-col justify-center" enctype="multipart/form-data">
+            <form id="bookingForm" class="flex-1 px-6 pt-6 pb-6 overflow-y-auto flex flex-col justify-start" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Room Info -->

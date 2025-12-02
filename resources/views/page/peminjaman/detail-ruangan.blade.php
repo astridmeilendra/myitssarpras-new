@@ -185,10 +185,10 @@
     </div>
 
     <!-- Booking Modal (Fixed Position Inside Frame) -->
-    <div id="bookingModal" class="modal-overlay hidden bg-black bg-opacity-50 z-50 flex items-end -m-6">
+    <div id="bookingModal" class="modal-overlay hidden bg-black bg-opacity-50 z-50 flex items-end w-full">
         <div class="modal-content bg-white w-full shadow-2xl overflow-hidden rounded-t-3xl flex flex-col" style="max-height: 85%;">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between px-6 py-6 border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
                 <button onclick="closeBookingModal()" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -199,11 +199,11 @@
             </div>
 
             <!-- Modal Content -->
-            <form id="bookingForm" class="flex-1 px-6 pt-8 pb-10 flex flex-col justify-center" enctype="multipart/form-data">
+            <form id="bookingForm" class="flex-1 px-6 pt-6 pb-6 overflow-y-auto flex flex-col justify-start" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Room Info -->
-                <div class="flex items-center mb-5">
+                <div class="flex items-center mb-4">
                     <span class="text-sm text-gray-700 font-medium mr-3">Room</span>
                     <span class="text-sm text-gray-700">:</span>
                     <span class="text-sm text-gray-800 font-semibold ml-3">{{ $ruangan->nama_ruangan }}</span>
@@ -213,24 +213,24 @@
                 </div>
 
                 <!-- Date Field -->
-                <div class="mb-5">
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
                     <input type="date"
                         name="tanggal"
                         id="tanggal"
                         min="{{ now()->addDay()->format('Y-m-d') }}"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm"
                         required>
                     <span class="text-xs text-red-500 hidden" id="error-tanggal"></span>
                 </div>
 
                 <!-- Time Field -->
-                <div class="mb-5">
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Waktu</label>
                     <select name="waktu"
                             id="waktu"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm appearance-none bg-white"
-                            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg width=%2712%27 height=%278%27 viewBox=%270 0 12 8%27 fill=%27none%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M1 1.5L6 6.5L11 1.5%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px 8px;"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm appearance-none bg-white"
+                            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg width=%2712%27 height=%278%27 viewBox=%270 0 12 8%27 fill=%27none%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M1 1.5L6 6.5L11 1.5%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 12px 8px;"
                             required>
                         <option value="">Pilih waktu</option>
                         <option value="sesi1" data-label="Sesi 1 (07.00 - 10.00)">Sesi 1 (07.00 - 10.00)</option>
@@ -242,12 +242,12 @@
                 </div>
 
                 <!-- Description Field -->
-                <div class="mb-5">
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
                     <textarea name="keterangan"
                             id="keterangan"
-                            rows="4"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm resize-none"
+                            rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm resize-none"
                             placeholder="Masukkan keterangan..."
                             required></textarea>
                     <span class="text-xs text-red-500 hidden" id="error-keterangan"></span>
@@ -276,8 +276,8 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="mt-6">
-                    <x-button type="submit" id="submitBtn" variant="solid" size="md" :full="true" class="mt-3">
+                <div class="mt-4">
+                    <x-button type="submit" id="submitBtn" variant="solid" size="md" :full="true">
                         Kirim
                     </x-button>
                 </div>

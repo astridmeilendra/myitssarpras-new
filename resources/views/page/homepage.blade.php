@@ -3,11 +3,30 @@
 @section('content')
 @php
     $statusbarTheme = 'light';
+
+    // Hitung notifikasi dari peminjaman dengan status Menunggu atau Ditolak
+    $notifications = \Illuminate\Support\Facades\DB::table('peminjaman as p')
+        ->join('riwayat_status as rs', function ($join) {
+            $join->on('p.peminjamanid', '=', 'rs.peminjamanid')
+                ->whereRaw('rs.statusid = (
+                    SELECT MAX(statusid)
+                    FROM riwayat_status
+                    WHERE peminjamanid = p.peminjamanid
+                )');
+        })
+        ->join('ruangan as r', 'p.ruanganid', '=', 'r.ruanganid')
+        ->where('p.userid', Auth::id())
+        ->whereIn('rs.nama_status', ['Menunggu', 'Ditolak'])
+        ->select('p.peminjamanid', 'r.nama_ruangan', 'rs.nama_status', 'p.tanggal', 'p.nama_shift')
+        ->orderByDesc('rs.statusid')
+        ->get();
+
+    $notificationCount = $notifications->count();
 @endphp
 
 <div class="flex flex-col h-full">
     <!-- Header Section -->
-    <div class="bg-white px-6 pt-3 pb-2">
+    <div class="bg-white px-6 pt-3 pb-2 relative">
         <!-- User Greeting -->
         <div class="flex items-center justify-between mt-4 mb-2">
             <div class="flex items-center gap-3">
@@ -39,18 +58,135 @@
                 </div>
             </div>
 
-            <!-- Notification Bell -->
+            <!-- Notification Bell with Dropdown -->
             <div class="relative">
-                <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <button id="notificationBtn" class="p-2 hover:bg-gray-100 rounded-full transition-colors relative">
                     <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
                     <!-- Notification Badge -->
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                    @if($notificationCount > 0)
+                        <span class="absolute top-1.5 right-1.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                            {{ $notificationCount > 9 ? '9+' : $notificationCount }}
+                        </span>
+                    @endif
                 </button>
+
+                <!-- Notification Dropdown -->
+                <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-[#003D82] to-[#013880] px-4 py-3">
+                        <h3 class="text-white font-bold text-sm">Notifikasi</h3>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="max-h-96 overflow-y-auto">
+                        @if($notificationCount > 0)
+                            @foreach($notifications as $notif)
+                                @php
+                                    $badgeClass = $notif->nama_status === 'Menunggu'
+                                        ? 'bg-yellow-100 text-yellow-700'
+                                        : 'bg-red-100 text-red-700';
+                                @endphp
+                                <a href="{{ route('peminjaman.detail', $notif->peminjamanid) }}"
+                                   class="block border-b border-gray-100 px-4 py-3 hover:bg-gray-50 transition-colors last:border-b-0">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex-shrink-0">
+                                            @if($notif->nama_status === 'Menunggu')
+                                                <svg class="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.5a1 1 0 002 0V7z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            @else
+                                                <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            @endif
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <p class="text-sm font-semibold text-gray-900 truncate">
+                                                    {{ $notif->nama_ruangan }}
+                                                </p>
+                                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $badgeClass }} whitespace-nowrap">
+                                                    {{ $notif->nama_status }}
+                                                </span>
+                                            </div>
+                                            <p class="text-xs text-gray-600">
+                                                {{ \Carbon\Carbon::parse($notif->tanggal)->translatedFormat('d F Y') }} - {{ $notif->nama_shift }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        @else
+                            <div class="px-4 py-8 text-center">
+                                <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                <p class="text-gray-500 text-sm">Tidak ada notifikasi</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+        .notification-dropdown-enter {
+            animation: slideInDown 0.3s ease forwards;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <!-- Notification Dropdown Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+
+            if (!notificationBtn || !notificationDropdown) return;
+
+            // Toggle dropdown
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (notificationDropdown.classList.contains('hidden')) {
+                    notificationDropdown.classList.remove('hidden');
+                    // Trigger animation
+                    requestAnimationFrame(() => {
+                        notificationDropdown.classList.add('notification-dropdown-enter');
+                    });
+                } else {
+                    notificationDropdown.classList.remove('notification-dropdown-enter');
+                    notificationDropdown.classList.add('hidden');
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                    notificationDropdown.classList.add('hidden');
+                }
+            });
+
+            // Close dropdown when clicking a notification
+            notificationDropdown.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function() {
+                    notificationDropdown.classList.add('hidden');
+                });
+            });
+        });
+    </script>
 
     <!-- Content Area (Scrollable) -->
     <div class="flex-1 overflow-y-auto px-6 pb-4 scrollbar-hide" style="scrollbar-width: none; -ms-overflow-style: none;">

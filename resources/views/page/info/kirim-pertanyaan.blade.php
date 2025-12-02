@@ -141,9 +141,8 @@
                             {{-- LAMPIRAN --}}
                             @if ($h->lampiran)
                                 @php
-                                    $fileUrl = env('SUPABASE_URL') .
-                                               '/storage/v1/object/public/dokumen-pertanyaan/' .
-                                               ltrim($h->lampiran, '/');
+                                    // Database sekarang menyimpan URL lengkap Supabase
+                                    $fileUrl = $h->lampiran;
                                 @endphp
 
                                 <div>

@@ -15,6 +15,7 @@
             left: 0;
             right: 0;
             bottom: 0;
+            opacity: 1;
         }
 
         .modal-overlay.hidden {
@@ -382,16 +383,12 @@
     function openBookingModal() {
         const modal = document.getElementById('bookingModal');
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.style.opacity = '1';
-        }, 10);
     }
 
     function closeBookingModal() {
         const modal = document.getElementById('bookingModal');
-        modal.style.opacity = '0';
+        modal.classList.add('hidden');
         setTimeout(() => {
-            modal.classList.add('hidden');
             document.getElementById('bookingForm').reset();
             clearErrors();
         }, 300);
