@@ -16,11 +16,18 @@ class PeminjamanDetailController extends Controller
     {
         $userId = Auth::id();
 
-        // Ambil detail peminjaman dengan semua informasi terkait
+        // Ambil status terakhir dulu
+        $statusTerakhir = DB::table('riwayat_status')
+            ->where('peminjamanid', $peminjamanId)
+            ->orderBy('statusid', 'desc')
+            ->first();
+
+        $status = $statusTerakhir?->nama_status ?? 'Menunggu';
+
+        // Ambil detail peminjaman dengan informasi terkait
         $peminjaman = DB::table('peminjaman as p')
             ->join('ruangan as r', 'p.ruanganid', '=', 'r.ruanganid')
             ->join('app_user as u', 'p.userid', '=', 'u.userid')
-            ->leftJoin('riwayat_status as rs', 'p.peminjamanid', '=', 'rs.peminjamanid')
             ->where('p.peminjamanid', $peminjamanId)
             ->where('p.userid', $userId) // Pastikan user hanya bisa lihat data miliknya
             ->select(
@@ -39,10 +46,7 @@ class PeminjamanDetailController extends Controller
                 'r.deskripsi',
                 'u.nama',
                 'u.no_telepon',
-                'u.email_its',
-                'rs.nama_status',
-                'rs.waktu_update',
-                'rs.keterangan as status_keterangan'
+                'u.email_its'
             )
             ->first();
 
@@ -53,26 +57,8 @@ class PeminjamanDetailController extends Controller
         // Ambil riwayat status lengkap
         $riwayatStatus = DB::table('riwayat_status')
             ->where('peminjamanid', $peminjamanId)
-            ->orderBy('waktu_update', 'asc')
+            ->orderBy('statusid', 'asc')
             ->get();
-
-        // Ambil status terakhir untuk menentukan view
-        $statusTerakhir = DB::table('riwayat_status')
-            ->where('peminjamanid', $peminjamanId)
-            ->orderBy('waktu_update', 'desc')
-            ->first();
-
-        $status = $statusTerakhir?->nama_status ?? 'Menunggu';
-
-        // Tentukan view berdasarkan status
-        $view = 'page.peminjaman.detail-peminjaman'; // default untuk status Menunggu
-        if ($status === 'Dibatalkan') {
-            $view = 'page.riwayat.batal';
-        } elseif ($status === 'Disetujui') {
-            $view = 'page.riwayat.dalam';
-        } elseif ($status === 'Selesai') {
-            $view = 'page.riwayat.selesai';
-        }
 
         // Format foto - ambil foto pertama jika ada multiple links
         $fotoUrl = null;
@@ -99,9 +85,11 @@ class PeminjamanDetailController extends Controller
             $dokumenUrl = route('peminjaman.download-dokumen', ['peminjamanid' => $peminjamanId]);
         }
 
-        return view($view, [
+        // Selalu gunakan view yang sama, cukup pass status ke view
+        return view('page.peminjaman.detail-peminjaman', [
             'peminjaman' => $peminjaman,
             'riwayatStatus' => $riwayatStatus,
+            'statusTerakhir' => $status,
             'fotoUrl' => $fotoUrl,
             'dokumenUrl' => $dokumenUrl
         ]);
@@ -142,5 +130,48 @@ class PeminjamanDetailController extends Controller
         $dokumentUrl = "{$supabaseUrl}/storage/v1/object/public/{$supabaseBucket}/{$filePath}";
 
         return redirect($dokumentUrl);
+    }
+
+    /**
+     * Batalkan peminjaman
+     */
+    public function cancel(Request $request, $peminjamanid)
+    {
+        $userId = Auth::id();
+
+        // Ambil peminjaman dan status terakhir
+        $peminjaman = DB::table('peminjaman')
+            ->where('peminjamanid', $peminjamanid)
+            ->where('userid', $userId) // Security: pastikan user hanya bisa batalkan miliknya
+            ->first();
+
+        if (!$peminjaman) {
+            return redirect()->route('riwayat')->with('error', 'Peminjaman tidak ditemukan');
+        }
+
+        // Cek status terakhir - hanya bisa batalkan jika masih "Menunggu"
+        $statusTerakhir = DB::table('riwayat_status')
+            ->where('peminjamanid', $peminjamanid)
+            ->orderBy('statusid', 'desc')
+            ->first();
+
+        $status = $statusTerakhir?->nama_status ?? 'Menunggu';
+
+        if ($status !== 'Menunggu') {
+            return redirect()->route('peminjaman.detail', $peminjamanid)
+                ->with('error', 'Hanya peminjaman dengan status Menunggu yang dapat dibatalkan');
+        }
+
+        // Buat riwayat status baru dengan status "Dibatalkan"
+        DB::table('riwayat_status')->insert([
+            'peminjamanid' => $peminjamanid,
+            'nama_status' => 'Dibatalkan',
+            'waktu_update' => now(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return redirect()->route('peminjaman.detail', $peminjamanid)
+            ->with('success', 'Peminjaman berhasil dibatalkan');
     }
 }

@@ -15,21 +15,23 @@
 </style>
 
 <div class="flex flex-col h-full">
-    <!-- Header with Back Button -->
-    <div class="bg-white border-b border-gray-200 px-5 py-4">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('kirimpertanyaan.create') }}" class="text-[#003d82] hover:text-[#002a5c]">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-            </a>
-            <h2 class="text-[#003d82] text-lg font-bold flex-1">Detail Pertanyaan</h2>
+    <!-- Header with Back Button - Sticky -->
+    <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center px-6 pt-6 pb-4">
+        <a href="{{ route('kirimpertanyaan.create') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </a>
+
+        <div class="flex flex-col justify-center text-center m-auto">
+            <h1 class="text-md font-bold text-[#003D82]">Detail Pertanyaan</h1>
         </div>
+        <div class="w-6 h-6"></div>
     </div>
 
     <!-- Content Area -->
-    <div class="flex-1 overflow-y-auto px-5 py-6 hide-scrollbar">
-        
+    <div class="flex-1 overflow-y-auto px-6 py-6 hide-scrollbar">
+
         <!-- Badge Sifat & Status -->
         <div class="flex items-center gap-2 flex-wrap mb-5">
             @php
@@ -40,11 +42,11 @@
                 ];
                 $badgeClass = $badgeColors[$pertanyaan->sifat] ?? 'bg-gray-100 text-gray-700 border-gray-300';
             @endphp
-            
+
             <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium border {{ $badgeClass }}">
                 Sifat: {{ ucfirst($pertanyaan->sifat) }}
             </span>
-            
+
             @if($pertanyaan->jawaban)
                 <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-100 text-blue-700 border border-blue-300">
                     <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
@@ -83,14 +85,18 @@
                     </svg>
                     <span class="text-sm font-semibold text-gray-600">Lampiran</span>
                 </div>
-                
+
                 @php
-                    $extension = pathinfo($pertanyaan->lampiran, PATHINFO_EXTENSION);
-                    $filename = basename($pertanyaan->lampiran);
-                    $fileUrl = asset('storage/' . $pertanyaan->lampiran);
+                    // Database sekarang menyimpan URL lengkap Supabase
+                    $fileUrl = $pertanyaan->lampiran;
+
+                    // Parse URL untuk ambil extension dan filename
+                    $parsedUrl = parse_url($fileUrl, PHP_URL_PATH);
+                    $extension = pathinfo($parsedUrl, PATHINFO_EXTENSION);
+                    $filename = basename($parsedUrl);
                 @endphp
-                
-                <a href="{{ $fileUrl }}" 
+
+                <a href="{{ $fileUrl }}"
                    target="_blank"
                    class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-100 transition group">
                     <div class="flex-shrink-0">
@@ -114,12 +120,12 @@
                             </div>
                         @endif
                     </div>
-                    
+
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-gray-800 truncate">{{ $filename }}</p>
                         <p class="text-xs text-gray-500 uppercase">{{ $extension }}</p>
                     </div>
-                    
+
                     <svg class="w-5 h-5 text-gray-400 group-hover:text-[#003d82] transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                     </svg>
@@ -138,7 +144,7 @@
                 <div class="flex-1">
                     <h3 class="text-sm font-semibold text-blue-700 mb-2">Jawaban Admin</h3>
                     <p class="text-base text-gray-800 leading-relaxed whitespace-pre-wrap">{{ $pertanyaan->jawaban->isi_jawaban }}</p>
-                    
+
                     @if($pertanyaan->jawaban->created_at)
                     <p class="text-xs text-gray-500 mt-3">
                         Dijawab pada {{ \Carbon\Carbon::parse($pertanyaan->jawaban->created_at)->format('d M Y, H:i') }}
@@ -166,8 +172,5 @@
         </div>
         @endif
     </div>
-
-    <!-- Bottom Navigation -->
-    <x-navbar active="info" />
 </div>
 @endsection

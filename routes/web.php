@@ -12,10 +12,9 @@ use App\Http\Controllers\EditakundanHapusakun\AkunController;
 use App\Http\Controllers\CariRuangan\CariRuanganController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RuanganController;
-use App\Http\Controllers\Pertanyaan\PertanyaanController;
-
 use App\Http\Controllers\Riwayat\RiwayatController;
-use App\Http\Controllers\KirimPertanyaan\KirimPertanyaanController;
+use App\Http\Controllers\Admin\AdminPertanyaanController;
+use App\Http\Controllers\KirimPertanyaanController;
 
 // Navbar
 Route::get('/home', function () {
@@ -58,6 +57,10 @@ Route::get('/peminjaman/{peminjamanid}', [PeminjamanDetailController::class, 'sh
     ->name('peminjaman.detail')
     ->middleware('auth');
 
+Route::post('/peminjaman/{peminjamanid}/cancel', [PeminjamanDetailController::class, 'cancel'])
+    ->name('peminjaman.cancel')
+    ->middleware('auth');
+
 Route::get('/peminjaman/{peminjamanid}/download-dokumen', [PeminjamanDetailController::class, 'downloadDokumen'])
     ->name('peminjaman.download-dokumen')
     ->middleware('auth');
@@ -65,34 +68,9 @@ Route::get('/peminjaman/{peminjamanid}/download-dokumen', [PeminjamanDetailContr
 Route::get('/search', [CariRuanganController::class, 'index'])->name('search');
 Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
 
-// Auth
-// Auth
-Route::get('/', function () {
-    return view('page/info/alur-penjelasan');
-});
-
-Route::get('/alur-penjelasan', function () {
-    return view('page/info/alur-penjelasan');
-})->name('alur-penjelasan');
-
-// ✅ TAMBAHAN MINIMAL AGAR navbar route('info') TIDAK ERROR
 Route::get('/info', function () {
-    return view('page/info/alur-penjelasan');
+    return view('/page/info/alur-penjelasan');
 })->name('info');
-
-// INFO - FAQ
-Route::get('/faq', function () {
-    return view('page/info/faq');
-})->name('faq');
-
-// INFO - KIRIM PERTANYAAN
-Route::get('/kirim-pertanyaan', [PertanyaanController::class, 'index'])
-    ->middleware('auth')
-    ->name('kirim-pertanyaan');
-
-Route::post('/pertanyaan', [PertanyaanController::class, 'store'])
-    ->middleware('auth')
-    ->name('pertanyaan.store');
 
 Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
@@ -107,7 +85,7 @@ Route::get('/cek-koneksi', function () {
 });
 
 // Auth
-Route::get('/auth', function () {
+Route::get('/', function () {
     return view('page/auth/auth');
 });
 
@@ -124,16 +102,6 @@ Route::post('/logout', function (Request $request) {
 // SIGNUP
 Route::get('/signup', [SignUpController::class, 'create'])->name('signup');
 Route::post('/signup', [SignUpController::class, 'store'])->name('signup.store');
-
-// Cariruangan
-Route::get('/search', function () {
-    return view('page/cariruangan/cariruangan');
-})->name('search');
-
-//Cariruangan parsial
-Route::get('/search-persial', function () {
-    return view('page/cariruangan/cariruanganparsial');
-});
 
 // ====== RUANGAN & PEMINJAMAN ROUTES ======
 
@@ -154,6 +122,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/ruangan/{id}/edit', [RuanganController::class, 'edit'])->name('admin.ruangan.edit');
     Route::post('/ruangan/{id}', [RuanganController::class, 'update'])->name('admin.ruangan.update');
     Route::delete('/ruangan/{id}', [RuanganController::class, 'destroy'])->name('admin.ruangan.destroy');
+
+    // Pertanyaan Routes
+    Route::get('/pertanyaan', [AdminPertanyaanController::class, 'index'])->name('admin.pertanyaan.index');
+    Route::get('/pertanyaan/{id}', [AdminPertanyaanController::class, 'show'])->name('admin.pertanyaan.show');
+    Route::post('/pertanyaan/{id}/jawab', [AdminPertanyaanController::class, 'store'])->name('admin.pertanyaan.store');
+    Route::put('/pertanyaan/{id}/jawab', [AdminPertanyaanController::class, 'update'])->name('admin.pertanyaan.update');
+    Route::delete('/pertanyaan/{id}/jawab', [AdminPertanyaanController::class, 'destroy'])->name('admin.pertanyaan.destroy');
 });
 
 // Detail Ruangan (Dynamic - route baru dengan ID) - SETELAH admin routes
@@ -226,15 +201,8 @@ Route::get('/fail', function () {
     return view('page/riwayat/fail');
 });
 
-// Cariruangan
-Route::get('/cariruangan', function () {
-    return view('page/cariruangan/cariruangan');
-});
 
-//Cariruangan parsial
-Route::get('/cariruanganparsial', function () {
-    return view('page/cariruangan/cariruanganparsial');
-});
+
 // Edit akun
 Route::get('/editakun', [AkunController::class, 'edit'])->name('account.edit');
 Route::post('/editakun', [AkunController::class, 'update'])->name('account.update');
@@ -256,13 +224,11 @@ Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name(
 // Route untuk konfirmasi booking
 Route::post('/search/confirm-booking', [CariRuanganController::class, 'confirmBooking'])->name('search.confirm-booking');
 
-Route::get('/kirimpertanyaan', function () {
-    return view('page/kirimpertanyaan/kirimpertanyaan');
-});
-// Routes untuk Kirim Pertanyaan dengan URL yang lebih sederhana
-Route::get('/kirimpertanyaan', [KirimPertanyaanController::class, 'create'])->name('kirimpertanyaan.create');
-Route::post('/kirimpertanyaan', [KirimPertanyaanController::class, 'store'])->name('kirimpertanyaan.store');
+Route::get('/kirimpertanyaan', [KirimPertanyaanController::class, 'create'])->name('kirimpertanyaan.create')->middleware('auth');
+Route::post('/kirimpertanyaan', [KirimPertanyaanController::class, 'store'])->name('kirimpertanyaan.store')->middleware('auth');
+Route::get('/kirimpertanyaan/{id}', [KirimPertanyaanController::class, 'show'])->name('kirimpertanyaan.show')->middleware('auth');
 
-// Optional: Routes tambahan jika diperlukan
-Route::get('/kirimpertanyaan/list', [KirimPertanyaanController::class, 'index'])->name('kirimpertanyaan.index');
-Route::get('/kirimpertanyaan/{id}', [KirimPertanyaanController::class, 'show'])->name('kirimpertanyaan.show');
+// faq
+Route::get('/faq', function () {
+    return view('page/info/faq');
+})->name('faq');

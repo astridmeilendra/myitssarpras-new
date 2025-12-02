@@ -192,16 +192,16 @@
         <!-- Pertanyaan Saya Section - Update bagian ini saja -->
         <div class="mb-6">
             <h3 class="text-[#003d82] text-base font-semibold mb-4">Pertanyaan Saya</h3>
-            
+
             @if($pertanyaan->count() > 0)
                 <div class="space-y-2.5">
                     @foreach($pertanyaan as $p)
-                    <a href="{{ route('kirimpertanyaan.show', $p->pertanyaanid) }}" 
+                    <a href="{{ route('kirimpertanyaan.show', $p->pertanyaanid) }}"
                     class="block bg-gray-50 border border-gray-200 rounded-lg px-4 py-3.5 cursor-pointer hover:bg-gray-100 transition">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1">
                                 <p class="text-sm text-gray-800 mb-2 line-clamp-2">{{ $p->isi_pertanyaan }}</p>
-                                
+
                                 <!-- Badge Sifat -->
                                 <div class="flex items-center gap-2 flex-wrap">
                                     @php
@@ -212,11 +212,11 @@
                                         ];
                                         $badgeClass = $badgeColors[$p->sifat] ?? 'bg-gray-100 text-gray-700 border-gray-300';
                                     @endphp
-                                    
+
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border {{ $badgeClass }}">
                                         {{ ucfirst($p->sifat) }}
                                     </span>
-                                    
+
                                     <!-- Status Jawaban -->
                                     @if($p->jawaban)
                                         <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-700 border border-blue-300">
@@ -230,7 +230,7 @@
                                             Menunggu Jawaban
                                         </span>
                                     @endif
-                                    
+
                                     <!-- Badge Lampiran -->
                                     @if($p->lampiran)
                                         <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-700 border border-purple-300">
@@ -242,7 +242,7 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <i class="fas fa-chevron-right text-gray-400 text-xs mt-1"></i>
                         </div>
                     </a>
@@ -258,23 +258,28 @@
             @endif
         </div>
 
+        <!-- Divider -->
+        <div class="flex items-center gap-3 my-6">
+            <div class="flex-1 h-px bg-[#E5E7EB]"></div>
+        </div>
+
         <!-- Form Section -->
-        <div class="mb-6">
+        <div class="bg-gradient-to-br from-blue-50 to-white border border-[#DBEAFE] rounded-lg shadow-sm px-5 py-5 mb-6">
             <h3 class="text-center text-[#003d82] text-base font-semibold mb-5">Buat Pertanyaan</h3>
 
             <form action="{{ route('kirimpertanyaan.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                
+
                 <!-- Textarea Pertanyaan -->
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-gray-800 mb-2">
                         Pertanyaan (max. 500 Kata)
                     </label>
-                    <textarea 
-                        name="isi_pertanyaan" 
+                    <textarea
+                        name="isi_pertanyaan"
                         id="pertanyaan"
                         class="w-full min-h-[120px] px-3 py-3 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#003d82] focus:border-transparent transition"
-                        maxlength="500" 
+                        maxlength="500"
                         placeholder="Tulis pertanyaan Anda di sini..."
                         required
                     >{{ old('isi_pertanyaan') }}</textarea>
@@ -288,13 +293,13 @@
                     <label class="block text-sm font-medium text-gray-800 mb-2">
                         Dokumen (Opsional)
                     </label>
-                    <div 
-                        class="border-2 border-dashed border-gray-300 rounded-lg px-4 py-4 text-center bg-gray-50 cursor-pointer hover:bg-gray-100 hover:border-[#003d82] transition"
+                    <div
+                        class="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg px-4 py-4 text-center bg-gray-50 cursor-pointer hover:bg-gray-100 hover:border-[#003d82] transition"
                         onclick="document.getElementById('fileInput').click()"
                     >
-                        <input 
-                            type="file" 
-                            id="fileInput" 
+                        <input
+                            type="file"
+                            id="fileInput"
                             name="lampiran"
                             class="hidden"
                             accept=".pdf,.jpg,.jpeg,.png"
@@ -315,10 +320,10 @@
                     </label>
                     <div class="flex justify-between gap-3">
                         <div class="flex items-center gap-2">
-                            <input 
-                                type="radio" 
-                                id="rendah" 
-                                name="sifat" 
+                            <input
+                                type="radio"
+                                id="rendah"
+                                name="sifat"
                                 value="rendah"
                                 class="radio-green"
                                 {{ old('sifat') == 'rendah' ? 'checked' : '' }}
@@ -326,10 +331,10 @@
                             <label for="rendah" class="text-sm text-gray-800 cursor-pointer">Rendah</label>
                         </div>
                         <div class="flex items-center gap-2">
-                            <input 
-                                type="radio" 
-                                id="sedang" 
-                                name="sifat" 
+                            <input
+                                type="radio"
+                                id="sedang"
+                                name="sifat"
                                 value="sedang"
                                 class="radio-yellow"
                                 {{ old('sifat') == 'sedang' ? 'checked' : '' }}
@@ -337,10 +342,10 @@
                             <label for="sedang" class="text-sm text-gray-800 cursor-pointer">Sedang</label>
                         </div>
                         <div class="flex items-center gap-2">
-                            <input 
-                                type="radio" 
-                                id="tinggi" 
-                                name="sifat" 
+                            <input
+                                type="radio"
+                                id="tinggi"
+                                name="sifat"
                                 value="tinggi"
                                 class="radio-red"
                                 {{ old('sifat') == 'tinggi' ? 'checked' : '' }}
@@ -351,8 +356,8 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     id="submitBtn"
                     class="w-full bg-[#003d82] text-white py-3.5 rounded-lg text-base font-semibold hover:bg-[#002a5c] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -377,7 +382,7 @@
     // Character counter
     const textarea = document.getElementById('pertanyaan');
     const charCount = document.getElementById('charCount');
-    
+
     if (textarea && charCount) {
         textarea.addEventListener('input', function() {
             charCount.textContent = this.value.length;

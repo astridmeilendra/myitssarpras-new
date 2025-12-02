@@ -1,14 +1,27 @@
 @extends('template-full')
 
 @section('content')
+<style>
+    /* Hide scrollbar */
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+
 <div class="flex flex-col h-full relative">
-    <!-- Header -->
-    <div class="bg-white px-6 py-4 border-b border-gray-100">
-        <h1 class="text-2xl font-bold text-center" style="color: #013880;">Riwayat Peminjaman</h1>
+    <!-- Header with Sticky - No Back Button -->
+    <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center px-6 pt-6 pb-4">
+        <div class="flex flex-col justify-center text-center m-auto">
+            <h1 class="text-md font-bold text-[#003D82]">Riwayat Peminjaman</h1>
+        </div>
     </div>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto px-6 py-4">
+    <div class="flex-1 overflow-y-auto px-6 py-6 hide-scrollbar">
         @if($peminjamans->isEmpty())
             <div class="flex flex-col items-center justify-center h-full">
                 <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +37,7 @@
 
                         // Tentukan styling berdasarkan status
                         $statusStyles = [
-                            'Menunggu' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-700', 'label' => 'Akan Datang'],
+                            'Menunggu' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-700', 'label' => 'Menunggu'],
                             'Disetujui' => ['bg' => 'bg-green-100', 'text' => 'text-green-700', 'label' => 'Dalam Peminjaman'],
                             'Ditolak' => ['bg' => 'bg-red-100', 'text' => 'text-red-700', 'label' => 'Ditolak'],
                             'Dibatalkan' => ['bg' => 'bg-red-100', 'text' => 'text-red-700', 'label' => 'Dibatalkan'],
@@ -40,19 +53,14 @@
                                 <div class="flex-1">
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="text-xs font-medium text-gray-500">Room</span>
-                                        <span class="px-2 py-0.5 {{ $currentStyle['bg'] }} {{ $currentStyle['text'] }} text-xs font-semibold rounded">
-                                            {{ $currentStyle['label'] }}
-                                        </span>
                                     </div>
                                     <h3 class="text-lg font-bold text-gray-900">
                                         {{ $peminjaman->ruangan?->nama_ruangan ?? 'N/A' }}
                                     </h3>
                                 </div>
-                                <a href="{{ route('peminjaman.detail', $peminjaman->peminjamanid) }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                                    <svg class="w-5 h-5" style="color: #013880;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </a>
+                                <span class="px-3 py-1 {{ $currentStyle['bg'] }} {{ $currentStyle['text'] }} text-xs font-semibold rounded-full whitespace-nowrap">
+                                    {{ $currentStyle['label'] }}
+                                </span>
                             </div>
 
                             <div class="space-y-2 mb-3">
@@ -84,8 +92,10 @@
                                 @endif
                             </div>
 
-                            <a href="{{ route('peminjaman.detail', $peminjaman->peminjamanid) }}" class="block w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm text-center">
-                                Lihat Detail
+                            <a href="{{ route('peminjaman.detail', $peminjaman->peminjamanid) }}" class="block w-full">
+                                <x-button variant="solid" size="md" :full="true">
+                                    Lihat Detail
+                                </x-button>
                             </a>
                         </div>
                     </div>

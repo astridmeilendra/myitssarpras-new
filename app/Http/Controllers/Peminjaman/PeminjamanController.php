@@ -201,7 +201,8 @@ class PeminjamanController extends Controller
                         throw new \Exception('Gagal upload file ke Supabase: ' . $response->body());
                     }
 
-                    $dokumenPath = $filePath;
+                    // Generate public URL dari Supabase
+                    $dokumenPath = "{$supabaseUrl}/storage/v1/object/public/{$supabaseBucket}/{$filePath}";
 
                 } catch (\Exception $e) {
                     Log::error('Supabase upload error', [

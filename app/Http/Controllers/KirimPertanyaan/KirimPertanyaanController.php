@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\KirimPertanyaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class KirimPertanyaanController extends Controller
 {
@@ -17,14 +16,14 @@ class KirimPertanyaanController extends Controller
     {
         // Ambil pertanyaan milik user yang sedang login
         $pertanyaan = collect(); // Default empty collection
-        
+
         if (Auth::check()) {
             $pertanyaan = KirimPertanyaan::where('userid', Auth::id())
                 ->with('jawaban') // Eager load jawaban
                 ->orderBy('pertanyaanid', 'desc')
                 ->get();
         }
-        
+
         return view('page.kirimpertanyaan.kirimpertanyaan', compact('pertanyaan'));
     }
 
@@ -67,32 +66,57 @@ class KirimPertanyaanController extends Controller
             try {
                 $file = $request->file('lampiran');
                 $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
-                
-                // Simpan file ke storage/app/public/lampiran
-                $path = $file->storeAs('lampiran', $filename, 'public');
-                $data['lampiran'] = $path;
-                
-                \Log::info('File uploaded:', ['path' => $path]);
+
+                // Path di bucket dokumen-pertanyaan
+                $filePath = 'pertanyaan/' . Auth::id() . '/' . $filename;
+
+                // Ambil Supabase credentials
+                $supabaseUrl = env('SUPABASE_URL');
+                $supabaseBucket = 'dokumen-pertanyaan';
+                $supabaseServiceKey = env('SUPABASE_SERVICE_ROLE');
+
+                // Upload ke Supabase via REST API
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = \Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $supabaseServiceKey,
+                    'Content-Type'  => $file->getMimeType(),
+                ])->withBody($fileContent, $file->getMimeType())
+                ->post("{$supabaseUrl}/storage/v1/object/{$supabaseBucket}/{$filePath}");
+
+                if ($response->successful()) {
+                    // Simpan URL lengkap ke database
+                    $data['lampiran'] = "{$supabaseUrl}/storage/v1/object/public/{$supabaseBucket}/{$filePath}";
+                    \Log::info('File uploaded to Supabase:', ['url' => $data['lampiran']]);
+                } else {
+                    \Log::error('Supabase upload failed:', ['status' => $response->status(), 'body' => $response->body()]);
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'Gagal upload file ke Supabase.');
+                }
+
             } catch (\Exception $e) {
                 \Log::error('File upload error:', ['message' => $e->getMessage()]);
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Gagal upload file: ' . $e->getMessage());
             }
         }
 
         // Simpan ke database
         try {
             $pertanyaan = KirimPertanyaan::create($data);
-            
+
             \Log::info('Data saved successfully:', ['id' => $pertanyaan->pertanyaanid]);
-            
+
             return redirect()->route('kirimpertanyaan.create')
                 ->with('success', 'Pertanyaan berhasil dikirim!');
-                
+
         } catch (\Exception $e) {
             \Log::error('Database error:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Gagal mengirim pertanyaan: ' . $e->getMessage());
@@ -105,12 +129,12 @@ class KirimPertanyaanController extends Controller
     public function show($id)
     {
         $pertanyaan = KirimPertanyaan::with('jawaban')->findOrFail($id);
-        
+
         // Pastikan user hanya bisa melihat pertanyaannya sendiri
         if (Auth::check() && $pertanyaan->userid !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         return view('page.kirimpertanyaan.detailpertanyaan', compact('pertanyaan'));
     }
 }

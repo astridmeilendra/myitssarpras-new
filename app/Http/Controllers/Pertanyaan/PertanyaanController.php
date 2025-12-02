@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Pertanyaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class PertanyaanController extends Controller
 {
@@ -43,30 +42,44 @@ class PertanyaanController extends Controller
         $userId = Auth::id();
 
         // Default: tidak ada file
-        $filePath = null;
+        $lampiran = null;
 
-        // Kalau ada lampiran, upload ke Supabase Storage (disk: supabase)
+        // Kalau ada lampiran, upload ke Supabase Storage via API
         if ($request->hasFile('lampiran')) {
             $file = $request->file('lampiran');
 
             // Nama file unik biar tidak tabrakan
             $fileName = time() . '_' . $file->getClientOriginalName();
 
-            // Folder di dalam bucket (misal: dokumen-pertanyaan/lampiran/xxx.pdf)
-            $filePath = 'lampiran/' . $fileName;
+            // Path di dalam bucket dokumen-pertanyaan
+            $filePath = 'pertanyaan/' . $userId . '/' . $fileName;
 
-            // Simpan ke disk 'supabase' (sudah di-setup di config/filesystems.php)
-            Storage::disk('supabase')->put(
-                $filePath,
-                file_get_contents($file->getRealPath())
-            );
+            // Ambil Supabase credentials dari env
+            $supabaseUrl = env('SUPABASE_URL');
+            $supabaseBucket = 'dokumen-pertanyaan';
+            $supabaseServiceKey = env('SUPABASE_SERVICE_ROLE');
+
+            // Upload file ke Supabase via REST API
+            $fileContent = file_get_contents($file->getRealPath());
+            $response = \Http::withHeaders([
+                'Authorization' => 'Bearer ' . $supabaseServiceKey,
+                'Content-Type'  => $file->getMimeType(),
+            ])->withBody($fileContent, $file->getMimeType())
+            ->post("{$supabaseUrl}/storage/v1/object/{$supabaseBucket}/{$filePath}");
+
+            // Jika upload berhasil, simpan URL lengkap ke database
+            if ($response->successful()) {
+                $lampiran = "{$supabaseUrl}/storage/v1/object/public/{$supabaseBucket}/{$filePath}";
+            } else {
+                return redirect()->back()->with('error', 'Gagal upload file ke Supabase.');
+            }
         }
 
         // Simpan ke tabel pertanyaan
         Pertanyaan::create([
             'userid'         => $userId,
             'isi_pertanyaan' => $validated['isi_pertanyaan'],
-            'lampiran'       => $filePath, // path di Supabase
+            'lampiran'       => $lampiran, // URL penuh dari Supabase
             'sifat'          => $validated['sifat'],
         ]);
 
