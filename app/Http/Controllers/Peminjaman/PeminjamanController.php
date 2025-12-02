@@ -40,7 +40,30 @@ class PeminjamanController extends Controller
             ->pluck('p.tanggal')
             ->all();
 
-        return view('page.ruangan.detail-ruangan', compact('ruangan', 'jadwalTerpakai'));
+        // Format foto - ambil foto pertama jika ada multiple links
+        $fotoUrl = null;
+
+        if ($ruangan->foto) {
+            // Split foto jika ada multiple links dipisah koma
+            $photos = array_filter(array_map('trim', explode(',', $ruangan->foto)));
+
+            if (!empty($photos)) {
+                $firstPhoto = $photos[0];
+
+                if (str_starts_with($firstPhoto, 'http://') || str_starts_with($firstPhoto, 'https://')) {
+                    $fotoUrl = $firstPhoto;
+                } else {
+                    $fotoUrl = asset('storage/' . ltrim($firstPhoto, '/'));
+                }
+            }
+        }
+
+        return view('page.peminjaman.detail', [
+            'peminjaman' => $ruangan,
+            'ruangan' => $ruangan,
+            'jadwalTerpakai' => $jadwalTerpakai,
+            'fotoUrl' => $fotoUrl
+        ]);
     }
 
     public function store(Request $request)

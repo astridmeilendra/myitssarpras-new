@@ -5,20 +5,32 @@
 
 @section('content')
 <div class="flex flex-col h-full relative">
-    <!-- Header -->
-    <div class="bg-white px-6 pt-5 pb-2">
-        <!-- Judul -->
-        <h1 class="text-xl font-extrabold text-[#013880] mb-4 text-center tracking-wide">
-            Cari Ruangan
-        </h1>
+    <!-- Header with Back Button - Sticky -->
+        <div class="sticky top-0 z-10 bg-white flex items-center px-6 pt-6 pb-4">
+        <div class="flex flex-col justify-center text-center m-auto">
+            <h1 class="text-md font-bold text-[#003D82]">Cari Ruangan</h1>
+        </div>
+    </div>
 
-        <!-- Search Bar -->
+    <!-- Search Bar -->
+    <div class="px-6 bg-white py-1 shadow-sm">
+        <style>
+            .search-input {
+                transition: all 0.2s;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #003D82 !important;
+                box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.05) !important;
+            }
+        </style>
         <div class="relative flex items-center w-full">
             <!-- Input -->
             <input
                 type="text"
                 placeholder="Masukkan nama ruangan..."
-                class="w-full pl-4 pr-24 py-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent transition-all"
+                class="search-input w-full pl-4 pr-24 py-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent transition-all"
                 id="searchInput"
                 value="{{ $search ?? '' }}"
             >
@@ -42,8 +54,8 @@
             </button>
         </div>
 
-        <!-- Active Filters (Chip Container) - Sticky -->
-        <div class="bg-white pt-3 pb-3 -mx-6 px-6">
+        <!-- Active Filters (Chip Container) -->
+        <div class="pt-2 pb-2">
             <div id="activeFilters"
                 class="flex flex-wrap gap-2 w-full">
                 <!-- Chip akan muncul di sini via JS -->
@@ -182,9 +194,9 @@
     </div>
 
     <!-- Content -->
-    <div class="flex flex-col px-6 overflow-y-auto scrollbar-hide h-full mb-4" style="scrollbar-width: none; -ms-overflow-style: none;">
+    <div class="flex flex-col px-6 overflow-y-auto scrollbar-hide h-full pt-2 mb-4" style="scrollbar-width: none; -ms-overflow-style: none;">
         <h2 class="text-sm font-semibold text-gray-500 mb-4 mt-1">Pencarian Cepat</h2>
-        
+
         <!-- Loading State -->
         <div id="loadingState" class="hidden text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#013880]"></div>
@@ -203,61 +215,30 @@
         <!-- Room Cards -->
         <div class="space-y-4" id="roomList">
             @forelse ($rooms as $room)
-            <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow" 
+            <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                  data-room-name="{{ strtolower($room['name']) }}"
                  data-room-desc="{{ strtolower($room['desc']) }}"
                  data-room-location="{{ strtolower($room['location'] ?? '') }}"
-                 data-room-id="{{ $room['id'] }}">
-                <div class="flex gap-4 p-4">
-                    <!-- Image -->
-                    <div class="flex-shrink-0">
-                        <img
-                            src="{{ $room['image'] }}"
-                            alt="{{ $room['name'] }}"
-                            class="w-[120px] h-full rounded-lg object-cover"
-                            onerror="this.src='{{ asset('img/tw-201.png') }}'"
-                        >
-                    </div>
+                 data-room-id="{{ $room['id'] }}"
+                 onclick="window.location.href='/ruangan/{{ $room['id'] }}'">
+                <!-- Image -->
+                <div class="w-full h-[180px] overflow-hidden">
+                    <img
+                        src="{{ $room['image'] }}"
+                        alt="{{ $room['name'] }}"
+                        class="w-full h-full object-cover"
+                        onerror="console.error('Image failed:', this.src); this.src='{{ asset('img/default-room.png') }}'"
+                        onload="console.log('Image loaded:', this.src)"
+                    >
+                </div>
 
-                    <!-- Info -->
-                    <div class="flex-1 flex flex-col justify-between py-1">
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 mb-1">{{ $room['type'] }}</p>
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $room['name'] }}</h3>
-                            <p class="text-xs text-gray-600 leading-relaxed line-clamp-3">
-                                {{ $room['desc'] }}
-                            </p>
-                        </div>
-                        <!-- Facilities -->
-                        <div class="flex flex-wrap gap-2 mt-3 text-xs text-gray-700">
-                            @if($room['location'])
-                            <div class="flex items-center gap-1">
-                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                <span>{{ $room['location'] }}</span>
-                            </div>
-                            @endif
-                            <div class="flex items-center gap-1">
-                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
-                                </svg>
-                                <span>{{ $room['facilities'] }}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                <span>{{ $room['capacityLabel'] }}</span>
-                            </div>
-                            @if ($room['price'])
-                            <div class="flex items-center gap-1">
-                                <span class="text-gray-700">{{ $room['price'] }}</span>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
+                <!-- Info -->
+                <div class="p-4">
+                    <p class="text-xs font-medium text-gray-500 mb-1">{{ $room['type'] }}</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $room['name'] }}</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed line-clamp-2">
+                        {{ $room['desc'] }}
+                    </p>
                 </div>
             </div>
             @empty
@@ -301,7 +282,7 @@
 
     filterButton.addEventListener('click', openFilterPanel);
     closeFilter.addEventListener('click', closeFilterPanel);
-    
+
     // Apply Filter dengan AJAX
     applyFilter.addEventListener('click', () => {
         const date = document.getElementById('filterDate').value;
@@ -339,7 +320,7 @@
 
             if (data.success) {
                 updateRoomList(data.data);
-                
+
                 // Update chips
                 activeFilters.innerHTML = '';
                 const addChip = (label, value) => {
@@ -374,9 +355,9 @@
 
     searchInput.addEventListener('input', function() {
         const searchQuery = this.value.toLowerCase().trim();
-        
+
         clearTimeout(searchTimeout);
-        
+
         searchTimeout = setTimeout(() => {
             let visibleCount = 0;
 
@@ -384,7 +365,7 @@
                 const roomName = card.getAttribute('data-room-name');
                 const roomDesc = card.getAttribute('data-room-desc');
                 const roomLocation = card.getAttribute('data-room-location');
-                
+
                 if (roomName.includes(searchQuery) || roomDesc.includes(searchQuery) || roomLocation.includes(searchQuery)) {
                     card.style.display = 'block';
                     visibleCount++;
@@ -420,46 +401,28 @@
 
         rooms.forEach(room => {
             const roomCard = `
-                <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow" 
+                <div class="room-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                      data-room-name="${room.name.toLowerCase()}"
                      data-room-desc="${room.desc.toLowerCase()}"
                      data-room-location="${(room.location || '').toLowerCase()}"
-                     data-room-id="${room.id}">
-                    <div class="flex gap-4 p-4">
-                        <div class="flex-shrink-0">
-                            <img src="${room.image}" alt="${room.name}" class="w-[120px] h-full rounded-lg object-cover" onerror="this.src='{{ asset('img/tw-201.png') }}'">
-                        </div>
-                        <div class="flex-1 flex flex-col justify-between py-1">
-                            <div>
-                                <p class="text-xs font-medium text-gray-500 mb-1">${room.type}</p>
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">${room.name}</h3>
-                                <p class="text-xs text-gray-600 leading-relaxed line-clamp-3">${room.desc}</p>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mt-3 text-xs text-gray-700">
-                                ${room.location ? `
-                                <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                    <span>${room.location}</span>
-                                </div>
-                                ` : ''}
-                                <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
-                                    </svg>
-                                    <span>${room.facilities}</span>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                    </svg>
-                                    <span>${room.capacityLabel}</span>
-                                </div>
-                                ${room.price ? `<div class="flex items-center gap-1"><span class="text-gray-700">${room.price}</span></div>` : ''}
-                            </div>
-                        </div>
+                     data-room-id="${room.id}"
+                     onclick="window.location.href='/ruangan/${room.id}'">
+                    <!-- Image -->
+                    <div class="w-full h-[180px] overflow-hidden">
+                        <img
+                            src="${room.image}"
+                            alt="${room.name}"
+                            class="w-full h-full object-cover"
+                            onerror="console.error('Image failed to load:', this.src); this.src='{{ asset('img/default-room.png') }}'"
+                            onload="console.log('Image loaded:', this.src)"
+                        >
+                    </div>
+
+                    <!-- Info -->
+                    <div class="p-4">
+                        <p class="text-xs font-medium text-gray-500 mb-1">${room.type}</p>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">${room.name}</h3>
+                        <p class="text-xs text-gray-600 leading-relaxed line-clamp-2">${room.desc}</p>
                     </div>
                 </div>
             `;

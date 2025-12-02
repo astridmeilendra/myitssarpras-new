@@ -11,27 +11,20 @@ class Ruangan extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'peminjamanid',
         'nama_ruangan',
         'lokasi_ruangan',
         'deskripsi',
         'kapasitas',
         'foto',
-        'fasilitas',
-        'nama_shift',
-        'tanggal'
-    ];
-
-    protected $casts = [
-        'tanggal' => 'date'
+        'fasilitas'
     ];
 
     /**
-     * Relasi ke Peminjaman
+     * Relasi ke Peminjaman (one ruangan bisa dipinjam berkali-kali)
      */
     public function peminjaman()
     {
-        return $this->belongsTo(Peminjaman::class, 'peminjamanid', 'peminjamanid');
+        return $this->hasMany(Peminjaman::class, 'ruanganid', 'ruanganid');
     }
 
     /**

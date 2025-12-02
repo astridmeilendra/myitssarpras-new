@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'My App' }}</title>
+    <title>{{ $title ?? 'MyITS Sarpras' }}</title>
 
     {{-- Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
 
 <body class="bg-background flex items-center justify-center min-h-screen">
 
-    <div class="bg-card w-full max-w-[390px] h-[854px] rounded-xl shadow-mobile p-6 overflow-hidden">
+    <div class="bg-card w-full max-w-[390px] md:max-h-[854px] h-screen max-h-[854px] rounded-xl shadow-mobile p-6 overflow-hidden">
         @yield('content')
     </div>
 
@@ -76,7 +76,7 @@
                 if (e.ctrlKey || e.metaKey) {
                     return;
                 }
-                
+
                 e.preventDefault();
                 const href = link.href;
 

@@ -25,11 +25,11 @@ class Peminjaman extends Model
     }
 
     /**
-     * Relasi ke Ruangan (1 peminjaman bisa punya banyak detail ruangan)
+     * Relasi ke Ruangan (belongsTo karena satu peminjaman milik satu ruangan)
      */
     public function ruangan()
     {
-        return $this->hasMany(Ruangan::class, 'peminjamanid', 'peminjamanid');
+        return $this->belongsTo(Ruangan::class, 'ruanganid', 'ruanganid');
     }
 
     /**

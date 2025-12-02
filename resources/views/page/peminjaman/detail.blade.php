@@ -1,4 +1,4 @@
-@extends('template-full')
+﻿@extends('template-full')
 
 @section('content')
 <div class="relative h-full">
@@ -188,7 +188,7 @@
     <div id="bookingModal" class="modal-overlay hidden bg-black bg-opacity-50 z-50 flex items-end -m-6">
         <div class="modal-content bg-white w-full shadow-2xl overflow-hidden rounded-t-3xl flex flex-col" style="max-height: 85%;">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between px-12 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-6 border-b border-gray-200">
                 <button onclick="closeBookingModal()" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -199,11 +199,11 @@
             </div>
 
             <!-- Modal Content -->
-            <form id="bookingForm" class="flex-1 overflow-y-auto px-12 py-12 flex flex-col justify-start" enctype="multipart/form-data">
+            <form id="bookingForm" class="flex-1 px-6 pt-8 pb-10 flex flex-col justify-center" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Room Info -->
-                <div class="flex items-center mb-8">
+                <div class="flex items-center mb-5">
                     <span class="text-sm text-gray-700 font-medium mr-3">Room</span>
                     <span class="text-sm text-gray-700">:</span>
                     <span class="text-sm text-gray-800 font-semibold ml-3">{{ $ruangan->nama_ruangan }}</span>
@@ -213,23 +213,23 @@
                 </div>
 
                 <!-- Date Field -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Tanggal</label>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
                     <input type="date"
                         name="tanggal"
                         id="tanggal"
                         min="{{ now()->addDay()->format('Y-m-d') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm"
                         required>
                     <span class="text-xs text-red-500 hidden" id="error-tanggal"></span>
                 </div>
 
                 <!-- Time Field -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Waktu</label>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Waktu</label>
                     <select name="waktu"
                             id="waktu"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm appearance-none bg-white"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm appearance-none bg-white"
                             style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg width=%2712%27 height=%278%27 viewBox=%270 0 12 8%27 fill=%27none%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M1 1.5L6 6.5L11 1.5%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px 8px;"
                             required>
                         <option value="">Pilih waktu</option>
@@ -242,19 +242,19 @@
                 </div>
 
                 <!-- Description Field -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Keterangan</label>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
                     <textarea name="keterangan"
                             id="keterangan"
                             rows="4"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm resize-none"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm resize-none"
                             placeholder="Masukkan keterangan..."
                             required></textarea>
                     <span class="text-xs text-red-500 hidden" id="error-keterangan"></span>
                 </div>
 
                 <!-- File Upload -->
-                <div class="mb-10">
+                <div class="mb-6">
                     <div class="flex items-center">
                         <span class="text-sm font-medium text-gray-700 mr-3">File</span>
                         <span class="text-sm text-gray-700">:</span>
@@ -271,13 +271,13 @@
                                 onchange="updateFileName(this)">
                         </label>
                     </div>
-                    <span class="text-xs text-gray-500 ml-16 mt-2 block">Format: PDF, DOC, DOCX, JPG, PNG (Max: 5MB)</span>
+                    <span class="text-xs text-gray-500 ml-16 mt-1 block">Format: PDF, DOC, DOCX, JPG, PNG (Max: 5MB)</span>
                     <span class="text-xs text-red-500 hidden" id="error-dokumen"></span>
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pb-4">
-                    <x-button type="submit" id="submitBtn" variant="solid" size="md" :full="true">
+                <div class="mt-6">
+                    <x-button type="submit" id="submitBtn" variant="solid" size="md" :full="true" class="mt-3">
                         Kirim
                     </x-button>
                 </div>
@@ -354,7 +354,7 @@
     // Render initial calendar
     renderCalendar();
 
-    // Thumbnail → ganti gambar utama
+    // Thumbnail â†’ ganti gambar utama
     document.addEventListener('DOMContentLoaded', function () {
         const mainImage = document.getElementById('main-room-image');
         const thumbnails = document.querySelectorAll('.thumbnail-item');
@@ -469,7 +469,7 @@
         }
     });
 
-    // Check availability on date change → disable option penuh
+    // Check availability on date change â†’ disable option penuh
     let checkTimeout;
     document.getElementById('tanggal').addEventListener('change', function () {
         clearTimeout(checkTimeout);
