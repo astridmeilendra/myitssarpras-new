@@ -1,4 +1,5 @@
-![Cozy Mario Gaming Room Pixel Art _ Nostalgic Lofi   8-Bit Vibes](https://github.com/user-attachments/assets/d8acbefb-837d-4090-a9bc-f589dfb162d8)
+https://github.com/user-attachments/assets/a2577a32-8551-44d1-af3e-3906b71205c2
+
 
 #MyITS Sarpras
 ## Overview  
