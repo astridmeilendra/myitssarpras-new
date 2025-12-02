@@ -12,6 +12,7 @@ use App\Http\Controllers\EditakundanHapusakun\AkunController;
 use App\Http\Controllers\CariRuangan\CariRuanganController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RuanganController;
+use App\Http\Controllers\Riwayat\RiwayatController;
 use App\Http\Controllers\KirimPertanyaan\KirimPertanyaanController;
 
 // Navbar
@@ -48,9 +49,7 @@ Route::get('/home', function () {
     return view('page/homepage', compact('riwayat'));
 })->name('home');
 
-Route::get('/riwayat', function () {
-    return view('page/riwayat/riwayat');
-})->name('riwayat');
+Route::get('/riwayat', [RiwayatController::class, 'riwayat'])->name('riwayat');
 
 // Detail Peminjaman
 Route::get('/peminjaman/{peminjamanid}', [PeminjamanDetailController::class, 'show'])
@@ -100,9 +99,9 @@ Route::get('/signup', [SignUpController::class, 'create'])->name('signup');
 Route::post('/signup', [SignUpController::class, 'store'])->name('signup.store');
 
 // Cariruangan
-Route::get('/seacrh', function () {
+Route::get('/search', function () {
     return view('page/cariruangan/cariruangan');
-});
+})->name('search');
 
 //Cariruangan parsial
 Route::get('/search-persial', function () {

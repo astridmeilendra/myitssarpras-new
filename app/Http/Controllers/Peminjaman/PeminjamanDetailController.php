@@ -56,6 +56,24 @@ class PeminjamanDetailController extends Controller
             ->orderBy('waktu_update', 'asc')
             ->get();
 
+        // Ambil status terakhir untuk menentukan view
+        $statusTerakhir = DB::table('riwayat_status')
+            ->where('peminjamanid', $peminjamanId)
+            ->orderBy('waktu_update', 'desc')
+            ->first();
+
+        $status = $statusTerakhir?->nama_status ?? 'Menunggu';
+
+        // Tentukan view berdasarkan status
+        $view = 'page.peminjaman.detail-peminjaman'; // default untuk status Menunggu
+        if ($status === 'Dibatalkan') {
+            $view = 'page.riwayat.batal';
+        } elseif ($status === 'Disetujui') {
+            $view = 'page.riwayat.dalam';
+        } elseif ($status === 'Selesai') {
+            $view = 'page.riwayat.selesai';
+        }
+
         // Format foto - ambil foto pertama jika ada multiple links
         $fotoUrl = null;
 
@@ -81,7 +99,7 @@ class PeminjamanDetailController extends Controller
             $dokumenUrl = route('peminjaman.download-dokumen', ['peminjamanid' => $peminjamanId]);
         }
 
-        return view('page.peminjaman.detail', [
+        return view($view, [
             'peminjaman' => $peminjaman,
             'riwayatStatus' => $riwayatStatus,
             'fotoUrl' => $fotoUrl,
