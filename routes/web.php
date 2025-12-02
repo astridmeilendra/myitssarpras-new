@@ -12,7 +12,8 @@ use App\Http\Controllers\EditakundanHapusakun\AkunController;
 use App\Http\Controllers\CariRuangan\CariRuanganController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RuanganController;
-
+use App\Http\Controllers\Riwayat\RiwayatController;
+use App\Http\Controllers\KirimPertanyaan\KirimPertanyaanController;
 
 // Navbar
 Route::get('/home', function () {
@@ -48,9 +49,7 @@ Route::get('/home', function () {
     return view('page/homepage', compact('riwayat'));
 })->name('home');
 
-Route::get('/riwayat', function () {
-    return view('page/riwayat/riwayat');
-})->name('riwayat');
+Route::get('/riwayat', [RiwayatController::class, 'riwayat'])->name('riwayat');
 
 // Detail Peminjaman
 Route::get('/peminjaman/{peminjamanid}', [PeminjamanDetailController::class, 'show'])
@@ -100,9 +99,9 @@ Route::get('/signup', [SignUpController::class, 'create'])->name('signup');
 Route::post('/signup', [SignUpController::class, 'store'])->name('signup.store');
 
 // Cariruangan
-Route::get('/seacrh', function () {
+Route::get('/search', function () {
     return view('page/cariruangan/cariruangan');
-});
+})->name('search');
 
 //Cariruangan parsial
 Route::get('/search-persial', function () {
@@ -219,3 +218,17 @@ Route::get('/search/facilities', [CariRuanganController::class, 'getFacilities']
 Route::post('/search/check-availability', [CariRuanganController::class, 'checkAvailability'])->name('search.check-availability');
 // Route untuk booking ruangan
 Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name('search.booking');
+
+// Route untuk konfirmasi booking
+Route::post('/search/confirm-booking', [CariRuanganController::class, 'confirmBooking'])->name('search.confirm-booking');
+
+Route::get('/kirimpertanyaan', function () {
+    return view('page/kirimpertanyaan/kirimpertanyaan');
+});
+// Routes untuk Kirim Pertanyaan dengan URL yang lebih sederhana
+Route::get('/kirimpertanyaan', [KirimPertanyaanController::class, 'create'])->name('kirimpertanyaan.create');
+Route::post('/kirimpertanyaan', [KirimPertanyaanController::class, 'store'])->name('kirimpertanyaan.store');
+
+// Optional: Routes tambahan jika diperlukan
+Route::get('/kirimpertanyaan/list', [KirimPertanyaanController::class, 'index'])->name('kirimpertanyaan.index');
+Route::get('/kirimpertanyaan/{id}', [KirimPertanyaanController::class, 'show'])->name('kirimpertanyaan.show');

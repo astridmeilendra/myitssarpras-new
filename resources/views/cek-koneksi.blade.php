@@ -14,7 +14,7 @@
 <body>
     <h1>Daftar Peminjaman Ruangan</h1>
     <table>
-        <thead>
+        <thead> 
             <tr>
                 <th>ID</th>
                 <th>Nama Pemohon</th>
