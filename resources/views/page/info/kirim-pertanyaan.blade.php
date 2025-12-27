@@ -9,7 +9,7 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-<div class="flex flex-col h-full bg-white" x-data="{ openHistory: [] }">
+<div class="flex flex-col h-full bg-white" x-data="{ openHistory: [], fileName: null }">
 
     {{-- HEADER --}}
     <div class="pt-6 pb-3 px-5">
@@ -22,6 +22,13 @@
     @if (Session::has('success'))
         <div class="mx-5 mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
             {{ Session::get('success') }}
+        </div>
+    @endif
+
+    {{-- ERROR (Tambahan untuk menangkap error upload) --}}
+    @if (Session::has('error'))
+        <div class="mx-5 mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+            {{ Session::get('error') }}
         </div>
     @endif
 
@@ -41,12 +48,12 @@
         <div class="w-full max-w-[360px] mx-auto grid grid-cols-3 relative">
             <div class="absolute bottom-0 left-0 w-full h-[1.6px] bg-[#D1D5DB]"></div>
 
-            <a href="{{ url('/alur-penjelasan') }}"
+            <a href="{{ route('info') }}"
                class="h-10 flex items-center justify-center text-[14px] font-medium text-[#3C3C3C]">
                 Alur Penjelasan
             </a>
 
-            <a href="{{ url('/faq') }}"
+            <a href="{{ route('faq') }}"
                class="h-10 flex items-center justify-center text-[14px] font-medium text-[#3C3C3C]">
                 FAQ
             </a>
@@ -90,13 +97,13 @@
 
                             {{-- ICON --}}
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-5 h-5 transition-transform duration-300"
-                                 :class="openHistory.includes({{ $h->pertanyaanid }})
-                                         ? 'rotate-90 text-[#013880]'
-                                         : 'text-[#C4C4C4]'"
-                                 viewBox="0 0 24 24" stroke-width="2"
-                                 stroke="currentColor" fill="none">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                class="w-5 h-5 transition-transform duration-300"
+                                :class="openHistory.includes({{ $h->pertanyaanid }})
+                                        ? 'text-[#013880]'
+                                        : 'rotate-90 text-[#C4C4C4]'"
+                                viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                             </svg>
                         </button>
 
@@ -138,18 +145,25 @@
                                 </p>
                             @endif
 
-                            {{-- LAMPIRAN --}}
+                            {{-- BAGIAN LAMPIRAN --}}
                             @if ($h->lampiran)
-                                @php
-                                    // Database sekarang menyimpan URL lengkap Supabase
-                                    $fileUrl = $h->lampiran;
-                                @endphp
-
                                 <div>
                                     <p class="text-[12px] font-semibold text-[#6B7280] mb-1">Lampiran:</p>
-                                    <a href="{{ $fileUrl }}" target="_blank"
-                                       class="text-[13px] text-blue-600 hover:underline">
-                                        Lihat File
+                                    
+                                    @php
+                                        // Arahkan ke bucket 'lampiran'
+                                        $linkFile = env('SUPABASE_URL') . '/storage/v1/object/public/lampiran/' . $h->lampiran;
+                                    @endphp
+
+                                    <a href="{{ $linkFile }}"
+                                       target="_blank"
+                                       class="text-[13px] text-blue-600 hover:underline flex items-center gap-1">
+                                       
+                                       {{-- Icon Paperclip --}}
+                                       <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                       </svg>
+                                       Lihat File
                                     </a>
                                 </div>
                             @endif
@@ -165,17 +179,12 @@
             </div>
         </div>
 
-        {{-- DIVIDER --}}
-        <div class="flex items-center gap-3 my-6">
-            <div class="flex-1 h-px bg-[#E5E7EB]"></div>
-            <span class="text-[12px] text-[#9CA3AF] font-medium">Buat Pertanyaan Baru</span>
-            <div class="flex-1 h-px bg-[#E5E7EB]"></div>
-        </div>
+        <hr class="border-[#E5E7EB]">
 
-        {{-- FORM CARD --}}
-        <div class="bg-gradient-to-br from-blue-50 to-white border border-[#DBEAFE] rounded-[16px] shadow-sm px-5 py-5">
+        {{-- FORM --}}
+        <div class="bg-white rounded-[18px] shadow-sm px-4 py-4">
 
-            <p class="text-center text-[14px] font-bold text-[#013880] mb-5">
+            <p class="text-center text-[14px] font-bold text-[#013880] mb-4">
                 Buat Pertanyaan
             </p>
 
@@ -185,7 +194,7 @@
                 @csrf
 
                 {{-- TEXTAREA --}}
-                <label class="block text-[13px] text-[#111827] mb-2 font-medium">
+                <label class="block text-[13px] text-[#111827] mb-1">
                     Pertanyaan (max. 500 kata)
                 </label>
                 <textarea
@@ -193,50 +202,58 @@
                     required
                     maxlength="500"
                     class="w-full h-28 rounded-[10px] border border-[#E5E7EB]
-                           focus:outline-none focus:ring-2 focus:ring-[#013880] focus:border-transparent
-                           px-3 py-2 text-[13px] mb-4 bg-white"
+                           focus:outline-none focus:ring-1 focus:ring-[#013880]
+                           px-3 py-2 text-[13px] mb-3"
                     placeholder="Tulis pertanyaan kamu di sini..."></textarea>
 
                 {{-- FILE --}}
-                <label class="block text-[13px] text-[#111827] mb-2 font-medium">
+                <label class="block text-[13px] text-[#111827] mb-1">
                     Dokumen (Opsional)
                 </label>
 
                 <label class="w-full flex items-center gap-2 border border-[#E5E7EB]
-                               rounded-[10px] px-3 py-2 text-[13px] text-[#6B7280]
-                               mb-4 cursor-pointer bg-white hover:bg-blue-50 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         class="w-4 h-4 text-[#013880]" fill="none"
-                         viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor">
-                        <path d="M4 14.5 12 5l8 9.5"/>
-                        <path d="M14 12 9.5 16.5 7 14"/>
+                               rounded-[10px] px-3 py-2 text-[13px] mb-3 cursor-pointer bg-white"
+                       :class="fileName ? 'text-[#111827]' : 'text-[#6B7280]'">
+
+                    {{-- Icon Cloud Upload --}}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#013880]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 12v9"/>
+                        <path d="m16 16-4-4-4 4"/>
+                        <path d="M20 16.7A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/>
                     </svg>
-                    Unggah File
-                    <input type="file" name="lampiran" class="hidden">
+
+                    {{-- Teks berubah dinamis --}}
+                    <span x-text="fileName ? fileName : 'Unggah File'" class="truncate"></span>
+
+                    {{-- Input File dengan Event Change --}}
+                    <input type="file" 
+                           name="lampiran" 
+                           class="hidden"
+                           @change="fileName = $event.target.files.length > 0 ? $event.target.files[0].name : null">
                 </label>
 
                 {{-- SIFAT --}}
-                <p class="text-[13px] text-[#111827] mb-3 font-medium">Sifat Pertanyaan</p>
+                <p class="text-[13px] text-[#111827] mb-2">Sifat Pertanyaan</p>
 
-                <div class="flex items-center gap-4 mb-5">
-                    <label class="flex items-center gap-2 text-[13px] cursor-pointer">
+                <div class="flex items-center gap-4 mb-4">
+                    <label class="flex items-center gap-1 text-[13px]">
                         <input type="radio" name="sifat" value="rendah" checked class="accent-[#16A34A]">
-                        <span class="text-[#16A34A] font-medium">Rendah</span>
+                        <span class="text-[#16A34A]">Rendah</span>
                     </label>
-                    <label class="flex items-center gap-2 text-[13px] cursor-pointer">
+                    <label class="flex items-center gap-1 text-[13px]">
                         <input type="radio" name="sifat" value="sedang" class="accent-[#F97316]">
-                        <span class="text-[#F97316] font-medium">Sedang</span>
+                        <span class="text-[#F97316]">Sedang</span>
                     </label>
-                    <label class="flex items-center gap-2 text-[13px] cursor-pointer">
+                    <label class="flex items-center gap-1 text-[13px]">
                         <input type="radio" name="sifat" value="menengah" class="accent-[#DC2626]">
-                        <span class="text-[#DC2626] font-medium">Menengah</span>
+                        <span class="text-[#DC2626]">Menengah</span>
                     </label>
                 </div>
 
                 {{-- SUBMIT --}}
                 <button type="submit"
-                        class="w-full bg-[#013880] hover:bg-[#002659] text-white rounded-[12px] h-10 text-[14px] font-semibold transition-colors">
-                    Kirim Pertanyaan
+                        class="w-full bg-[#003B84] text-white rounded-[14px] h-10 text-[14px] font-semibold">
+                    Kirim
                 </button>
             </form>
 
