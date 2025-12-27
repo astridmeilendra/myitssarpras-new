@@ -4,10 +4,8 @@
 <div class="flex flex-col h-full bg-white">
 
     {{-- HEADER --}}
-    <div class="sticky top-0 z-10 bg-white shadow-sm flex items-center mb-6 px-6 pt-6 pb-4">
-        <div class="flex flex-col justify-center text-center m-auto">
-            <h1 class="text-md font-bold text-[#003D82]">Informasi</h1>
-        </div>
+    <div class="pt-6 pb-3 px-5">
+        <h1 class="text-center text-[20px] font-bold text-[#013880] tracking-tight">Informasi</h1>
     </div>
 
     {{-- TAB 3 KOLOM --}}
@@ -28,7 +26,7 @@
             </a>
 
             {{-- Tab: Kirim Pertanyaan --}}
-            <a href="{{ url('/kirimpertanyaan') }}"
+            <a href="{{ url('/kirim-pertanyaan') }}"
                class="h-10 flex items-center justify-center text-[14px] font-medium text-[#3C3C3C]">
                 Kirim Pertanyaan
             </a>

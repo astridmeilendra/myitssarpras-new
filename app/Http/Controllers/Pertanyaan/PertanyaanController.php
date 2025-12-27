@@ -6,19 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Pertanyaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class PertanyaanController extends Controller
 {
-    /**
-     * Tampilkan halaman "Kirim Pertanyaan"
-     * beserta daftar pertanyaan milik user yang sedang login.
-     */
     public function index()
     {
-        // Pastikan user sudah login (harusnya sudah lewat middleware auth)
         $userId = Auth::id();
-
-        // Ambil semua pertanyaan milik user + relasi jawaban (jika ada)
         $histories = Pertanyaan::with('jawaban')
             ->where('userid', $userId)
             ->orderByDesc('pertanyaanid')
@@ -27,59 +21,61 @@ class PertanyaanController extends Controller
         return view('page.info.kirim-pertanyaan', compact('histories'));
     }
 
-    /**
-     * Simpan pertanyaan baru dari user.
-     */
     public function store(Request $request)
     {
-        // Validasi input
         $validated = $request->validate([
             'isi_pertanyaan' => ['required', 'string', 'max:500'],
-            'lampiran'       => ['nullable', 'file', 'max:10240'], // max 10 MB
+            'lampiran'       => ['nullable', 'file', 'max:10240'],
             'sifat'          => ['required', 'in:rendah,sedang,menengah'],
         ]);
 
         $userId = Auth::id();
+        $filePath = null;
 
-        // Default: tidak ada file
-        $lampiran = null;
-
-        // Kalau ada lampiran, upload ke Supabase Storage via API
+        // --- UPLOAD MANUAL KE BUCKET 'lampiran'
         if ($request->hasFile('lampiran')) {
             $file = $request->file('lampiran');
 
-            // Nama file unik biar tidak tabrakan
-            $fileName = time() . '_' . $file->getClientOriginalName();
-
-            // Path di dalam bucket dokumen-pertanyaan
-            $filePath = 'pertanyaan/' . $userId . '/' . $fileName;
-
-            // Ambil Supabase credentials dari env
+            // 1. Bersihkan Nama File
+            $cleanName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+            $fileName = time() . '_' . $cleanName;
+            
+            // 2. Tentukan Bucket & URL
+            // upload langsung ke dalam bucket 'lampiran'
+            $bucketName = 'lampiran'; 
+            
             $supabaseUrl = env('SUPABASE_URL');
-            $supabaseBucket = 'dokumen-pertanyaan';
-            $supabaseServiceKey = env('SUPABASE_SERVICE_ROLE');
+            $supabaseKey = env('SUPABASE_KEY');
 
-            // Upload file ke Supabase via REST API
-            $fileContent = file_get_contents($file->getRealPath());
-            $response = \Http::withHeaders([
-                'Authorization' => 'Bearer ' . $supabaseServiceKey,
-                'Content-Type'  => $file->getMimeType(),
-            ])->withBody($fileContent, $file->getMimeType())
-            ->post("{$supabaseUrl}/storage/v1/object/{$supabaseBucket}/{$filePath}");
+            // URL API Supabase untuk Upload
+            $uploadUrl = "{$supabaseUrl}/storage/v1/object/{$bucketName}/{$fileName}";
 
-            // Jika upload berhasil, simpan URL lengkap ke database
-            if ($response->successful()) {
-                $lampiran = "{$supabaseUrl}/storage/v1/object/public/{$supabaseBucket}/{$filePath}";
-            } else {
-                return redirect()->back()->with('error', 'Gagal upload file ke Supabase.');
+            // 3. Kirim File via HTTP POST
+            try {
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $supabaseKey,
+                    'Content-Type'  => $file->getMimeType(), 
+                ])->withBody(
+                    file_get_contents($file->getRealPath()),
+                    $file->getMimeType()
+                )->post($uploadUrl);
+
+                if ($response->successful()) {
+                    // Jika sukses, simpan NAMA FILE-nya di kolom lampiran database
+                    $filePath = $fileName; 
+                } else {
+                    return redirect()->back()->with('error', 'Gagal upload ke Supabase: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Error koneksi: ' . $e->getMessage());
             }
         }
 
-        // Simpan ke tabel pertanyaan
+        // Simpan ke Database
         Pertanyaan::create([
             'userid'         => $userId,
             'isi_pertanyaan' => $validated['isi_pertanyaan'],
-            'lampiran'       => $lampiran, // URL penuh dari Supabase
+            'lampiran'       => $filePath,
             'sifat'          => $validated['sifat'],
         ]);
 

@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RuanganController;
 use App\Http\Controllers\Riwayat\RiwayatController;
 use App\Http\Controllers\Admin\AdminPertanyaanController;
-use App\Http\Controllers\KirimPertanyaanController;
+use App\Http\Controllers\Pertanyaan\PertanyaanController;
 
 // Navbar
 Route::get('/home', function () {
@@ -67,10 +67,6 @@ Route::get('/peminjaman/{peminjamanid}/download-dokumen', [PeminjamanDetailContr
 
 Route::get('/search', [CariRuanganController::class, 'index'])->name('search');
 Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
-
-Route::get('/info', function () {
-    return view('/page/info/alur-penjelasan');
-})->name('info');
 
 Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
@@ -202,7 +198,6 @@ Route::get('/fail', function () {
 });
 
 
-
 // Edit akun
 Route::get('/editakun', [AkunController::class, 'edit'])->name('account.edit');
 Route::post('/editakun', [AkunController::class, 'update'])->name('account.update');
@@ -224,9 +219,14 @@ Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name(
 // Route untuk konfirmasi booking
 Route::post('/search/confirm-booking', [CariRuanganController::class, 'confirmBooking'])->name('search.confirm-booking');
 
-Route::get('/kirimpertanyaan', [KirimPertanyaanController::class, 'create'])->name('kirimpertanyaan.create')->middleware('auth');
-Route::post('/kirimpertanyaan', [KirimPertanyaanController::class, 'store'])->name('kirimpertanyaan.store')->middleware('auth');
-Route::get('/kirimpertanyaan/{id}', [KirimPertanyaanController::class, 'show'])->name('kirimpertanyaan.show')->middleware('auth');
+// Route untuk akses alur penjelasan
+Route::get('/alur-penjelasan', function () {
+    return view('/page/info/alur-penjelasan');
+})->name('info');
+
+// Route untuk kirim pertanyaan
+Route::get('/kirim-pertanyaan', [PertanyaanController::class, 'index'])->name('kirim-pertanyaan')->middleware('auth');
+Route::post('/pertanyaan/store', [PertanyaanController::class, 'store'])->name('pertanyaan.store')->middleware('auth');
 
 // faq
 Route::get('/faq', function () {
