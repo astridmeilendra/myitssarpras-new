@@ -219,16 +219,16 @@ Route::post('/search/booking', [CariRuanganController::class, 'booking'])->name(
 // Route untuk konfirmasi booking
 Route::post('/search/confirm-booking', [CariRuanganController::class, 'confirmBooking'])->name('search.confirm-booking');
 
-// Route untuk akses alur penjelasan
+// Route untuk akses alur penjelasan (Imanuel Dwi Prasetyo 5026231114)
 Route::get('/alur-penjelasan', function () {
     return view('/page/info/alur-penjelasan');
 })->name('info');
 
-// Route untuk kirim pertanyaan
-Route::get('/kirim-pertanyaan', [PertanyaanController::class, 'index'])->name('kirim-pertanyaan')->middleware('auth');
-Route::post('/pertanyaan/store', [PertanyaanController::class, 'store'])->name('pertanyaan.store')->middleware('auth');
+// Route untuk kirim pertanyaan (Imanuel Dwi Prasetyo 5026231114)
+Route::get('/kirim-pertanyaan', [PertanyaanController::class, 'displayPertanyaan'])->name('kirim-pertanyaan')->middleware('auth');
+Route::post('/pertanyaan/store', [PertanyaanController::class, 'savePertanyaan'])->name('pertanyaan.savePertanyaan')->middleware('auth');
 
-// faq
+// Route untuk faq (Imanuel Dwi Prasetyo 5026231114)
 Route::get('/faq', function () {
     return view('page/info/faq');
 })->name('faq');
