@@ -2,6 +2,8 @@
 
 @section('content')
 
+{{-- Imanuel Dwi Prasetyo 5026231114 --}}
+
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <style>
@@ -188,7 +190,7 @@
                 Buat Pertanyaan
             </p>
 
-            <form action="{{ route('pertanyaan.store') }}"
+            <form action="{{ route('pertanyaan.savePertanyaan') }}"
                   method="POST"
                   enctype="multipart/form-data">
                 @csrf

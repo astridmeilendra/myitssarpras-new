@@ -1,5 +1,6 @@
 <?php
 
+//Imanuel Dwi Prasetyo 5026231114
 namespace App\Http\Controllers\Pertanyaan;
 
 use App\Http\Controllers\Controller;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 
 class PertanyaanController extends Controller
 {
-    public function index()
+    public function displayPertanyaan()
     {
         $userId = Auth::id();
         $histories = Pertanyaan::with('jawaban')
@@ -21,7 +22,7 @@ class PertanyaanController extends Controller
         return view('page.info.kirim-pertanyaan', compact('histories'));
     }
 
-    public function store(Request $request)
+    public function savePertanyaan(Request $request)
     {
         $validated = $request->validate([
             'isi_pertanyaan' => ['required', 'string', 'max:500'],
@@ -79,8 +80,7 @@ class PertanyaanController extends Controller
             'sifat'          => $validated['sifat'],
         ]);
 
-        return redirect()
-            ->route('kirim-pertanyaan')
-            ->with('success', 'Pertanyaan berhasil dikirim!');
+        // Tampilkan pertanyaan berhasil dikirim
+        return view('page.info.pertanyaan-berhasil');
     }
 }
