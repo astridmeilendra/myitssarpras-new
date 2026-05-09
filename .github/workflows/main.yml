@@ -32,6 +32,4 @@ jobs:
           --platform=managed \
           --region=${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
-          --port=8080 \
-          --memory=512Mi \
-          --set-env-vars="SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}"
+          --set-env-vars="APP_KEY=${{ secrets.APP_KEY }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }},APP_ENV=production"
