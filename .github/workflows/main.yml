@@ -2,7 +2,8 @@ name: Build & Deploy to Cloud Run
 
 on:
   push:
-    branches: [main]
+    # Diubah agar otomatis jalan saat kamu push ke branch GCP-SetUp
+    branches: [GCP-SetUp] 
 
 jobs:
   deploy:
@@ -32,4 +33,4 @@ jobs:
           --platform=managed \
           --region=${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
-          --set-env-vars="APP_KEY=${{ secrets.APP_KEY }},APP_ENV=production,APP_DEBUG=true,DB_CONNECTION=${{ secrets.DB_CONNECTION }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT }},DB_DATABASE=${{ secrets.DB_DATABASE }},DB_USERNAME=${{ secrets.DB_USERNAME }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}"
+          --set-env-vars="APP_KEY=${{ secrets.APP_KEY }},APP_ENV=production,APP_DEBUG=true,SESSION_DRIVER=file,DB_CONNECTION=${{ secrets.DB_CONNECTION }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT }},DB_DATABASE=${{ secrets.DB_DATABASE }},DB_USERNAME=${{ secrets.DB_USERNAME }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}"
