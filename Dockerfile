@@ -25,8 +25,11 @@ COPY . .
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions untuk Laravel
+# Set permissions untuk Laravel agar folder storage bisa ditulisi
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# PENTING: Ubah DocumentRoot Apache ke folder /public agar tidak Forbidden
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Ubah port Apache ke 8080 (sesuai standar Cloud Run)
 RUN sed -i 's/80/8080/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
