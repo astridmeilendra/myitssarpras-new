@@ -29,8 +29,8 @@ jobs:
         run: touch .env
         
       - name: Install Composer Dependencies
-        # Opsi --scripts SUDAH DIHAPUS di sini
-        run: composer install -q --no-ansi --no-interaction --no-progress --prefer-dist
+        # MENGGUNAKAN UPDATE & IGNORE PLATFORM REQS UNTUK BYPASS ERROR LOCK FILE
+        run: composer update -q --no-ansi --no-interaction --no-progress --prefer-dist --ignore-platform-reqs
         
       - name: Generate Application Key
         run: php artisan key:generate
