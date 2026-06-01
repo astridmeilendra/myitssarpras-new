@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY: myitssarprasregistry.azurecr.io # GANTI: URL ACR kamu
   IMAGE_NAME: myitssarpras-app              # GANTI: Nama image Docker kamu
-  WEBAPP_NAME: myitssarpras-app            # GANTI: Nama Azure App Service kamu
+  WEBAPP_NAME: myits-sarpras-web            # GANTI: Nama Azure App Service kamu
 
 jobs:
   # Tahap 1: Jalankan Testing dengan Pest
@@ -25,11 +25,15 @@ jobs:
           php-version: '8.2' # Sesuaikan dengan versi PHP di local/Dockerfile kamu
           
       - name: Setup Environment File
-        # Membuat file .env kosong agar proses generate key dan testing tidak error
-        run: touch .env
+        # Membuat file .env dengan variabel dasar agar key:generate dan testing berjalan mulus
+        run: |
+          touch .env
+          echo "APP_ENV=testing" >> .env
+          echo "APP_KEY=" >> .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=:memory:" >> .env
         
       - name: Install Composer Dependencies
-        # MENGGUNAKAN UPDATE & IGNORE PLATFORM REQS UNTUK BYPASS ERROR LOCK FILE
         run: composer update -q --no-ansi --no-interaction --no-progress --prefer-dist --ignore-platform-reqs
         
       - name: Generate Application Key
