@@ -8,7 +8,6 @@ on:
 env:
   REGISTRY: myitssarprasregistry.azurecr.io # GANTI: URL ACR kamu
   IMAGE_NAME: myitssarpras-app              # Nama image Docker kamu
-  WEBAPP_NAME: myitssarpras-app             # NAMA APP SERVICE SUDAH DISESUAIKAN
 
 jobs:
   # Tahap 1: Jalankan Testing dengan Pest
@@ -22,10 +21,9 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' # Sesuaikan dengan versi PHP di local/Dockerfile kamu
+          php-version: '8.2'
           
       - name: Setup Environment File
-        # Membuat file .env dengan variabel dasar agar key:generate dan testing berjalan mulus
         run: |
           touch .env
           echo "APP_ENV=testing" >> .env
@@ -42,7 +40,7 @@ jobs:
       - name: Run Pest Tests
         run: ./vendor/bin/pest
 
-  # Tahap 2: Build & Push ke ACR (Hanya jalan jika Tahap 1 Sukses)
+  # Tahap 2: Build & Push ke ACR (Selesai sampai di sini!)
   build-and-push:
     name: Build and Push Docker Image
     needs: test
@@ -60,21 +58,5 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          # Build image dengan tag spesifik (commit hash) dan tag 'latest'
           docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
-          # Push semua tag ke ACR
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --all-tags
-
-  # Tahap 3: Deploy ke Azure (Hanya jalan jika Tahap 2 Sukses)
-  deploy:
-    name: Deploy to Azure App Service
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      # Langsung deploy menggunakan Publish Profile
-      - name: Deploy Container to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
