@@ -7,8 +7,8 @@ on:
 
 env:
   REGISTRY: myitssarprasregistry.azurecr.io # GANTI: URL ACR kamu
-  IMAGE_NAME: myitssarpras-app              # GANTI: Nama image Docker kamu
-  WEBAPP_NAME: myits-sarpras-web            # GANTI: Nama Azure App Service kamu
+  IMAGE_NAME: myitssarpras-app              # Nama image Docker kamu
+  WEBAPP_NAME: myitssarpras-app             # NAMA APP SERVICE SUDAH DISESUAIKAN
 
 jobs:
   # Tahap 1: Jalankan Testing dengan Pest
@@ -71,14 +71,10 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      # Login ke Azure menggunakan Service Principal (RBAC)
-      - name: Log in to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
+      # Langsung deploy menggunakan Publish Profile
       - name: Deploy Container to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
