@@ -1,19 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+test('halaman utama mengembalikan status 200 sukses', function () {
+    $response = $this->get('/');
+    $response->assertStatus(200);
+});
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-
-class ExampleTest extends TestCase
-{
-    /**
-     * A basic test example.
-     */
-    public function test_the_application_returns_a_successful_response(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-}
+// Contoh test lain: memastikan halaman login bisa diakses
+test('halaman login bisa diakses', function () {
+    $response = $this->get('/login');
+    $response->assertStatus(200);
+});

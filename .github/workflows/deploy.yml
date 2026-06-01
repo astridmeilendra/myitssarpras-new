@@ -1,0 +1,73 @@
+name: CI/CD Pipeline MyITS Sarpras
+
+on:
+  push:
+    branches:
+      - main # Ubah ke 'master' jika branch utamamu bernama master
+
+env:
+  REGISTRY: myitssarprasregistry.azurecr.io 
+  IMAGE_NAME: myitssarpras-app              
+  WEBAPP_NAME: myitssarpras-app            # GANTI: Nama Azure App Service kamu
+
+jobs:
+  # Tahap 1: Jalankan Testing dengan Pest
+  test:
+    name: Run Pest Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2' 
+          
+      - name: Setup Environment File
+        run: cp .env.example .env
+        
+      - name: Install Composer Dependencies
+        run: composer install -q --no-ansi --no-interaction --scripts --no-progress --prefer-dist
+        
+      - name: Generate Application Key
+        run: php artisan key:generate
+        
+      - name: Run Pest Tests
+        run: ./vendor/bin/pest
+
+  # Tahap 2: Build & Push ke ACR (Hanya jalan jika Tahap 1 Sukses)
+  build-and-push:
+    name: Build and Push Docker Image
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          # Build image dengan tag spesifik (commit hash) dan tag 'latest'
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+          # Push semua tag ke ACR
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --all-tags
+
+  # Tahap 3: Deploy ke Azure (Hanya jalan jika Tahap 2 Sukses)
+  deploy:
+    name: Deploy to Azure App Service
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Container to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
