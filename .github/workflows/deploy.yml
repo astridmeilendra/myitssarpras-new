@@ -6,8 +6,8 @@ on:
       - main # Ubah ke 'master' jika branch utamamu bernama master
 
 env:
-  REGISTRY: myitssarprasregistry.azurecr.io 
-  IMAGE_NAME: myitssarpras-app              
+  REGISTRY: myitssarprasregistry.azurecr.io # GANTI: URL ACR kamu
+  IMAGE_NAME: myitssarpras-app              # GANTI: Nama image Docker kamu
   WEBAPP_NAME: myitssarpras-app            # GANTI: Nama Azure App Service kamu
 
 jobs:
@@ -22,10 +22,11 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' 
+          php-version: '8.2' # Sesuaikan dengan versi PHP di local/Dockerfile kamu
           
       - name: Setup Environment File
-        run: cp .env.example .env
+        # Membuat file .env kosong agar proses generate key dan testing tidak error
+        run: touch .env
         
       - name: Install Composer Dependencies
         run: composer install -q --no-ansi --no-interaction --scripts --no-progress --prefer-dist
@@ -65,9 +66,14 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      # Login ke Azure menggunakan Service Principal (RBAC) yang sudah disetup di GitHub Secrets
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Deploy Container to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
