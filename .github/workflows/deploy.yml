@@ -29,7 +29,8 @@ jobs:
         run: touch .env
         
       - name: Install Composer Dependencies
-        run: composer install -q --no-ansi --no-interaction --scripts --no-progress --prefer-dist
+        # Opsi --scripts SUDAH DIHAPUS di sini
+        run: composer install -q --no-ansi --no-interaction --no-progress --prefer-dist
         
       - name: Generate Application Key
         run: php artisan key:generate
@@ -66,7 +67,7 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      # Login ke Azure menggunakan Service Principal (RBAC) yang sudah disetup di GitHub Secrets
+      # Login ke Azure menggunakan Service Principal (RBAC)
       - name: Log in to Azure
         uses: azure/login@v1
         with:
