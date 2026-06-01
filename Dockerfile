@@ -14,7 +14,7 @@ COPY . .
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer update --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # Build aset Vite
 RUN npm install
