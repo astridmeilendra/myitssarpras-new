@@ -40,13 +40,13 @@ class PertanyaanController extends Controller
             // 1. Bersihkan Nama File
             $cleanName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
             $fileName = time() . '_' . $cleanName;
-            
+
             // 2. Tentukan Bucket & URL
             // upload langsung ke dalam bucket 'lampiran'
-            $bucketName = 'lampiran'; 
-            
+            $bucketName = 'lampiran';
+
             $supabaseUrl = env('SUPABASE_URL');
-            $supabaseKey = env('SUPABASE_KEY');
+            $supabaseKey = env('SUPABASE_SERVICE_ROLE');
 
             // URL API Supabase untuk Upload
             $uploadUrl = "{$supabaseUrl}/storage/v1/object/{$bucketName}/{$fileName}";
@@ -55,7 +55,7 @@ class PertanyaanController extends Controller
             try {
                 $response = Http::withHeaders([
                     'Authorization' => 'Bearer ' . $supabaseKey,
-                    'Content-Type'  => $file->getMimeType(), 
+                    'Content-Type'  => $file->getMimeType(),
                 ])->withBody(
                     file_get_contents($file->getRealPath()),
                     $file->getMimeType()
@@ -63,7 +63,7 @@ class PertanyaanController extends Controller
 
                 if ($response->successful()) {
                     // Jika sukses, simpan NAMA FILE-nya di kolom lampiran database
-                    $filePath = $fileName; 
+                    $filePath = $fileName;
                 } else {
                     return redirect()->back()->with('error', 'Gagal upload ke Supabase: ' . $response->body());
                 }
