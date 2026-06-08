@@ -15,7 +15,6 @@
             left: 0;
             right: 0;
             bottom: 0;
-            opacity: 1;
         }
 
         .modal-overlay.hidden {
@@ -186,10 +185,10 @@
     </div>
 
     <!-- Booking Modal (Fixed Position Inside Frame) -->
-    <div id="bookingModal" class="modal-overlay hidden bg-black bg-opacity-50 z-50 flex items-end -m-6">
+    <div id="bookingModal" class="modal-overlay hidden bg-black bg-opacity-50 z-50 flex items-end w-full">
         <div class="modal-content bg-white w-full shadow-2xl overflow-hidden rounded-t-3xl flex flex-col" style="max-height: 85%;">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between px-12 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
                 <button onclick="closeBookingModal()" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -200,11 +199,11 @@
             </div>
 
             <!-- Modal Content -->
-            <form id="bookingForm" class="flex-1 overflow-y-auto px-12 py-12 flex flex-col justify-start" enctype="multipart/form-data">
+            <form id="bookingForm" class="flex-1 px-6 pt-6 pb-6 overflow-y-auto flex flex-col justify-start" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Room Info -->
-                <div class="flex items-center mb-8">
+                <div class="flex items-center mb-4">
                     <span class="text-sm text-gray-700 font-medium mr-3">Room</span>
                     <span class="text-sm text-gray-700">:</span>
                     <span class="text-sm text-gray-800 font-semibold ml-3">{{ $ruangan->nama_ruangan }}</span>
@@ -214,24 +213,24 @@
                 </div>
 
                 <!-- Date Field -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Tanggal</label>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
                     <input type="date"
                         name="tanggal"
                         id="tanggal"
                         min="{{ now()->addDay()->format('Y-m-d') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm"
                         required>
                     <span class="text-xs text-red-500 hidden" id="error-tanggal"></span>
                 </div>
 
                 <!-- Time Field -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Waktu</label>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Waktu</label>
                     <select name="waktu"
                             id="waktu"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm appearance-none bg-white"
-                            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg width=%2712%27 height=%278%27 viewBox=%270 0 12 8%27 fill=%27none%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M1 1.5L6 6.5L11 1.5%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px 8px;"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm appearance-none bg-white"
+                            style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg width=%2712%27 height=%278%27 viewBox=%270 0 12 8%27 fill=%27none%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M1 1.5L6 6.5L11 1.5%27 stroke=%27%23374151%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 12px 8px;"
                             required>
                         <option value="">Pilih waktu</option>
                         <option value="sesi1" data-label="Sesi 1 (07.00 - 10.00)">Sesi 1 (07.00 - 10.00)</option>
@@ -243,19 +242,35 @@
                 </div>
 
                 <!-- Description Field -->
-                <div class="mb-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Keterangan</label>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
                     <textarea name="keterangan"
                             id="keterangan"
-                            rows="4"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm resize-none"
+                            rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D82] focus:border-transparent text-sm resize-none"
                             placeholder="Masukkan keterangan..."
                             required></textarea>
                     <span class="text-xs text-red-500 hidden" id="error-keterangan"></span>
                 </div>
 
+                <!-- Generate Surat Section -->
+                <div class="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-4">
+                    <p class="text-xs font-semibold text-[#003D82] mb-1">📄 Butuh Surat Permohonan?</p>
+                    <p class="text-xs text-gray-500 mb-3 leading-relaxed">Generate surat resmi dari data yang sudah kamu isi, lalu upload sebagai lampiran di bawah.</p>
+                    <button type="button"
+                        onclick="generateSuratPeminjaman()"
+                        id="btnGenerateSurat"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-[#003D82] text-[#003D82] text-sm font-semibold hover:bg-[#003D82] hover:text-white transition-all duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Download Template Surat Permohonan
+                    </button>
+                    <p class="text-xs text-gray-400 mt-2 text-center">Isi Tanggal, Waktu & Keterangan terlebih dahulu</p>
+                </div>
+
                 <!-- File Upload -->
-                <div class="mb-10">
+                <div class="mb-6">
                     <div class="flex items-center">
                         <span class="text-sm font-medium text-gray-700 mr-3">File</span>
                         <span class="text-sm text-gray-700">:</span>
@@ -272,12 +287,12 @@
                                 onchange="updateFileName(this)">
                         </label>
                     </div>
-                    <span class="text-xs text-gray-500 ml-16 mt-2 block">Format: PDF, DOC, DOCX, JPG, PNG (Max: 5MB)</span>
+                    <span class="text-xs text-gray-500 ml-16 mt-1 block">Format: PDF, DOC, DOCX, JPG, PNG (Max: 5MB)</span>
                     <span class="text-xs text-red-500 hidden" id="error-dokumen"></span>
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pb-4">
+                <div class="mt-4">
                     <x-button type="submit" id="submitBtn" variant="solid" size="md" :full="true">
                         Kirim
                     </x-button>
@@ -383,12 +398,16 @@
     function openBookingModal() {
         const modal = document.getElementById('bookingModal');
         modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.style.opacity = '1';
+        }, 10);
     }
 
     function closeBookingModal() {
         const modal = document.getElementById('bookingModal');
-        modal.classList.add('hidden');
+        modal.style.opacity = '0';
         setTimeout(() => {
+            modal.classList.add('hidden');
             document.getElementById('bookingForm').reset();
             clearErrors();
         }, 300);
@@ -537,6 +556,128 @@
             }
         });
     });
+
+    function generateSuratPeminjaman() {
+        const namaRuangan = document.querySelector('input[name="nama_ruangan"]').value;
+        const tanggal = document.getElementById('tanggal').value;
+        const waktuSelect = document.getElementById('waktu');
+        const waktuLabel = waktuSelect.options[waktuSelect.selectedIndex]?.getAttribute('data-label') || waktuSelect.value;
+        const keterangan = document.getElementById('keterangan').value;
+
+        if (!tanggal || !waktuSelect.value || !keterangan) {
+            alert('Mohon isi Tanggal, Waktu, dan Keterangan terlebih dahulu sebelum generate surat.');
+            return;
+        }
+
+        const tgl = new Date(tanggal);
+        const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+        const tanggalFormatted = `${tgl.getDate()} ${bulan[tgl.getMonth()]} ${tgl.getFullYear()}`;
+        const hariFormatted = hari[tgl.getDay()];
+        const today = new Date();
+        const todayFormatted = `${today.getDate()} ${bulan[today.getMonth()]} ${today.getFullYear()}`;
+
+        const htmlContent = `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            color: #000;
+            padding: 60px 72px;
+            line-height: 1.6;
+        }
+        .nomor-hal { margin-bottom: 24px; }
+        .nomor-hal p { margin-bottom: 4px; }
+        .tujuan { margin-bottom: 24px; }
+        .tujuan p { margin-bottom: 2px; }
+        .salam { margin-bottom: 16px; }
+        .isi { margin-bottom: 16px; text-align: justify; }
+        .detail { margin: 16px 0 16px 32px; }
+        .detail p { margin-bottom: 4px; }
+        .penutup { margin-bottom: 40px; text-align: justify; }
+        .ttd-section { display: flex; justify-content: space-between; margin-top: 16px; }
+        .ttd-kiri { }
+        .ttd-kanan { text-align: center; }
+        .ttd-kanan .space { height: 72px; }
+        .tembusan { margin-top: 40px; }
+        .tembusan p { margin-bottom: 2px; }
+        @page { margin: 0; }
+        @media print { body { padding: 40px 60px; } }
+    </style>
+</head>
+<body>
+
+    <div class="nomor-hal">
+        <p>Nomor &nbsp;&nbsp;: &nbsp;___________________________</p>
+        <p>Hal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;Peminjaman Ruang di ${namaRuangan}</p>
+    </div>
+
+    <div class="tujuan">
+        <p>Kepada Yth :</p>
+        <p>Direktur Pendidikan</p>
+        <p>Di Kampus ITS Sukolilo</p>
+        <p>Surabaya</p>
+    </div>
+
+    <div class="salam">
+        <p>Dengan hormat,</p>
+    </div>
+
+    <div class="isi">
+        <p>Sehubungan dengan akan diselenggarakan kegiatan <strong>${keterangan}</strong>, oleh ___________________________ maka bersama ini kami mengajukan permohonan peminjaman Ruang di ${namaRuangan}:</p>
+    </div>
+
+    <div class="detail">
+        <p>Hari &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;${hariFormatted}</p>
+        <p>Tanggal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;${tanggalFormatted}</p>
+        <p>Jam &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;${waktuLabel}</p>
+        <p>Ruang yang dipinjam &nbsp;: &nbsp;${namaRuangan}</p>
+    </div>
+
+    <div class="penutup">
+        <p>Demikian permohonan kami, atas perhatian dan kerjasamanya kami sampaikan terima kasih.</p>
+    </div>
+
+    <div class="ttd-section">
+        <div class="ttd-kiri"></div>
+        <div class="ttd-kanan">
+            <p>Surabaya, ${todayFormatted}</p>
+            <p>Kepala Unit/Departemen,</p>
+            <div class="space"></div>
+            <p><strong>___________________________</strong></p>
+            <p>NIP. ___________________________</p>
+        </div>
+    </div>
+
+    <div class="tembusan">
+        <p>Tembusan Yth:</p>
+        <p>1. Kepala Subdirektorat Koordinasi Perkuliahan Bersama</p>
+        <p>2. Kepala Biro Sarana dan Prasarana</p>
+    </div>
+
+</body>
+</html>`;
+
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Surat_Peminjaman_${namaRuangan.replace(/\s+/g, '_')}_${tanggal}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        setTimeout(() => {
+            alert('✅ Template surat berhasil diunduh!\n\nLangkah selanjutnya:\n1. Buka file .html di browser\n2. Lengkapi: Nomor surat, Nama unit/pengaju\n3. Tekan Ctrl+P → Save as PDF\n4. Upload PDF-nya di kolom File di bawah.');
+        }, 400);
+    }
+
 </script>
 
 @endsection

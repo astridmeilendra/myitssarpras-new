@@ -253,27 +253,7 @@
                     <span class="text-xs text-red-500 hidden" id="error-keterangan"></span>
                 </div>
 
-                <!-- File Upload -->
-                <div class="mb-6">
-                    <div class="flex items-center">
-                        <span class="text-sm font-medium text-gray-700 mr-3">File</span>
-                        <span class="text-sm text-gray-700">:</span>
-                        <label class="ml-3 flex items-center cursor-pointer text-sm text-gray-500 hover:text-gray-700">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span id="file-label">Unggah File</span>
-                            <input type="file"
-                                name="dokumen"
-                                id="dokumen"
-                                class="hidden"
-                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                                onchange="updateFileName(this)">
-                        </label>
-                    </div>
-                    <span class="text-xs text-gray-500 ml-16 mt-1 block">Format: PDF, DOC, DOCX, JPG, PNG (Max: 5MB)</span>
-                    <span class="text-xs text-red-500 hidden" id="error-dokumen"></span>
-                </div>
+
 
                 <!-- Submit Button -->
                 <div class="mt-6">
@@ -395,15 +375,6 @@
             document.getElementById('bookingForm').reset();
             clearErrors();
         }, 300);
-    }
-
-    function updateFileName(input) {
-        const label = document.getElementById('file-label');
-        if (input.files && input.files[0]) {
-            label.textContent = input.files[0].name;
-        } else {
-            label.textContent = 'Unggah File';
-        }
     }
 
     function clearErrors() {

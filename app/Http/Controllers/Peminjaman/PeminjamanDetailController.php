@@ -133,6 +133,111 @@ class PeminjamanDetailController extends Controller
     }
 
     /**
+     * Upload surat peminjaman dan ubah status ke Menunggu
+     */
+    public function submitUploadSurat(Request $request, $peminjamanid)
+    {
+        $userId = Auth::id();
+
+        $peminjaman = DB::table('peminjaman')
+            ->where('peminjamanid', $peminjamanid)
+            ->where('userid', $userId)
+            ->first();
+
+        if (!$peminjaman) {
+            return response()->json(['success' => false, 'message' => 'Peminjaman tidak ditemukan'], 404);
+        }
+
+        $statusTerakhir = DB::table('riwayat_status')
+            ->where('peminjamanid', $peminjamanid)
+            ->orderBy('statusid', 'desc')
+            ->value('nama_status');
+
+        if ($statusTerakhir !== 'Verifikasi Data') {
+            return response()->json(['success' => false, 'message' => 'Status peminjaman tidak valid untuk upload surat'], 422);
+        }
+
+        if (!$request->hasFile('surat')) {
+            return response()->json(['success' => false, 'message' => 'File surat tidak ditemukan'], 422);
+        }
+
+        $file = $request->file('surat');
+
+        // Validasi file
+        $allowedMimes = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+        if (!in_array(strtolower($file->getClientOriginalExtension()), $allowedMimes)) {
+            return response()->json(['success' => false, 'message' => 'Format file tidak valid. Gunakan PDF, DOC, DOCX, JPG, atau PNG'], 422);
+        }
+        if ($file->getSize() > 5 * 1024 * 1024) {
+            return response()->json(['success' => false, 'message' => 'Ukuran file maksimal 5MB'], 422);
+        }
+
+        try {
+            $timestamp = time();
+            $filename = $timestamp . '_' . $file->getClientOriginalName();
+            $filePath = "dokumen_peminjaman/{$userId}/{$filename}";
+            $fileContent = file_get_contents($file->getRealPath());
+
+            // Baca Supabase config dari .env
+            $envContent = file_get_contents(base_path('.env'));
+            preg_match('/SUPABASE_URL=(.*)/', $envContent, $urlMatch);
+            preg_match('/SUPABASE_SERVICE_ROLE=(.*)/', $envContent, $keyMatch);
+            preg_match('/SUPABASE_BUCKET=(.*)/', $envContent, $bucketMatch);
+
+            $supabaseUrl = trim($urlMatch[1] ?? '');
+            $supabaseKey = trim($keyMatch[1] ?? '');
+            $supabaseBucket = trim($bucketMatch[1] ?? '');
+
+            if (!$supabaseUrl || !$supabaseBucket || !$supabaseKey) {
+                throw new \Exception('Konfigurasi Supabase tidak lengkap');
+            }
+
+            $uploadUrl = "{$supabaseUrl}/storage/v1/object/{$supabaseBucket}/{$filePath}";
+
+            $response = \Illuminate\Support\Facades\Http::timeout(60)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $supabaseKey,
+                    'Content-Type'  => $file->getMimeType(),
+                ])->withBody($fileContent, $file->getMimeType())
+                ->post($uploadUrl);
+
+            if ($response->failed()) {
+                throw new \Exception('Gagal upload ke Supabase: ' . $response->body());
+            }
+
+            $dokumenPath = "{$supabaseUrl}/storage/v1/object/public/{$supabaseBucket}/{$filePath}";
+
+            DB::beginTransaction();
+
+            // Simpan dokumen ke peminjaman
+            DB::table('peminjaman')
+                ->where('peminjamanid', $peminjamanid)
+                ->update(['dokumen' => $dokumenPath]);
+
+            // Tambah status Menunggu
+            DB::table('riwayat_status')->insert([
+                'peminjamanid' => $peminjamanid,
+                'nama_status'  => 'Menunggu',
+                'waktu_update' => now(),
+                'keterangan'   => 'Surat permohonan telah diupload. Menunggu persetujuan Sarpras.',
+            ]);
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Surat berhasil diupload. Status berubah menjadi Menunggu.']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Upload surat error', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengupload surat',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], 500);
+        }
+    }
+
+    /**
      * Batalkan peminjaman
      */
     public function cancel(Request $request, $peminjamanid)
@@ -157,9 +262,9 @@ class PeminjamanDetailController extends Controller
 
         $status = $statusTerakhir?->nama_status ?? 'Menunggu';
 
-        if ($status !== 'Menunggu') {
+        if (!in_array($status, ['Menunggu', 'Verifikasi Data'])) {
             return redirect()->route('peminjaman.detail', $peminjamanid)
-                ->with('error', 'Hanya peminjaman dengan status Menunggu yang dapat dibatalkan');
+                ->with('error', 'Hanya peminjaman dengan status Menunggu atau Verifikasi Data yang dapat dibatalkan');
         }
 
         // Buat riwayat status baru dengan status "Dibatalkan"

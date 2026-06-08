@@ -65,6 +65,10 @@ Route::get('/peminjaman/{peminjamanid}/download-dokumen', [PeminjamanDetailContr
     ->name('peminjaman.download-dokumen')
     ->middleware('auth');
 
+Route::post('/peminjaman/{peminjamanid}/upload-surat', [PeminjamanDetailController::class, 'submitUploadSurat'])
+    ->name('peminjaman.upload-surat')
+    ->middleware('auth');
+
 Route::get('/search', [CariRuanganController::class, 'index'])->name('search');
 Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
 

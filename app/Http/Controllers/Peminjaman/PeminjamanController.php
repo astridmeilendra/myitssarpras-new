@@ -136,83 +136,6 @@ class PeminjamanController extends Controller
         DB::beginTransaction();
 
         try {
-            // Upload dokumen ke Supabase jika ada
-            $dokumenPath = null;
-            if ($request->hasFile('dokumen')) {
-                try {
-                    $file = $request->file('dokumen');
-                    $userId = Auth::id();
-                    $timestamp = time();
-                    $originalName = $file->getClientOriginalName();
-                    $filename = $timestamp . '_' . $originalName;
-                    $filePath = "dokumen_peminjaman/{$userId}/{$filename}";
-
-                    // Siapkan data untuk upload ke Supabase
-                    $fileContent = file_get_contents($file);
-
-                    // Baca langsung dari .env file (bypass cache)
-                    $envPath = base_path('.env');
-                    $envContent = file_get_contents($envPath);
-
-                    // Parse .env
-                    preg_match('/SUPABASE_URL=(.*)/', $envContent, $urlMatch);
-                    preg_match('/SUPABASE_SERVICE_ROLE=(.*)/', $envContent, $keyMatch);
-                    preg_match('/SUPABASE_BUCKET=(.*)/', $envContent, $bucketMatch);
-
-                    $supabaseUrl = trim($urlMatch[1] ?? '');
-                    $supabaseKey = trim($keyMatch[1] ?? '');
-                    $supabaseBucket = trim($bucketMatch[1] ?? '');
-
-                    // Validasi environment variables
-                    if (!$supabaseUrl || !$supabaseBucket || !$supabaseKey) {
-                        throw new \Exception('Supabase configuration missing: URL=' . ($supabaseUrl ? 'OK' : 'MISSING') .
-                            ', BUCKET=' . ($supabaseBucket ? 'OK' : 'MISSING') .
-                            ', KEY=' . ($supabaseKey ? 'OK' : 'MISSING'));
-                    }
-
-                    // Construct URL dengan benar
-                    $uploadUrl = "{$supabaseUrl}/storage/v1/object/{$supabaseBucket}/{$filePath}";
-
-                    Log::info('Supabase upload attempt', [
-                        'url' => $uploadUrl,
-                        'file' => $filename,
-                        'path' => $filePath,
-                        'bucket' => $supabaseBucket,
-                        'key_length' => strlen($supabaseKey),
-                        'key_preview' => substr($supabaseKey, 0, 30) . '...' . substr($supabaseKey, -10),
-                    ]);
-
-                    // Upload ke Supabase Storage via REST API
-                    // Menggunakan service role key untuk bypass row-level security
-                    $response = Http::timeout(60)
-                        ->withHeaders([
-                            'Authorization' => 'Bearer ' . $supabaseKey,
-                            'Content-Type' => $file->getMimeType(),
-                        ])->withBody($fileContent, $file->getMimeType())
-                        ->post($uploadUrl);
-
-                    Log::info('Supabase upload response', [
-                        'status' => $response->status(),
-                        'success' => $response->successful(),
-                        'body' => $response->body(),
-                    ]);
-
-                    if ($response->failed()) {
-                        throw new \Exception('Gagal upload file ke Supabase: ' . $response->body());
-                    }
-
-                    // Generate public URL dari Supabase
-                    $dokumenPath = "{$supabaseUrl}/storage/v1/object/public/{$supabaseBucket}/{$filePath}";
-
-                } catch (\Exception $e) {
-                    Log::error('Supabase upload error', [
-                        'error' => $e->getMessage(),
-                        'user_id' => Auth::id(),
-                    ]);
-                    throw $e;
-                }
-            }
-
             // Insert ke tabel peminjaman (1 record = 1 booking)
             $peminjamanId = DB::table('peminjaman')->insertGetId([
                 'userid'     => $userId,
@@ -220,16 +143,15 @@ class PeminjamanController extends Controller
                 'tanggal'    => $request->tanggal,
                 'nama_shift' => $namaShift,
                 'keterangan' => $request->keterangan,
-                'dokumen'    => $dokumenPath,
+                'dokumen'    => null,
             ], 'peminjamanid');
-
 
             // Insert status awal ke tabel riwayat_status
             DB::table('riwayat_status')->insert([
                 'peminjamanid' => $peminjamanId,
-                'nama_status'  => 'Menunggu',
+                'nama_status'  => 'Verifikasi Data',
                 'waktu_update' => now(),
-                'keterangan'   => 'Pengajuan peminjaman ruangan baru',
+                'keterangan'   => 'Pengajuan peminjaman ruangan baru. Silakan upload surat peminjaman.',
             ]);
 
             DB::commit();
@@ -243,10 +165,6 @@ class PeminjamanController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-
-            if (!empty($dokumenPath) && Storage::disk('public')->exists($dokumenPath)) {
-                Storage::disk('public')->delete($dokumenPath);
-            }
 
             Log::error('Peminjaman store error', [
                 'error' => $e->getMessage(),

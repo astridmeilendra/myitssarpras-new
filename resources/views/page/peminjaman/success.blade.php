@@ -9,6 +9,7 @@
         <div class="flex flex-col items-center justify-center mt-6">
             <p class="text-md text-white">Permintaan</p>
             <p class="text-md font-bold text-white">Berhasil Dikirim!</p>
+            <p class="text-xs text-blue-200 mt-2 text-center px-4">Cek riwayatmu dan upload surat permohonan untuk melanjutkan.</p>
         </div>
     </div>
 </div>
