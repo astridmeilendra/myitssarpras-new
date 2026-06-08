@@ -270,10 +270,9 @@ class PeminjamanDetailController extends Controller
         // Buat riwayat status baru dengan status "Dibatalkan"
         DB::table('riwayat_status')->insert([
             'peminjamanid' => $peminjamanid,
-            'nama_status' => 'Dibatalkan',
-            'waktu_update' => now(),
-            'created_at' => now(),
-            'updated_at' => now()
+             'nama_status' => 'Dibatalkan',
+             'waktu_update' => now(),
+             'keterangan' => 'Peminjaman dibatalkan oleh peminjam'
         ]);
 
         return redirect()->route('peminjaman.detail', $peminjamanid)
