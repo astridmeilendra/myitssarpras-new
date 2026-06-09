@@ -65,14 +65,15 @@ Route::get('/peminjaman/{peminjamanid}/download-dokumen', [PeminjamanDetailContr
     ->name('peminjaman.download-dokumen')
     ->middleware('auth');
 
-Route::post('/peminjaman/{peminjamanid}/upload-surat', [PeminjamanDetailController::class, 'submitUploadSurat'])
-    ->name('peminjaman.upload-surat')
-    ->middleware('auth');
-
 Route::get('/search', [CariRuanganController::class, 'index'])->name('search');
 Route::post('/search/filter', [CariRuanganController::class, 'search'])->name('search.filter');
 
 Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+
+Route::post('/peminjaman/{peminjamanid}/upload-surat',
+    [PeminjamanDetailController::class, 'submitUploadSurat'])
+    ->name('peminjaman.upload-surat')
+    ->middleware('auth');
 
 //DB Connection
 Route::get('/cek-koneksi', function () {
@@ -236,3 +237,4 @@ Route::post('/pertanyaan/store', [PertanyaanController::class, 'savePertanyaan']
 Route::get('/faq', function () {
     return view('page/info/faq');
 })->name('faq');
+
