@@ -188,14 +188,9 @@ class PeminjamanDetailController extends Controller
             ]);
 
             // Baca Supabase config dari .env
-            $envContent = file_get_contents(base_path('.env'));
-            preg_match('/SUPABASE_URL=(.*)/', $envContent, $urlMatch);
-            preg_match('/SUPABASE_SERVICE_ROLE=(.*)/', $envContent, $keyMatch);
-            preg_match('/SUPABASE_BUCKET=(.*)/', $envContent, $bucketMatch);
-
-            $supabaseUrl = trim($urlMatch[1] ?? '');
-            $supabaseKey = trim($keyMatch[1] ?? '');
-            $supabaseBucket = trim($bucketMatch[1] ?? '');
+            $supabaseUrl = env('SUPABASE_URL');
+            $supabaseKey = env('SUPABASE_SERVICE_ROLE');
+            $supabaseBucket = env('SUPABASE_BUCKET');
 
             if (!$supabaseUrl || !$supabaseBucket || !$supabaseKey) {
                 throw new \Exception('Konfigurasi Supabase tidak lengkap');
