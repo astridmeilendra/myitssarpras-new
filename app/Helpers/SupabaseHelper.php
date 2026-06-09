@@ -8,79 +8,48 @@ use Illuminate\Support\Str;
 
 class SupabaseHelper
 {
-    /**
-     * Helper untuk mengambil config yang aman dari cache
-     */
-    private static function getConfig($key)
-    {
-        return config("services.supabase.{$key}");
-    }
-
-    public static function uploadFile($file, $bucket = 'ruangan', $path = null)
+    public static function uploadFile($file, $bucket = 'dokumen-peminjaman', $path = null)
     {
         try {
-            if (!$file || !$file->isValid()) {
+            // AMBIL KONFIGURASI DARI SERVICES.PHP
+            $supabaseUrl = config('services.supabase.url');
+            $supabaseKey = config('services.supabase.service_role');
+
+            if (!$supabaseUrl || !$supabaseKey) {
+                Log::error('Supabase: Configuration missing!');
                 return null;
             }
 
-            // MENGGUNAKAN CONFIG() BUKAN LAGI BACA FILE .ENV
-            $supabaseUrl = self::getConfig('url');
-            $supabaseKey = self::getConfig('service_role'); // Pastikan key ini ada di services.php
-
-            if (!$supabaseUrl || !$supabaseKey) {
-                Log::error('Supabase configuration missing');
+            if (!$file || !$file->isValid()) {
+                Log::error('Supabase: File invalid!');
                 return null;
             }
 
             $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '-' . time() . '-' . Str::random(8) . '.' . $file->getClientOriginalExtension();
             $filePath = $path ? $path . '/' . $filename : $filename;
-            $fullPath = $bucket . '/' . $filePath;
             $uploadUrl = "{$supabaseUrl}/storage/v1/object/{$bucket}/{$filePath}";
 
-            $fileContent = file_get_contents($file);
-
+            // Upload dengan bypass SSL (withoutVerifying) untuk menghindari error SSL Certificate di Azure
             $response = Http::timeout(60)
+                ->withoutVerifying() 
                 ->withHeaders([
                     'Authorization' => 'Bearer ' . $supabaseKey,
                     'Content-Type' => $file->getMimeType(),
                     'x-upsert' => 'true',
-                ])->withBody($fileContent, $file->getMimeType())
+                ])
+                ->withBody(file_get_contents($file), $file->getMimeType())
                 ->post($uploadUrl);
 
             if ($response->failed()) {
-                Log::error('Supabase upload failed: ' . $response->body());
+                Log::error('Supabase Upload Failed: ' . $response->body());
                 return null;
             }
 
-            return "{$supabaseUrl}/storage/v1/object/public/{$fullPath}";
+            return "{$supabaseUrl}/storage/v1/object/public/{$bucket}/{$filePath}";
+            
         } catch (\Exception $e) {
-            Log::error('Supabase upload error: ' . $e->getMessage());
+            Log::error('Supabase Exception: ' . $e->getMessage());
             return null;
-        }
-    }
-
-    public static function deleteFile($url, $bucket = 'ruangan')
-    {
-        try {
-            $supabaseUrl = self::getConfig('url');
-            $supabaseKey = self::getConfig('key'); // Sesuaikan dengan key yang dipakai delete
-
-            if (!$supabaseUrl || !$supabaseKey) {
-                return false;
-            }
-
-            $path = str_replace("{$supabaseUrl}/storage/v1/object/public/", '', $url);
-            $deleteUrl = "{$supabaseUrl}/storage/v1/object/{$path}";
-
-            $response = Http::timeout(60)
-                ->withHeaders([
-                    'Authorization' => 'Bearer ' . $supabaseKey,
-                ])->delete($deleteUrl);
-
-            return $response->successful();
-        } catch (\Exception $e) {
-            Log::error('Supabase delete error: ' . $e->getMessage());
-            return false;
         }
     }
 }
