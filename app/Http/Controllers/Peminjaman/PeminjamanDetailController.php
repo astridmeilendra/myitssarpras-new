@@ -236,21 +236,14 @@ class PeminjamanDetailController extends Controller
             return response()->json(['success' => true, 'message' => 'Surat berhasil diupload. Status berubah menjadi Menunggu.']);
 
         } catch (\Exception $e) {
-
-            \Log::error('UPLOAD SURAT ERROR', [
-            'message' => $e->getMessage(),
-            'line' => $e->getLine(),
-            'file' => $e->getFile(),
-            ]);
-
-             DB::rollBack();
-
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Upload surat error', ['error' => $e->getMessage()]);
             return response()->json([
-            'success' => false,
-            'message' => 'Terjadi kesalahan saat mengupload surat',
-            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-         ], 500);
-}
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengupload surat',
+                'error'   => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], 500);
+        }
     }
 
     /**
