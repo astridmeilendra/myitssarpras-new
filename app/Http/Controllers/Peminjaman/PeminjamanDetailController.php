@@ -178,6 +178,15 @@ class PeminjamanDetailController extends Controller
             $filePath = "dokumen_peminjaman/{$userId}/{$filename}";
             $fileContent = file_get_contents($file->getRealPath());
 
+
+            // Logging kalau tidak bisa upload surat
+            \Log::info('SUPABASE DEBUG', [
+            'env_exists' => file_exists(base_path('.env')),
+            'bucket_env' => env('SUPABASE_BUCKET'),
+             'url_env' => env('SUPABASE_URL'),
+             'service_role_env' => env('SUPABASE_SERVICE_ROLE') ? 'ADA' : 'KOSONG',
+            ]);
+
             // Baca Supabase config dari .env
             $envContent = file_get_contents(base_path('.env'));
             preg_match('/SUPABASE_URL=(.*)/', $envContent, $urlMatch);
@@ -227,14 +236,21 @@ class PeminjamanDetailController extends Controller
             return response()->json(['success' => true, 'message' => 'Surat berhasil diupload. Status berubah menjadi Menunggu.']);
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            \Illuminate\Support\Facades\Log::error('Upload surat error', ['error' => $e->getMessage()]);
+
+            \Log::error('UPLOAD SURAT ERROR', [
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            ]);
+
+             DB::rollBack();
+
             return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengupload surat',
-                'error'   => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], 500);
-        }
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat mengupload surat',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+         ], 500);
+}
     }
 
     /**
