@@ -39,6 +39,97 @@
                 </div>
             </div>
 
+            <!-- ===================== -->
+            <!-- MODAL: PREVIEW SURAT -->
+            <!-- ===================== -->
+            <div id="suratModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-60 flex items-end justify-center">
+                <div class="bg-white w-full max-w-lg rounded-t-2xl flex flex-col" style="max-height:92vh">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
+                        <h3 class="text-sm font-bold text-gray-900">Surat Permohonan Peminjaman</h3>
+                        <button onclick="closeSuratModal()" class="text-gray-400 hover:text-gray-600 p-1">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body — scrollable -->
+                    <div class="overflow-y-auto flex-1 px-5 py-4 space-y-3">
+
+                        <!-- Nomor Surat -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nomor Surat</label>
+                            <input id="s_nomor" type="text" placeholder="Contoh: 001/HMT-ITS/VI/2026"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+
+                        <!-- Nama Kegiatan -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nama Kegiatan</label>
+                            <input id="s_kegiatan" type="text" placeholder="Contoh: Rapat Koordinasi Himpunan"
+                                value="{{ $peminjaman->keterangan ?? '' }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+
+                        <!-- Nama Unit / Organisasi -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nama Unit / Organisasi / Himpunan</label>
+                            <input id="s_unit" type="text" placeholder="Contoh: Himpunan Mahasiswa Teknik ITS"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+
+                        <!-- Nama Penandatangan -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nama Penandatangan</label>
+                            <input id="s_nama_ttd" type="text" placeholder="Nama lengkap"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+
+                        <!-- NIP / NRP -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">NIP / NRP Penandatangan</label>
+                            <input id="s_nip" type="text" placeholder="Contoh: 5024231001"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+
+                        <!-- Data otomatis (readonly) -->
+                        <div class="bg-gray-50 rounded-xl p-3 space-y-1.5">
+                            <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Data Peminjaman (otomatis)</p>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">Ruangan</span>
+                                <span class="font-medium text-gray-800">{{ $peminjaman->nama_ruangan }}</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">Hari</span>
+                                <span class="font-medium text-gray-800">{{ \Carbon\Carbon::parse($peminjaman->tanggal)->locale('id')->isoFormat('dddd') }}</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">Tanggal</span>
+                                <span class="font-medium text-gray-800">{{ \Carbon\Carbon::parse($peminjaman->tanggal)->locale('id')->isoFormat('D MMMM Y') }}</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">Waktu</span>
+                                <span class="font-medium text-gray-800">{{ $peminjaman->nama_shift }}</span>
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] text-gray-400 text-center">PDF akan langsung terunduh ke perangkatmu</p>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="px-5 py-4 border-t border-gray-100 flex-shrink-0">
+                        <button type="button" onclick="downloadSuratPDF()"
+                            class="w-full flex items-center justify-center gap-2 py-3 bg-[#003D82] text-white font-semibold rounded-xl text-sm hover:bg-[#002a5c] transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Download Surat (PDF)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Info Room -->
             <div class="flex items-start justify-between mb-4 gap-4">
                 <div class="flex-1">
@@ -164,20 +255,20 @@
                     <div class="space-y-2 mb-4">
                         <div class="flex items-start gap-2">
                             <span class="flex-shrink-0 w-5 h-5 bg-blue-700 text-white rounded-full text-[10px] font-bold flex items-center justify-center">1</span>
-                            <p class="text-xs text-blue-800">Klik "Generate Surat" → surat terbuka di tab baru</p>
+                            <p class="text-xs text-blue-800">Klik "Generate Surat" → isi data yang kosong di form</p>
                         </div>
                         <div class="flex items-start gap-2">
                             <span class="flex-shrink-0 w-5 h-5 bg-blue-700 text-white rounded-full text-[10px] font-bold flex items-center justify-center">2</span>
-                            <p class="text-xs text-blue-800">Lengkapi nomor surat, nama unit &amp; penandatangan</p>
+                            <p class="text-xs text-blue-800">Klik "Download Surat" → simpan sebagai PDF dari browser/Files</p>
                         </div>
                         <div class="flex items-start gap-2">
                             <span class="flex-shrink-0 w-5 h-5 bg-blue-700 text-white rounded-full text-[10px] font-bold flex items-center justify-center">3</span>
-                            <p class="text-xs text-blue-800">Cetak/Save as PDF → upload di bawah → Kirim</p>
+                            <p class="text-xs text-blue-800">Upload file PDF-nya di bawah → Kirim</p>
                         </div>
                     </div>
 
                     <!-- Generate Button -->
-                    <button onclick="generateSurat()" class="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-blue-600 text-blue-700 font-semibold rounded-xl text-sm hover:bg-blue-100 transition-colors bg-white mb-4">
+                    <button onclick="openSuratModal()" class="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-blue-600 text-blue-700 font-semibold rounded-xl text-sm hover:bg-blue-100 transition-colors bg-white mb-4">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
@@ -255,6 +346,7 @@
     <x-navbar active="riwayat" />
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
     function openConfirmModal() {
         document.getElementById('confirmModal').classList.remove('hidden');
@@ -277,144 +369,144 @@
         }
     }
 
-    function generateSurat() {
-        const data = {
-            nama_pemohon: "{{ $peminjaman->nama ?? '' }}",
-            nama_ruangan: "{{ $peminjaman->nama_ruangan ?? '' }}",
-            lokasi: "{{ $peminjaman->lokasi_ruangan ?? '' }}",
-            hari: "{{ \Carbon\Carbon::parse($peminjaman->tanggal)->isoFormat('dddd') }}",
-            tanggal: "{{ \Carbon\Carbon::parse($peminjaman->tanggal)->isoFormat('D MMMM Y') }}",
-            shift: "{{ $peminjaman->nama_shift ?? '' }}",
-            keterangan: "{{ addslashes($peminjaman->keterangan ?? '') }}",
-            tanggalHari: new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}),
+    function openSuratModal() {
+        document.getElementById('suratModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSuratModal() {
+        document.getElementById('suratModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('suratModal').addEventListener('click', function(e) {
+        if (e.target === this) closeSuratModal();
+    });
+
+    function downloadSuratPDF() {
+        const nomor    = document.getElementById('s_nomor').value.trim() || '_______________';
+        const kegiatan = document.getElementById('s_kegiatan').value.trim() || '_______________';
+        const unit     = document.getElementById('s_unit').value.trim() || '_______________';
+        const namaTtd  = document.getElementById('s_nama_ttd').value.trim() || '_______________';
+        const nip      = document.getElementById('s_nip').value.trim() || '_______________';
+
+        const namaRuangan = "{{ $peminjaman->nama_ruangan ?? '' }}";
+        const lokasi      = "{{ $peminjaman->lokasi_ruangan ?? '' }}";
+        const hari        = "{{ \Carbon\Carbon::parse($peminjaman->tanggal)->locale('id')->isoFormat('dddd') }}";
+        const tanggal     = "{{ \Carbon\Carbon::parse($peminjaman->tanggal)->locale('id')->isoFormat('D MMMM Y') }}";
+        const shift       = "{{ $peminjaman->nama_shift ?? '' }}";
+        const today       = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+        const marginL = 30;
+        const marginR = 210 - 25;
+        const lineW   = marginR - marginL;
+        let y = 20;
+
+        const center = (text, yPos, size = 12, style = 'normal') => {
+            doc.setFontSize(size);
+            doc.setFont('times', style);
+            doc.text(text, 210 / 2, yPos, { align: 'center' });
         };
 
-        const html = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Surat Permohonan Peminjaman Ruangan</title>
-<style>
-  * { box-sizing: border-box; }
-  body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; margin: 2.5cm 3cm 2.5cm 3cm; color: #000; line-height: 1.5; }
-  .kop { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 24px; }
-  .kop h2 { font-size: 14pt; margin: 0 0 2px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-  .kop p { font-size: 10pt; margin: 2px 0; }
-  .meta-table { margin-bottom: 20px; border-collapse: collapse; }
-  .meta-table td { padding: 1px 0; vertical-align: top; }
-  .meta-table td:first-child { min-width: 100px; }
-  .meta-table td:nth-child(2) { padding: 1px 8px; }
-  .kepada { margin-bottom: 16px; }
-  .kepada p { margin: 1px 0; }
-  .body-text { text-align: justify; }
-  .body-text p { margin: 12px 0; }
-  .detail-table { margin: 8px 0 8px 20px; border-collapse: collapse; }
-  .detail-table td { padding: 2px 0; vertical-align: top; }
-  .detail-table td:first-child { min-width: 130px; }
-  .detail-table td:nth-child(2) { padding: 2px 12px; }
-  .ttd-wrap { margin-top: 36px; display: flex; justify-content: flex-end; }
-  .ttd { text-align: center; min-width: 220px; }
-  .ttd .space { height: 70px; }
-  .ttd .nama { font-weight: bold; text-decoration: underline; }
-  .ttd .nip { font-size: 11pt; }
-  .tembusan { margin-top: 36px; font-size: 11pt; }
-  .tembusan p { margin: 1px 0; }
-  .print-btn { position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; background: #003D82; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 999; }
-  .print-btn:hover { background: #002d62; }
-  @media print { .print-btn { display: none !important; } body { margin: 2cm 2.5cm; } }
-  input[type=text] { border: none; border-bottom: 1px dashed #aaa; background: transparent; font-family: inherit; font-size: inherit; color: inherit; padding: 0 4px 1px; }
-  input[type=text]:focus { outline: none; border-bottom: 1px solid #003D82; }
-  input[type=text]::placeholder { color: #aaa; font-style: italic; }
-</style>
-</head>
-<body>
+        const left = (text, yPos, size = 12, style = 'normal') => {
+            doc.setFontSize(size);
+            doc.setFont('times', style);
+            doc.text(text, marginL, yPos);
+        };
 
-<!-- KOP SURAT -->
-<div class="kop">
-  <h2>Institut Teknologi Sepuluh Nopember</h2>
-  <p>Direktorat Sarana dan Prasarana</p>
-  <p>Kampus ITS Sukolilo, Surabaya 60111 &nbsp;|&nbsp; Telp. (031) 5994251</p>
-</div>
+        const wrap = (text, yPos, size = 12, style = 'normal') => {
+            doc.setFontSize(size);
+            doc.setFont('times', style);
+            const lines = doc.splitTextToSize(text, lineW);
+            doc.text(lines, marginL, yPos);
+            return yPos + (lines.length * 6);
+        };
 
-<!-- NOMOR & HAL -->
-<table class="meta-table">
-  <tr>
-    <td>Nomor</td>
-    <td>:</td>
-    <td><input type="text" placeholder="………………………" style="min-width:200px"></td>
-  </tr>
-  <tr>
-    <td>Hal</td>
-    <td>:</td>
-    <td>Peminjaman Ruang di ${data.lokasi || 'Gedung ITS'}</td>
-  </tr>
-</table>
+        // KOP SURAT
+        center('INSTITUT TEKNOLOGI SEPULUH NOPEMBER', y, 14, 'bold');
+        y += 6;
+        center('Direktorat Sarana dan Prasarana', y, 11);
+        y += 5;
+        center('Kampus ITS Sukolilo, Surabaya 60111  |  Telp. (031) 5994251', y, 10);
+        y += 6;
+        doc.setLineWidth(0.8);
+        doc.line(marginL, y, marginR, y);
+        doc.setLineWidth(0.3);
+        doc.line(marginL, y + 1.5, marginR, y + 1.5);
+        y += 8;
 
-<!-- KEPADA -->
-<div class="kepada">
-  <p>Kepada &nbsp;Yth &nbsp;:</p>
-  <p>Direktur Pendidikan</p>
-  <p>Di Kampus ITS Sukolilo</p>
-  <p>Surabaya</p>
-</div>
+        // NOMOR & HAL
+        doc.setFontSize(12); doc.setFont('times', 'normal');
+        doc.text('Nomor', marginL, y);
+        doc.text(':', marginL + 22, y);
+        doc.text(nomor, marginL + 26, y);
+        y += 6;
+        doc.text('Hal', marginL, y);
+        doc.text(':', marginL + 22, y);
+        doc.text('Peminjaman Ruang di ' + (lokasi || namaRuangan), marginL + 26, y);
+        y += 12;
 
-<!-- BODY -->
-<div class="body-text">
-  <p>Dengan hormat,</p>
-  <p>Sehubungan dengan akan diselenggarakan kegiatan <input type="text" placeholder="nama kegiatan" style="min-width:200px">, oleh <input type="text" placeholder="nama unit/organisasi/himpunan" style="min-width:180px">, maka bersama ini kami mengajukan permohonan peminjaman ruangan:</p>
+        // KEPADA
+        left('Kepada  Yth :', y);  y += 6;
+        left('Direktur Pendidikan', y); y += 6;
+        left('Di Kampus ITS Sukolilo', y); y += 6;
+        left('Surabaya', y); y += 12;
 
-  <table class="detail-table">
-    <tr>
-      <td>Hari</td>
-      <td>:</td>
-      <td>${data.hari}</td>
-    </tr>
-    <tr>
-      <td>Tanggal</td>
-      <td>:</td>
-      <td>${data.tanggal}</td>
-    </tr>
-    <tr>
-      <td>Jam</td>
-      <td>:</td>
-      <td>${data.shift}</td>
-    </tr>
-    <tr>
-      <td>Ruang yang dipinjam</td>
-      <td>:</td>
-      <td>${data.nama_ruangan}</td>
-    </tr>
-  </table>
+        // SALAM
+        left('Dengan hormat,', y); y += 8;
 
-  <p>Demikian permohonan kami, atas perhatian dan kerjasamanya kami sampaikan terima kasih.</p>
-</div>
+        // ISI
+        const kalimatIsi = 'Sehubungan dengan akan diselenggarakan kegiatan ' + kegiatan + ', oleh ' + unit + ', maka bersama ini kami mengajukan permohonan peminjaman ruangan:';
+        y = wrap(kalimatIsi, y, 12, 'normal') + 4;
 
-<!-- TTD -->
-<div class="ttd-wrap">
-  <div class="ttd">
-    <p>Surabaya, ${data.tanggalHari}</p>
-    <p>Kepala Unit/Departemen,</p>
-    <div class="space"></div>
-    <p class="nama"><input type="text" placeholder="Nama Penandatangan" style="min-width:160px; text-align:center; font-weight:bold; text-decoration:underline"></p>
-    <p class="nip"><input type="text" placeholder="NIP" style="min-width:120px; text-align:center"></p>
-  </div>
-</div>
+        // DETAIL TABLE
+        const col1 = marginL + 5;
+        const col2 = col1 + 42;
+        const col3 = col2 + 8;
+        const rows = [
+            ['Hari', hari],
+            ['Tanggal', tanggal],
+            ['Jam', shift],
+            ['Ruang yang dipinjam', namaRuangan],
+        ];
+        rows.forEach(([label, val]) => {
+            doc.setFontSize(12); doc.setFont('times', 'normal');
+            doc.text(label, col1, y);
+            doc.text(':', col2, y);
+            doc.text(val, col3, y);
+            y += 6;
+        });
+        y += 6;
 
-<!-- TEMBUSAN -->
-<div class="tembusan">
-  <p>Tembusan Yth:</p>
-  <p>- Kepala Subdirektorat Koordinasi Perkuliahan Bersama</p>
-  <p>- Kepala Biro Sarana dan Prasarana</p>
-</div>
+        // PENUTUP
+        y = wrap('Demikian permohonan kami, atas perhatian dan kerjasamanya kami sampaikan terima kasih.', y, 12, 'normal') + 10;
 
-<button class="print-btn" onclick="window.print()">🖨️ Cetak / Save as PDF</button>
+        // TTD
+        const ttdX = 210 - 25 - 50;
+        doc.setFontSize(12); doc.setFont('times', 'normal');
+        doc.text('Surabaya, ' + today, ttdX, y, { align: 'center' });
+        y += 6;
+        doc.text('Kepala Unit/Departemen,', ttdX, y, { align: 'center' });
+        y += 24; // ruang tanda tangan
+        doc.setFont('times', 'bold');
+        doc.text(namaTtd, ttdX, y, { align: 'center' });
+        y += 6;
+        doc.setFont('times', 'normal');
+        doc.text('NIP. ' + nip, ttdX, y, { align: 'center' });
+        y += 14;
 
-</body>
-</html>`;
+        // TEMBUSAN
+        left('Tembusan Yth:', y, 11); y += 5;
+        left('1. Kepala Subdirektorat Koordinasi Perkuliahan Bersama', y, 11); y += 5;
+        left('2. Kepala Biro Sarana dan Prasarana', y, 11);
 
-        const win = window.open('', '_blank');
-        win.document.write(html);
-        win.document.close();
+        // SAVE
+        const filename = 'Surat_Peminjaman_' + namaRuangan.replace(/\s+/g, '_') + '_' + tanggal.replace(/\s+/g, '-') + '.pdf';
+        doc.save(filename);
+        closeSuratModal();
     }
 
     async function submitUploadSurat() {
