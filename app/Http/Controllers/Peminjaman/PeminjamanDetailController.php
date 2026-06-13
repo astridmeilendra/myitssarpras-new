@@ -178,15 +178,19 @@ class PeminjamanDetailController extends Controller
             $filePath = "dokumen_peminjaman/{$userId}/{$filename}";
             $fileContent = file_get_contents($file->getRealPath());
 
-            // Baca Supabase config dari .env
-            $envContent = file_get_contents(base_path('.env'));
-            preg_match('/SUPABASE_URL=(.*)/', $envContent, $urlMatch);
-            preg_match('/SUPABASE_SERVICE_ROLE=(.*)/', $envContent, $keyMatch);
-            preg_match('/SUPABASE_BUCKET=(.*)/', $envContent, $bucketMatch);
 
-            $supabaseUrl = trim($urlMatch[1] ?? '');
-            $supabaseKey = trim($keyMatch[1] ?? '');
-            $supabaseBucket = trim($bucketMatch[1] ?? '');
+            // Logging kalau tidak bisa upload surat
+            \Log::info('SUPABASE DEBUG', [
+            'env_exists' => file_exists(base_path('.env')),
+            'bucket_env' => env('SUPABASE_BUCKET'),
+             'url_env' => env('SUPABASE_URL'),
+             'service_role_env' => env('SUPABASE_SERVICE_ROLE') ? 'ADA' : 'KOSONG',
+            ]);
+
+            // Baca Supabase config dari .env
+            $supabaseUrl = env('SUPABASE_URL');
+            $supabaseKey = env('SUPABASE_SERVICE_ROLE');
+            $supabaseBucket = env('SUPABASE_BUCKET');
 
             if (!$supabaseUrl || !$supabaseBucket || !$supabaseKey) {
                 throw new \Exception('Konfigurasi Supabase tidak lengkap');
