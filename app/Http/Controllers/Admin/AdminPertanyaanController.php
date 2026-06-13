@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\KirimPertanyaan;
+use App\Models\Pertanyaan as KirimPertanyaan;
 use App\Models\Jawaban;
 use Illuminate\Http\Request;
 

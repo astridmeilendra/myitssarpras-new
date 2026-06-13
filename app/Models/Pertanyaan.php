@@ -23,7 +23,7 @@ class Pertanyaan extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'userid', 'userid');
+    return $this->belongsTo(AppUser::class, 'userid', 'userid');
     }
 
     /**

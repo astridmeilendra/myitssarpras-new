@@ -31,7 +31,7 @@ class SupabaseHelper
 
             // Upload dengan bypass SSL (withoutVerifying) untuk menghindari error SSL Certificate di Azure
             $response = Http::timeout(60)
-                ->withoutVerifying() 
+                ->withoutVerifying()
                 ->withHeaders([
                     'Authorization' => 'Bearer ' . $supabaseKey,
                     'Content-Type' => $file->getMimeType(),
@@ -46,10 +46,22 @@ class SupabaseHelper
             }
 
             return "{$supabaseUrl}/storage/v1/object/public/{$bucket}/{$filePath}";
-            
+
         } catch (\Exception $e) {
             Log::error('Supabase Exception: ' . $e->getMessage());
             return null;
         }
+    }
+    public static function parseFotoUrls($foto): array
+    {
+    if (empty($foto)) {
+        return [];
+    }
+
+    if (is_array($foto)) {
+        return array_values(array_filter($foto));
+    }
+
+    return array_values(array_filter(array_map('trim', explode(',', $foto))));
     }
 }
