@@ -218,6 +218,8 @@
                             $badgeClass = 'bg-red-100 text-red-700';
                         } elseif ($status === 'Selesai') {
                             $badgeClass = 'bg-blue-100 text-blue-700';
+                        } elseif ($status === 'Dibatalkan') {
+                            $badgeClass = 'bg-red-100 text-red-700';
                         }
                     @endphp
 
